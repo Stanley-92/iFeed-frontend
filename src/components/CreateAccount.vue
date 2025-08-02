@@ -1,6 +1,5 @@
 <template>
   <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center border-8 border-blue-400">
-
     <div class="w-full max-w-md bg-white p-8 rounded-md shadow-md text-center border border-gray-300">
       <h1 class="text-3xl font-bold text-green-600 mb-1">iFeed</h1>
       <p class="text-xs text-gray-700 mb-6">Create a new account</p>
@@ -72,6 +71,11 @@
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
+// ✅ Firebase Auth
+import { auth } from '@/firebase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+ 
+
 const router = useRouter()
 
 const form = reactive({
@@ -95,7 +99,13 @@ const errors = reactive({
 
 const years = Array.from({ length: 100 }, (_, i) => `${new Date().getFullYear() - i}`)
 
-function handleSubmit() {
+
+
+
+
+
+
+async function handleSubmit() {
   // Reset errors
   errors.name = ''
   errors.dob = ''
@@ -130,10 +140,35 @@ function handleSubmit() {
     errors.password = 'Password must be at least 6 characters.'
   }
 
-  // ✅ If no errors, proceed
+  // ✅ Proceed if all valid
   if (!errors.name && !errors.dob && !errors.gender && !errors.contact && !errors.password) {
-    localStorage.setItem('verifyEmail', form.contact)
-    router.push('/verify')
+    if (emailRegex.test(form.contact)) {
+      try {
+        // ✅ Firebase Registration
+        await createUserWithEmailAndPassword(auth, form.contact, form.password)
+
+        // ✅ Call Backend to Send Verification Code Email
+        await fetch('http://localhost:3001/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: form.contact })
+        })
+
+        // Save email for verification screen
+        localStorage.setItem('verifyEmail', form.contact)
+
+        // Redirect to Verify Page
+        router.push('/verify')
+
+      } catch (err) {
+        errors.contact = 'Account already exists or invalid email.'
+        console.error(err.message)
+      }
+    } else {
+      errors.contact = 'Phone signup not supported yet.'
+    }
   }
 }
+
+
 </script>

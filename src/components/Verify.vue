@@ -75,18 +75,44 @@ function handleKeydown(e, i) {
 
 
 // Verify Code
-function verifyCode() {
+async function verifyCode() {
   const fullCode = digits.value.join('')
-  if (fullCode === '123456') {
-    alert('✅ Verified!')
-    router.push('/mainfeed') // <-- route to Mainfeed.vue
+  if (fullCode.length !== 6) {
+    error.value = 'Please enter all 6 digits.'
+    return
+  }
+
+  const response = await fetch('http://localhost:3001/verify-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: contact.value, code: fullCode })
+  })
+
+  const data = await response.json()
+  if (data.success) {
+    alert('✅ Code Verified!')
+    router.push('/mainfeed')
   } else {
-    error.value = 'Invalid code. Try again.'
+    error.value = 'Invalid verification code.'
   }
 }
 
 // Dummy resend function
-function resendCode() {
-  alert(`📨 A new code was sent to ${contact.value}`)
+async function resendCode() {
+  const response = await fetch('http://localhost:3001/send-code', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: contact.value })
+  })
+
+  const data = await response.json()
+  if (data.success) {
+    alert('📨 A new code has been sent to ' + contact.value)
+    digits.value = ['', '', '', '', '', '']
+    nextTick(() => digitInputs.value[0]?.focus())
+  } else {
+    error.value = 'Failed to resend code. Try again.'
+  }
 }
+
 </script>

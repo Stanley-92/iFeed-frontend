@@ -37,75 +37,103 @@
 
     
 
-    <!-- Chat Area -->
-    <main class="flex-1 flex flex-col">
-    <!-- Chat Header (Dynamic) -->
-    <div class="border-b px-6 py-4 bg-white flex items-center gap-3">
+   <!-- Chat Area -->
+<main class="flex-1 flex flex-col">
+
+  <!-- Chat Header -->
+  <div class="border-b px-6 py-4 bg-white flex items-center gap-3">
     <img :src="selectedUser.avatar" class="w-10 h-10 rounded-full" />
     <div>
-    <h2 class="font-semibold">{{ selectedUser.name }}</h2>
-    <p class="text-xs text-green-500">{{ selectedUser.status }}</p>
+      <h2 class="font-semibold">{{ selectedUser.name }}</h2>
+      <p class="text-xs text-green-500">{{ selectedUser.status }}</p>
     </div>
-    </div>
-
+  </div>
 
   <!-- Messages -->
-  <div class="flex-1 overflow-y-auto px-6 py-4 space-y-3 bg-gray-50">
-  <div
-  v-for="(msg, index) in messages"
-  :key="index"
-  class="flex items-end gap-3"
-  :class="msg.from === 'me' ? 'justify-end' : 'justify-start'">
-  <img
-  :src="msg.avatar"
-  class="w-8 h-8 rounded-full "
-  :class="msg.from === 'me' ? 'order-2 ml-2' : 'order-1 mr-2'"/>
-
-    
-<!-- File Message -->
-  <div v-if="msg.file" class="mt-2 flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
-  <Icon icon="iconamoon:file-document-thin" class="text-blue-600 w-5 h-5" />
-  <a :href="msg.file.url" target="_blank" class="text-sm font-medium text-blue-700 underline">
-  {{ msg.file.name }}
-  </a>
-  </div> 
-
-
-
-<!-- Audio Message -->
-<div
- v-if="msg.audio"
-  class="flex flex-col transition-transform duration-200"
-  :style="{ transform: swipeTranslateX(index) }"
-  @touchstart="onTouchStart"
-  @touchmove="onTouchMove"
-  @touchend="onTouchEnd(index)">
-<audio :src="msg.audio" controls class="mt-2 rounded-lg w-64"/>
-<p class="text-[11px] text-right opacity-70 mt-1">{{ msg.time }}</p>
-</div>
-
-
-
-
+  <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
     <div
-    class="max-w-[70%] rounded-2xl px-4 py-2"
-    :class="msg.from === 'me' ? ' text-gray rounded-br-none' : 'bg-gray-200 text-black rounded-bl-none'">
-    <p class="text-sm whitespace-pre-wrap">{{ msg.text }}</p>
+      v-for="(msg, index) in messages"
+      :key="index"
+      class="flex items-end gap-3"
+      :class="msg.from === 'me' ? 'justify-end' : 'justify-start'"
+    >
 
- <!-- Image message -->
- <img
-  v-if="msg.image"
-  :src="msg.image"
-  class="mt-2 rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
-  @click="openMediaPreview(msg.image)"/>
-  <video
-  v-if="msg.video"
-  :src="msg.video"
-  class="mt-2 rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
-  @click="openMediaPreview(msg.image)"
-  controls>
-</video>
+      <!-- Avatar -->
+      <img
+        :src="msg.avatar"
+        class="w-8 h-8 rounded-full"
+        :class="msg.from === 'me' ? 'order-2 ml-2' : 'order-1 mr-2'"
+      />
 
+      <!-- Message Bubble -->
+      <div
+        class="max-w-[70%] flex flex-col gap-2"
+        :class="msg.from === 'me' ? 'items-end order-1' : 'items-start order-2'"
+      >
+
+        <!-- File Message -->
+        <div
+          v-if="msg.file"
+          class="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg"
+        >
+          <Icon icon="iconamoon:file-document-thin" class="text-blue-600 w-5 h-5" />
+          <a
+            :href="msg.file.url"
+            target="_blank"
+            class="text-sm font-medium text-blue-700 underline"
+          >
+            {{ msg.file.name }}
+          </a>
+        </div>
+
+        <!-- Audio Message -->
+        <div
+          v-if="msg.audio"
+          class="flex flex-col transition-transform duration-200"
+          :style="{ transform: swipeTranslateX(index) }"
+          @touchstart="onTouchStart"
+          @touchmove="onTouchMove"
+          @touchend="onTouchEnd(index)"
+        >
+          <audio :src="msg.audio" controls class="rounded-lg w-64" />
+          <p
+            v-if="msg.text"
+            class="mt-1 text-sm whitespace-pre-wrap px-4 py-2 rounded-xl"
+            :class="msg.from === 'me' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'"
+          >
+            {{ msg.text }}
+          </p>
+        </div>
+
+        <!-- Image message -->
+        <img
+          v-if="msg.image"
+          :src="msg.image"
+          class="rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
+          @click="openMediaPreview(msg.image)"
+        />
+
+        <!-- Video message -->
+        <video
+          v-if="msg.video"
+          :src="msg.video"
+          class="rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
+          @click="openMediaPreview(msg.video)"
+          controls
+        ></video>
+
+        <!-- Text Message -->
+        <div
+          v-if="!msg.audio && !msg.file && !msg.image && !msg.video"
+          class="px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap"
+          :class="msg.from === 'me' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'"
+        >
+          {{ msg.text }}
+        </div>
+
+
+        
+    
 <!-- Media Preview Modal -->
 <div
   v-if="mediaPreview"
@@ -146,7 +174,7 @@
   @click="forwardMessage(msg)"
   title="Forward"
 >
-  🔁
+  
 </button>
 
 <!-- Forward Modal -->
@@ -168,10 +196,6 @@
 </div>
 
 
-
-
-
-
 <!--Time Stamp-->
     <p class="text-[11px] text-right opacity-70 mt-1">{{ msg.time }}</p>
     </div>
@@ -181,26 +205,30 @@
 
 
 <!-- Input Area -->
-<div class="border-t px-4 py-3 bg-white flex items-center gap-2">
+<div class="border-t px-1 py-4 bg-white flex items-center gap-9">
   <!-- Input with Mic Icon -->
-  <div class="flex items-center flex-1 bg-gray-100 rounded-full px-3 py-2 border border-blue-500">
-  <!-- Mic Button -->
-<button
-  @click="toggleRecording"
-  class="text-gray-500 hover:text-red-500 transition"
-  :title="isRecording ? 'Stop recording' : 'Start recording'"
->
-  <Icon :icon="isRecording ? 'mdi:stop-circle-outline' : 'material-symbols:mic'" class="w-5 h-5" />
-</button>
-  
-  <input
-  v-model="newMessage"
-  placeholder="Write something..."
-  class="flex-1 bg-transparent focus:outline-none"
-  @keydown.enter.prevent="sendMessage"
-/>
-</div>
+<div class="flex items-start flex-1 bg-transparent px-4 gap-2 py-2 text-sm md:text-base shadow-sm">
+    
+    <!-- Mic Button -->
+  <button
+      @click="toggleRecording"
+      class="text-gray-500 hover:text-red-500 transition mt-2"
+      :title="isRecording ? 'Stop recording' : 'Start recording'"
+    >
+      <Icon :icon="isRecording ? 'mdi:stop-circle-outline' : 'material-symbols:mic'" class="w-5 h-5" />
+    </button>
 
+    <!-- Multiline Textarea -->
+    <textarea
+      v-model="newMessage"
+      placeholder="Write something..."
+      class="w-full bg-white  px-4 py-2 text-sm text-black resize-none overflow-y-auto  shadow-sm leading-snug align-top max-h-40"
+      rows="1"
+      @input="autoResize"
+      @keydown.enter.prevent="sendMessage"
+    ></textarea>
+
+  </div>
 
 <!-- Floating Voice Waveform Bar -->
 <div
@@ -215,21 +243,11 @@
       v-for="(bar, i) in waveformData"
       :key="i"
       :style="{ height: `${bar}px` }"
-      class="w-[2px] bg-white rounded-sm transition-all duration-75"
+      class="w-[2px] bg-white rounded-sm transition-all duration-75 "
     />
   </div>
- <!-- Waveform Bars -->
-<div class="flex items-end gap-[2px] flex-1">
-  <div
-    v-for="(bar, i) in waveformData"
-    :key="i"
-    :style="{ height: `${bar}px` }"
-    class="w-[2px] bg-white rounded-sm transition-all duration-75"
-  />
-</div>
 
-
-    <!-- Timer Floating -->
+<!-- Timer Floating -->
 <div class="flex flex-col min-w-[60px]">
 <span class="text-xs font-mono">{{ recordingTimerDisplay }}</span>
 </div>
@@ -255,14 +273,21 @@
 
 
  <!-- Emoji Picker -->
-      <div class="relative" title="Insert Emoji">
-        <button @click="toggleEmojiPicker">
-        <Icon icon="fa-regular:smile" class="w-5 h-5" />
-        </button>
-        <div v-if="showEmojiPicker" class="absolute z-50 top-8 right-0">
-        <EmojiPicker @select="addEmoji" />
-        </div>
-        </div>
+<div class="relative" title="Insert Emoji">
+  <button @click="toggleEmojiPicker">
+    <Icon icon="fa-regular:smile" class="w-5 h-5" />
+  </button>
+
+  <!-- Fullscreen overlay -->
+  <div
+    v-if="showEmojiPicker"
+    class="fixed inset-0 flex items-center justify-center z-50"
+    @click.self="showEmojiPicker = false">
+    <div class="bg-white p-3 rounded-xl shadow-lg border w-80 max-h-[80vh] overflow-y-auto">
+    <EmojiPicker @select="addEmoji" />
+    </div>
+  </div>
+</div>
 
         
 <!-- Paperclip Button (click to open file input) -->
@@ -583,15 +608,14 @@ function onTouchEnd(index) {
 
 
 //Wave voice
-const waveformData = ref(new Array(50).fill(4)) // 50 bars, 4px tall default
-cancelAnimationFrame(animationId)
+const waveformData = ref(new Array(80).fill(4)) // 80 bars at 4px height
 
+// 🎤 Start mic visualizer
 function startWaveformVisualizer(stream) {
   audioContext = new (window.AudioContext || window.webkitAudioContext)()
   const source = audioContext.createMediaStreamSource(stream)
   analyser = audioContext.createAnalyser()
   analyser.fftSize = 64
-
   source.connect(analyser)
 
   const bufferLength = analyser.frequencyBinCount
@@ -602,22 +626,24 @@ function startWaveformVisualizer(stream) {
 
     waveformData.value = dataArray
       .slice(0, waveformData.value.length)
-      .map(v => Math.max(4, (v / 255) * 24))
+      .map(v => Math.max(4, (v / 255) * 28)) // scale height smoothly
 
-    animationId = requestAnimationFrame(render) // ✅ was error source
+    animationId = requestAnimationFrame(render)
   }
 
   render()
 }
 
+// 🧼 Stop mic visualizer
 function cleanupAudioVisualizer() {
   cancelAnimationFrame(animationId)
   if (audioContext) {
     audioContext.close()
     audioContext = null
   }
-  waveformData.value = new Array(50).fill(4)
+  waveformData.value = new Array(80).fill(4)
 }
+
 
 
 
@@ -652,6 +678,14 @@ function sendForwardTo(friend) {
   })
 
   forwardingMessage.value = null
+}
+
+// Auto row
+
+const autoResize = (e) => {
+  const el = e.target
+  el.style.height = 'auto'
+  el.style.height = el.scrollHeight + 'px'
 }
 
 </script>
