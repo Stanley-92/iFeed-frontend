@@ -73,46 +73,33 @@ function handleKeydown(e, i) {
 
 
 
-
-// Verify Code
 async function verifyCode() {
   const fullCode = digits.value.join('')
-  if (fullCode.length !== 6) {
-    error.value = 'Please enter all 6 digits.'
-    return
-  }
-
-  const response = await fetch('http://localhost:3001/verify-code', {
+  
+  const response = await fetch('https://your-render-url.onrender.com/verify-code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: contact.value, code: fullCode })
   })
 
-  const data = await response.json()
-  if (data.success) {
-    alert('✅ Code Verified!')
-    router.push('/mainfeed')
+  const result = await response.json()
+
+  if (result.success) {
+    alert('✅ Verified!')
+    router.push('/feed')
   } else {
-    error.value = 'Invalid verification code.'
+    error.value = 'Invalid code. Try again.'
   }
 }
 
-// Dummy resend function
-async function resendCode() {
-  const response = await fetch('http://localhost:3001/send-code', {
+function resendCode() {
+  fetch('https://your-render-url.onrender.com/send-code', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: contact.value })
+  }).then(() => {
+    alert('📨 A new code was sent!')
   })
-
-  const data = await response.json()
-  if (data.success) {
-    alert('📨 A new code has been sent to ' + contact.value)
-    digits.value = ['', '', '', '', '', '']
-    nextTick(() => digitInputs.value[0]?.focus())
-  } else {
-    error.value = 'Failed to resend code. Try again.'
-  }
 }
 
 </script>

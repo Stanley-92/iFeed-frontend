@@ -148,11 +148,11 @@ async function handleSubmit() {
         await createUserWithEmailAndPassword(auth, form.contact, form.password)
 
         // ✅ Call Backend to Send Verification Code Email
-        await fetch('http://localhost:3001/send-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: form.contact })
-        })
+      await fetch('https://digit-backend-1b5i.onrender.com/send-code', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: form.contact })
+});
 
         // Save email for verification screen
         localStorage.setItem('verifyEmail', form.contact)
@@ -169,6 +169,9 @@ async function handleSubmit() {
     }
   }
 }
+
+
+
 
 
 </script>
