@@ -34,38 +34,97 @@
         <div class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer">
           <Icon icon="mdi:logout"/> Logout
         </div>
-      </nav>
-    </aside>   
+          <div class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer">
+          <Icon icon="bi:plus-square"/> Create Post
+        </div>
+
+
+<div @click="toggleFollowerPopup" class="flex items-center gap-3 p-2 hover:bg-gray-100 rounded cursor-pointer">
+  <Icon icon="fluent-mdl2:contact-heart" />
+  Follower
+</div>
+
+<div v-if="showFollowerPopup" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+  <div class="bg-white w-full max-w-sm rounded-lg shadow-lg p-4 relative">
+    <button @click="toggleFollowerPopup" class="absolute top-2 right-2 text-gray-500 hover:text-black">✕</button>
+    <h2 class="text-xl font-bold mb-4">Followers</h2>
+
+<!-- Tabs -->
+<div class="flex border-b mb-4">
+<button
+@click="switchTab('followers')"
+:class="activeTab === 'followers' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500'"
+class="flex-1 py-2 text-center font-semibold" >
+Followers
+</button>
+
+<button
+@click="switchTab('following')"
+:class="activeTab === 'following' ? 'border-b-2 border-green-500 text-green-600' : 'text-gray-500'"
+class="flex-1 py-2 text-center font-semibold">
+Following
+</button>
+</div>
+
+<!-- Followers List -->
+<div v-if="activeTab === 'followers'" class="space-y-3 max-h-64 overflow-y-auto">
+<div
+v-for="(user, index) in followers"
+:key="'follower-' + index"
+class="flex items-center gap-3 p-2 border rounded justify-between">
+ <div class="flex items-center gap-3">
+<img :src="user.avatar" class="w-10 h-10 rounded-full" />
+<span class="font-medium">{{ user.name }}</span>
+</div>
+<button class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">Following</button>
+</div>
+</div>
+
+ <!-- Following List -->
+<div v-if="activeTab === 'following'" class="space-y-3 max-h-64 overflow-y-auto">
+<div
+v-for="(user, index) in following"
+:key="'following-' + index"
+class="flex items-center gap-3 p-2 border rounded justify-between">
+<div class="flex items-center gap-3">
+<img :src="user.avatar" class="w-10 h-10 rounded-full" />
+<span class="font-medium">{{ user.name }}</span>
+</div>
+<button class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">Following</button>
+</div>
+</div>
+</div>
+</div>
+
+
+</nav>
+</aside>   
 
 
 <!-- Main Feed -->
 <main class="flex-1 max-w-2xl mx-auto px-4 py-5">
     
- <div class="max-w-2xl mx-auto bg-white border rounded-xl shadow-sm p-6 relative">
-    <!-- Scrollable Stories Container -->
-    <div
-      ref="storyScrollRef"
-      class="flex items-center gap-3 overflow-x-auto scroll-smooth no-scrollbar relative"
-    >
+<div class="max-w-2xl mx-auto bg-white border rounded-xl shadow-sm p-6 relative">
+ <!-- Scrollable Stories Container -->
       <div
-        v-for="(story, i) in stories"
-        :key="story.id"
-        class="flex flex-col items-center cursor-pointer flex-shrink-0"
-        @click="openStory(i)" >
-        <img
+      ref="storyScrollRef"
+      class="flex items-center gap-3 overflow-x-auto scroll-smooth no-scrollbar relative">
+      <div
+      v-for="(story, i) in stories"
+      :key="story.id"
+      @click="openStory(i)" >
+      <img
           :src="story.media"
-          class="w-12 h-12 rounded-full border-2 border-purple-500 object-cover"
-        />
+          class="w-12 h-12 rounded-full border-2 border-purple-500 object-cover" />
      <span class="text-xs mt-1 text-gray-600 truncate w-12 text-center">
-          {{ story.username }}
+    {{ story.username }}
     </span>
     </div>
     </div>
     <!-- Left Arrow -->
     <button
       @click="scrollStories('left')"
-      class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-1 rounded-full z-10"
-    >
+      class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-1 rounded-full z-10">
       <Icon icon="ic:round-chevron-left" class="w-5 h-5" />
     </button>
 
@@ -98,45 +157,89 @@
 
 
 
-<!--When  Post a Composer -->
+<!--When On you Mind  Post a Composer -->
+
 <div class="bg-white p-4 rounded-xl shadow-sm mb-6" @dragover.prevent @drop.prevent="handleDrop">
   <!-- Avatar + Textarea -->
   <div class="flex items-start gap-3 mb-3">
     <img :src="currentUser.avatar" class="w-10 h-10 rounded-full border" />
 
-    <textarea
-      v-model="newPost"
-      placeholder="What's on your mind?"
-      class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-    ></textarea>
-  </div>
+  <textarea
+  ref="textareaRef"
+  v-model="newPost"
+  placeholder="What's on your mind?"
+  class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+  @input="handleMentionInput"
+>
 
+     
+  </textarea>
+  </div>
+  <div v-if="showMentionList" class="absolute bg-white border rounded shadow w-48 mt-1 z-50">
+  <div
+    v-for="(user, index) in filteredUsers"
+    :key="index"
+    class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
+    @click="selectMention(user.name)"
+  >
+    {{ '@' + user.name }}
+</div>
+</div>
   <!-- Action Icons + Post (Right aligned) -->
   <div class="flex justify-end items-center gap-4 text-gray-600 mb-3 px-2">
+
+
+
+
+  <!-- Location Icon Button -->
+  <button @click="getLocation" title="Location">
+    <Icon icon="mynaui:location" class="w-5 h-5" />
+  </button>
+
+  <!-- Location Popup Modal -->
+  <div
+    v-if="showLocationPopup"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-xl p-6 w-80 space-y-4 shadow-lg">
+      <h2 class="text-lg font-semibold text-gray-800">Add Location</h2>
+
+      <input
+        v-model="locationInput"
+        type="text"
+        placeholder="Enter a location..."
+        class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-green-400"
+      />
+
+      <div class="flex justify-end gap-2">
+        <button @click="showLocationPopup = false" class="text-gray-500">Cancel</button>
+        <button @click="confirmLocation" class="bg-green-500 text-white px-4 py-1 rounded">Add</button>
+      </div>
+    </div>
+  </div>
+
+
+
     <!-- Upload -->
     <label class="cursor-pointer" title="Upload Media">
       <Icon icon="mdi:image-outline" class="w-5 h-5" />
       <input type="file" accept="image/*,video/*" multiple class="hidden" @change="handleFileUpload" />
     </label>
 
-    <!-- Emoji Picker -->
+    <!-- Comment -->
+    <button @click="toggleReplyComment" title="Comment">
+      <Icon icon="iconamoon:comment" class="w-5 h-5 " />
+    </button>
+
+   <!-- Emoji Picker -->
       <div class="relative" title="Insert Emoji">
         <button @click="toggleEmojiPicker">
-        <Icon icon="mdi:emoticon-outline" class="w-5 h-5" />
+        <Icon icon="mdi:emoticon-outline" class="w-5 h-5 mr-5 mt-2" />
         </button>
         <div v-if="showEmojiPicker" class="absolute z-50 top-8 right-0">
         <EmojiPicker @select="addEmoji" />
         </div>
         </div>
-    <!-- Comment -->
-    <button @click="toggleReplyComment" title="Comment">
-      <Icon icon="iconamoon:comment" class="w-5 h-5" />
-    </button>
-
-    <!-- Location -->
-    <button @click="getLocation" title="Location">
-      <Icon icon="mynaui:location" class="w-5 h-5" />
-    </button>
 
     <!-- Post -->
     <button class="text-sm font-semibold text-gray-700 hover:text-green-600" @click="submitPost">
@@ -199,10 +302,11 @@
 
 
 
-  <!-- Posts Feed -->
+  <!--  Feed Post -->
   <div v-for="(post, index) in posts" :key="post.id" class="bg-white border rounded-xl shadow-sm p-4 mb-6 relative">
-    <!-- Post Header -->
+   <!-- Post Header -->
    <div class="flex items-center justify-between mb-6">
+
   <!-- Avatar + User Info -->
   <div class="flex items-center gap-4">
     <img
@@ -212,23 +316,17 @@
     <div>
       <h2 class="text-sm font-semibold text-gray-800">{{ post.user }}</h2>
       <p class="text-xs text-gray-400">{{ post.time }}</p>
-
-
-      
   <!---Location text-->
-      <p v-if="post.location" class="text-xs text-gray-400">  {{post.location }}</p>
+  <p v-if="post.location" class="text-xs text-gray-400"> 📍 {{ post.location }}</p>
+  
       </div>
       </div>
-
-
-
-
   <!-- Three-dot Menu -->
   <div class="relative">
     <button
-      @click="toggleMenu(index)"
-      class="p-1 hover:bg-gray-100 rounded-full">
-      <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
+    @click="toggleMenu(index)"
+    class="p-1 hover:bg-gray-100 rounded-full">
+    <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
     </button>
 
 
@@ -412,6 +510,8 @@
 <!-- Share Popup -->
 
 
+
+
   <div
     v-if="post.showShare"
     :ref="el => sharePopupRefs[index] = el"
@@ -460,6 +560,8 @@
 
 
 
+
+
  <!-- Comment Box -->
   <div v-if="post.showComments" class="max-w-xl mx-auto px-4 py-6">
     <!-- View All Toggle -->
@@ -503,22 +605,21 @@
  </main>
 
    
-   <!-- Right Sidebar Suggestions -->
+  <!-- Right Sidebar Suggestions -->
 
-  <aside class="w-72 bg-white border-l p-10 hidden xl:block sticky top-0 h-screen overflow-y-auto">
-<!-- Profile Box with Heart Icon -->
+
+<aside class="w-72 bg-white border-l p-10 hidden xl:block sticky top-0 h-screen overflow-y-auto">
+
 
 <!-- Profile Box with Heart Icon -->
 <div class="flex items-center justify-between mb-6">
   <div class="flex items-center gap-3">
-    <img
-      :src="currentUser.avatar"
+  <img :src="currentUser.avatar"
       alt="Profile"
-       class="w-14 h-14 rounded-full border-2 border-purple-600 object-cover shadow-md"
-    />
+   class="w-16 h-16 rounded-full object-cover border" />
     <div>
-      <span class="font-medium text-gray-800">View profile</span>
-      <p class="text-sm text-gray-500">{{ currentUser.name }}</p>
+    <span class="font-medium text-gray-800">View profile</span>
+    <p class="text-sm text-gray-500">{{ currentUser.name }}</p>
     </div>
   </div>
 
@@ -535,16 +636,15 @@
 
 
       
-      <div class="flex justify-between items-center mb-10">
-        <h2 class="font-semibold text-gray-800">Suggested for you</h2>
-        <button class="text-sm text-gray-400 hover:text-blue-600">Show All</button>
-      </div>
-      <ul class="space-y-4">
-        <li
-          v-for="user in suggestedUsers"
-          :key="user.id"
-          class="flex items-start gap-3 hover:bg-gray-50 p-2 rounded"
-        >
+<div class="flex justify-between items-center mb-10">
+<h2 class="font-semibold text-gray-800">Suggested for you</h2>
+<button class="text-sm text-gray-400 hover:text-blue-600">Show All</button>
+</div>
+<ul class="space-y-4">
+ <li
+v-for="user in suggestedUsers"
+ :key="user.id"
+  class="flex items-start gap-3 hover:bg-gray-50 p-2 rounded">
           <img
             :src="user.avatar"
             alt="suggested"
@@ -596,6 +696,7 @@ import { Icon } from '@iconify/vue'
 import EmojiPicker from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
 import CommentCard from './CommentCard.vue'
+import { nextTick } from 'vue'
 
 
 
@@ -819,6 +920,7 @@ const toggleEmojiPicker = () => {
 }
 
 const submitPost = () => {
+const extractedTags = newPost.value.match(/@\w+/g) || []
   if (!newPost.value.trim() && !mediaPreviews.value.length) return
   posts.value.unshift({
     id: Date.now(),
@@ -827,6 +929,7 @@ const submitPost = () => {
     location: postLocation.value.trim(),
     caption: newPost.value,
     media: [...mediaPreviews.value],
+    tags: extractedTags, // <-- Save extracted tags here
     time: 'Just now',
     likes: 0,
     shares: 0,
@@ -842,6 +945,7 @@ const submitPost = () => {
    
   newPost.value = ''
   mediaPreviews.value = []
+  tags.value = []  // <-- Reset tags
   showEmojiPicker.value = false
   postLocation.value =''
   showLocation.value = false
@@ -926,20 +1030,54 @@ function autoResize(event) {
 
 
 
+
 // 📍 Get real-time location
+
+// State
+const showLocationPopup = ref(false)
+const locationInput = ref('')
+
+
+// 📍 Get Real-Time Location and show popup
 function getLocation() {
-  showLocation.value = !showLocation.value
+  showLocationPopup.value = true
+
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      const { latitude, longitude } = pos.coords
-      fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
-        .then(res => res.json())
-        .then(data => {
-          postLocation.value = data.address.city || data.address.town || 'Unknown'
-        })
-    })
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude, longitude } = pos.coords
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+          .then(res => res.json())
+          .then(data => {
+            locationInput.value =
+              data.address.city ||
+              data.address.town ||
+              data.address.village ||
+              'Unknown'
+          })
+          .catch(err => {
+            locationInput.value = 'Location error'
+            console.error(err)
+          })
+      },
+      error => {
+        console.error('Geolocation error:', error.message)
+        locationInput.value = 'Permission denied'
+      }
+    )
+  } else {
+    locationInput.value = 'Geolocation not supported'
   }
 }
+
+// ✅ Confirm Location (User clicked "Add")
+function confirmLocation() {
+  postLocation.value = locationInput.value
+  showLocationPopup.value = false
+  locationInput.value = ''
+}
+
 
 function formatCount(num) {
   if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B'
@@ -1085,7 +1223,97 @@ const toggleHeart = () => {
 }
 
 
-//Scroll bar
+//Tags User
+
+
+
+
+//Tag value when post
+const tags = ref([])
+
+
+
+
+//@Mention user
+const showMentionList = ref(false)
+const mentionQuery = ref('')
+const filteredUsers = ref([])
+const textareaRef = ref(null)
+
+const users = ref([
+  { name: 'sinayun' },
+  { name: 'nayun' },
+  { name: 'nita_lovekhmer' },
+  { name: 'chakriya' },
+  { name: 'konkhmer' }
+])
+
+
+function handleMentionInput(e) {
+  const cursorPos = e.target.selectionStart
+  const textUpToCursor = newPost.value.substring(0, cursorPos)
+
+  const mentionMatch = textUpToCursor.match(/@(\w*)$/)
+  if (mentionMatch) {
+    mentionQuery.value = mentionMatch[1].toLowerCase()
+    filteredUsers.value = users.value.filter(user =>
+      user.name.toLowerCase().startsWith(mentionQuery.value)
+    )
+    showMentionList.value = filteredUsers.value.length > 0
+  } else {
+    showMentionList.value = false
+  }
+}
+
+
+function selectMention(username) {
+  nextTick(() => {
+    const textarea = textareaRef.value
+    if (!textarea) return  // Safety fallback
+
+    const cursorPos = textarea.selectionStart
+    const textBeforeCursor = newPost.value.substring(0, cursorPos)
+    const textAfterCursor = newPost.value.substring(cursorPos)
+
+    // Replace the current @mention text being typed with the selected username
+    const newTextBeforeCursor = textBeforeCursor.replace(/@\w*$/, '@' + username + ' ')
+
+    newPost.value = newTextBeforeCursor + textAfterCursor
+
+    // Move cursor after inserted username
+    nextTick(() => {
+      textarea.selectionStart = textarea.selectionEnd = newTextBeforeCursor.length
+      textarea.focus()
+    })
+
+    showMentionList.value = false
+  })
+}
+
+
+//Follower Popup 
+
+
+const showFollowerPopup = ref(false)
+const activeTab = ref('followers') // 'followers' or 'following'
+
+function toggleFollowerPopup() {
+  showFollowerPopup.value = !showFollowerPopup.value
+}
+
+function switchTab(tab) {
+  activeTab.value = tab
+}
+//Follower and following List 
+const followers = [
+  { name: 'story5', avatar: '/images/default-avatar.jpg' },
+  { name: 'story3', avatar:'/images/default-avatar.jpg' }
+]
+
+const following = [
+  { name: 'mini1', avatar: '/images/default-avatar.jpg' },
+  { name: 'mini3', avatar:'/images/default-avatar.jpg' }
+]
 
 </script>
 

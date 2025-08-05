@@ -52,7 +52,7 @@
 
       <!-- Reply Input -->
       <div v-if="replyOpen" class="mt-3 flex gap-2 items-start w-full">
-        <img src="/assets/sinayun_xyn.jpg" class="w-7 h-7 rounded-full mt-1" />
+        <img :src="currentUser.avatar" class="w-7 h-7 rounded-full mt-1" />
         <textarea
           v-model="replyText"
           class="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-xl resize-none focus:outline-none w-full"

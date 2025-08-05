@@ -3,12 +3,12 @@
     <div class="w-full max-w-sm bg-white p-6 rounded-md shadow text-center">
       <h1 class="text-2xl font-bold text-green-600 mb-1">Verify Code</h1>
       <p class="text-xs text-gray-600 mb-4">
-        We’ve sent a 6-digit code to <span class="font-medium">{{ contact }}</span>
+        We've sent a 6-digit code to <span class="font-medium">{{ contact }}</span>
       </p>
 
       <!-- 6 Code Boxes -->
-      <div class="flex justify-between gap-2 mb-4">
-    <input
+ <div class="flex justify-between gap-2 mb-4">
+ <input
   v-for="(d, i) in digits"
   :key="i"
   v-model="digits[i]"
@@ -34,7 +34,7 @@
 
       <!-- Resend -->
       <p class="text-xs text-gray-500 mt-4">
-        Didn’t receive it?
+        Didn't receive it?
         <span class="text-blue-500 hover:underline cursor-pointer" @click="resendCode">Resend</span>
       </p>
     </div>
