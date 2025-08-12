@@ -1,8 +1,8 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex">
+  <div class="min-h-screen bg-gray-500 flex">
     <!-- Sidebar -->
     <aside class="w-64 bg-white p-6 border-r hidden lg:flex flex-col">
-      <h1 class="text-2xl font-bold text-green-600 mb-6">iFeed</h1>
+      <h1 class="text-4xl font-bold text-green-600 mb-6">iFeed</h1>
     </aside>
 
     <!-- Profile Section -->
@@ -61,25 +61,50 @@
       <p class="text-sm font-medium mb-3">Complete your profile</p>
       <div class="grid grid-cols-3 gap-3">
         <!-- Card 1 -->
-        <div class="bg-gray-100 rounded-xl p-4 flex flex-col items-center text-center">
+        <div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
           <Icon icon="mdi:pencil-outline" class="w-8 h-8 mb-2" />
-          <p class="text-xs mb-2">Share new feed<br />a recent highlight</p>
+          <p class="text-xs mb-2">Share new feed<br />a recent highlightSLKDflsklksdlf</p>
           <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">Create Post</button>
         </div>
 
         <!-- Card 2 -->
-        <div class="bg-gray-100 rounded-xl p-4 flex flex-col items-center text-center">
+        <div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
           <Icon icon="mdi:account-plus-outline" class="w-8 h-8 mb-2" />
-          <p class="text-xs mb-2">Follow 10 profile<br />Find new friend</p>
+          <p class="text-xs mb-2">Follow 10 profile<br />Find new friendsdfsasdlkfls;dfklsdfk</p>
           <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">View profile</button>
         </div>
 
         <!-- Card 3 -->
-<div class="bg-gray-100 rounded-xl p-4 flex flex-col items-center text-center">
+<div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
 <Icon icon="mdi:pencil" class="w-8 h-8 mb-2" />
-<p class="text-xs mb-2">Introduce yourself<br />and tell people<br />what you're into.</p>
+<p class="text-xs mb-2">Introduce yourself<br />and tell peoplewhat you're into.</p>
 <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">Add</button>
  </div>
+
+
+
+
+  <!-- Card 1 -->
+        <div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
+          <Icon icon="mdi:pencil-outline" class="w-8 h-8 mb-2" />
+          <p class="text-xs mb-2">Share new feed<br />a recent highlightSLKDflsklksdlf</p>
+          <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">Create Post</button>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
+          <Icon icon="mdi:account-plus-outline" class="w-8 h-8 mb-2" />
+          <p class="text-xs mb-2">Follow 10 profile<br />Find new friendsdfsasdlkfls;dfklsdfk</p>
+          <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">View profile</button>
+        </div>
+
+        <!-- Card 3 -->
+<div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
+<Icon icon="mdi:pencil" class="w-8 h-8 mb-2" />
+<p class="text-xs mb-2">Introduce yourself<br />and tell peoplewhat you're into.</p>
+<button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">Add</button>
+ </div>
+ 
  </div>
  </div>
   </div>

@@ -5,7 +5,8 @@
       <div class="hidden md:block">
         <h1 class="text-5xl font-bold text-green-600 mb-4">iFeed</h1>
         <p class="text-gray-600">Connect with the people in your Life 
-          and to the Worlds.</p>
+          and to the Worlds.<br>
+        Secirity and more Safe for sharing your activity.</p>
       </div>
 
       <!-- Right side: Login form -->
@@ -21,19 +22,17 @@
           class="w-full mb-4 px-4 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
-          class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 mb-2"
-        >
+          class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 mb-2" >
           Login
         </button>
         <p class="text-sm text-center text-gray-500 mb-4">
           Forgot your Password
         </p>
         <hr class="mb-4" />
-      
-       <!-- ✅ Router link to Create Account -->
+      <!-- ✅ Router link to Create Account -->
       <router-link to="/create" class="w-full block">
-        <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-semibold hover:bg-green-700">
-          Create your account
+      <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-semibold hover:bg-green-700">
+       Create your account
       </button>
       </router-link>
 

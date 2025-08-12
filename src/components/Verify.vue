@@ -98,7 +98,7 @@ function resendCode() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email: contact.value })
   }).then(() => {
-    alert('📨 A new code was sent!')
+    alert(' A new code was sent!')
   })
 }
 

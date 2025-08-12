@@ -1,250 +1,297 @@
 <template>
-  <div class="flex h-screen bg-gray-100">
-    <!-- Sidebar -->
-
-    
-    <aside class="w-80 bg-white border-r p-4">
-      <!-- User Info -->
-    <div class="flex items-center gap-3 mb-6">
-    <img :src="currentUser.avatar" class="w-10 h-10 rounded-full" />
-    <div>
-    <h2 class="font-bold">{{ currentUser.name }}</h2>
-    <p class="text-xs text-gray-500">{{ currentUser.role }}</p>
+ <div class="fixed top-0 right-0 h-full w-[400px] bg-white shadow-xl border-l border-gray-200 z-[9999] flex flex-col">
+    <!-- Header -->
+    <div class="flex justify-between items-center p-4 border-b">
+    <button @click="$emit('close')" class="text-gray-400 hover:text-black">close</button>
     </div>
 
-    <button class="ml-auto text-gray-400 hover:text-black">
-    <i class="fas fa-edit"></i>
-    </button>
-    </div>
-      <!-- Search -->
-      <input
-      type="text"
-      placeholder="Search Friend..."
-      class="w-full px-3 py-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-green-500"/>
+<!-- Current User -->
+<div class="flex items-center gap-5 mb-5 px-5">
+<img :src="currentUser.avatar" class="w-10 h-10 rounded-full border-2 border-purple-600" />
+<div>
+ <p class="font-semibold text-sm">{{ currentUser.name }}</p>
+ <p class="text-xs text-gray-400">{{ currentUser.role }}</p>
+</div>
+</div>
 
-      <!-- Friend List -->
-      <div class="space-y-3">
-      <div v-for="friend in friends" :key="friend.id" class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-      <img :src="friend.avatar" class="w-8 h-8 rounded-full" />
-      <span class="text-sm font-medium text-purple-700">{{ friend.name }}</span>
-      </div>
-      <span class="text-xs text-gray-400">{{ friend.time }}</span>
-      </div>
-      </div>
-      </aside>
+<!-- Search Bar -->
+<div class="relative mb-5 px-5">
+<input
+v-model="searchQuery"
+type="text"
+placeholder="Search Friend..."
+class="w-full border border-gray-300 rounded-full px-4 py-2 pl-10 text-sm focus:outline-none focus:ring-1 "/>
+<Icon icon="mdi:magnify" class="absolute left-7 top-2.5 text-gray-400 w-4 h-4" />
+</div>
 
-
-    
-
-   <!-- Chat Area -->
-<main class="flex-1 flex flex-col">
-
-  <!-- Chat Header -->
-  <div class="border-b px-6 py-4 bg-white flex items-center gap-3">
-    <img :src="selectedUser.avatar" class="w-10 h-10 rounded-full" />
-    <div>
-      <h2 class="font-semibold">{{ selectedUser.name }}</h2>
-      <p class="text-xs text-green-500">{{ selectedUser.status }}</p>
-    </div>
+<!-- FRIEND LIST or CHAT THREAD VIEW -->
+  <div v-if="!chatStarted" class="space-y-3 overflow-y-auto px-4">
+  <div
+  v-for="friend in filteredFriends"
+  :key="friend.id"
+  class="flex items-center justify-between hover:bg-gray-50 px-2 py-1 rounded cursor-pointer"
+  @click="selectFriend(friend)">
+  <div class="flex items-center gap-2">
+  <img :src="friend.avatar" class="w-8 h-8 rounded-full border-2 border-purple-600" />
+  <span class="text-sm font-medium text-blue-700">{{ friend.name }}</span>
+  </div>
+  <span class="text-xs text-gray-500">{{ friends.time }}</span>
+  </div>
   </div>
 
-  <!-- Messages -->
-  <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4 bg-gray-50">
-    <div
-      v-for="(msg, index) in messages"
-      :key="index"
-      class="flex items-end gap-3"
-      :class="msg.from === 'me' ? 'justify-end' : 'justify-start'"
-    >
+<!-- CHAT THREAD VIEW -->
+  <div v-else class="flex flex-col flex-1 overflow-hidden">
+  <!-- Chat Header -->
+  <div class="border-b px-6 py-4 bg-white flex items-center justify-between">
+  <div class="flex items-center gap-3">
+  <img :src="selectedUser.avatar" class="w-10 h-10 rounded-full" />
+  <div>
+  <h2 class="font-semibold">{{ selectedUser.name }}</h2>
+ <p class="text-xs text-green-500">{{ selectedUser.status ||'online' }}</p>
+ </div>
+ </div>
 
-      <!-- Avatar -->
-      <img
-        :src="msg.avatar"
-        class="w-8 h-8 rounded-full"
-        :class="msg.from === 'me' ? 'order-2 ml-2' : 'order-1 mr-2'"
-      />
+ <button @click="chatStarted = false" class="text-gray-400 hover:text-black">
+<Icon icon="ci:chevron-left"/>
+</button>
+ <button>
+  <Icon icon="material-symbols:zoom-out-map-rounded"/>
+ </button>
+ </div>
 
-      <!-- Message Bubble -->
-      <div
-        class="max-w-[70%] flex flex-col gap-2"
-        :class="msg.from === 'me' ? 'items-end order-1' : 'items-start order-2'"
-      >
 
-        <!-- File Message -->
-        <div
-          v-if="msg.file"
-          class="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg"
-        >
-          <Icon icon="iconamoon:file-document-thin" class="text-blue-600 w-5 h-5" />
-          <a
-            :href="msg.file.url"
-            target="_blank"
-            class="text-sm font-medium text-blue-700 underline"
-          >
-            {{ msg.file.name }}
-          </a>
-        </div>
 
-        <!-- Audio Message -->
-        <div
-          v-if="msg.audio"
-          class="flex flex-col transition-transform duration-200"
-          :style="{ transform: swipeTranslateX(index) }"
-          @touchstart="onTouchStart"
-          @touchmove="onTouchMove"
-          @touchend="onTouchEnd(index)"
-        >
-          <audio :src="msg.audio" controls class="rounded-lg w-64" />
-          <p
-            v-if="msg.text"
-            class="mt-1 text-sm whitespace-pre-wrap px-4 py-2 rounded-xl"
-            :class="msg.from === 'me' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'"
-          >
-            {{ msg.text }}
-          </p>
-        </div>
 
-        <!-- Image message -->
-        <img
-          v-if="msg.image"
-          :src="msg.image"
-          class="rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
-          @click="openMediaPreview(msg.image)"
-        />
+<!-- Message + Input -->
+<div class="flex flex flex-col h-full overflow-hidden">
 
-        <!-- Video message -->
-        <video
-          v-if="msg.video"
-          :src="msg.video"
-          class="rounded-lg max-w-xs cursor-pointer hover:opacity-90 transition"
-          @click="openMediaPreview(msg.video)"
-          controls
-        ></video>
+<!-- Messages Wrap Here -->
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-4 gap-2">
+<div
+v-for="(msg, index) in messages"
+:key="index"
+class="flex items-end gap-1"
+:class="msg.from === 'me' ? 'justify-end' : 'justify-start'">
+<!-- Avatar -->
+   <img
+      :src="msg.avatar"
+      class="w-8 h-8 rounded-full gap-1"
+      :class="msg.from === 'me' ? 'order-2' : 'order-1'"/>
 
-        <!-- Text Message -->
-        <div
-          v-if="!msg.audio && !msg.file && !msg.image && !msg.video"
-          class="px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap"
-          :class="msg.from === 'me' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'"
-        >
-          {{ msg.text }}
-        </div>
+<!-- Message Bubble -->
+<div
+class="max-w-[70%] flex flex-col gap-1"
+ :class="msg.from === 'me' ? 'items-end order-1' : 'items-start order-2'">
 
+ <!-- File Message -->
+ <div
+ v-if="msg.file"
+ class="flex items-center gap-2 bg-gray-100 px-3 py-2 rounded-lg">
+<Icon icon="iconamoon:file-document-thin" class="text-blue-600 w-5 h-5" />
+<a
+ target="_blank"
+ class="text-sm font-medium text-blue-700 underline">{{ msg.file.name }}
+</a>
+</div>
+
+
+<!-- Audio Message -->
+<div
+  v-if="msg.audio"
+  class="flex flex-col transition-transform duration-200 max-w-[70%]"
+  :style="{ transform: swipeTranslateX(index) }"
+  :class="msg.from === 'me' ? ' items-end self-end' : 'items-start self-start '" 
+  @touchstart="onTouchStart"
+  @touchmove="onTouchMove"
+  @touchend="onTouchEnd(index)">
+
+  
+  <!-- Audio Bubble Container -->
+  <div
+    class="rounded-2xl px-3 py-2 flex flex-col gap-2"
+    :class="msg.from === 'me' ? 'text-white' : 'text-white'">
+    <audio
+      :src="msg.audio "
+      
+      controls
+      class="w-56 " >
+  </audio>
+
+    <!-- Optional text below audio -->
+    <p v-if="msg.text" class="text-sm whitespace-pre-wrap break-all ">
+      {{ msg.text }}
+    </p>
+  </div>
+</div>
+
+
+
+<!-- Image message -->
+<img
+  v-if="msg.image"
+  :src="msg.image"
+  class="w-48 max-h-64 object-cover rounded-xl shadow-md cursor-pointer hover:opacity-90 transition"
+  @click="openMediaPreview(msg.image)"/>
+
+<!-- Video message -->
+<video
+  v-if="msg.video"
+  :src="msg.video"
+  class="w-48 max-h-64 object-cover rounded-xl shadow-md cursor-pointer hover:opacity-90 transition gap-1 "
+  controls
+  @click="openMediaPreview(msg.video)"/>
+
+<!-- Text Message -->
+<div
+  v-if="!msg.audio && !msg.file && !msg.image && !msg.video"
+  class="px-4 py-2 rounded-2xl text-sm whitespace-pre-wrap break-all "
+  :class="msg.from === 'me' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'">
+  {{ msg.text }}
+</div>
 
         
     
 <!-- Media Preview Modal -->
 <div
-  v-if="mediaPreview"
-  class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
->
-  <div class="relative">
-    <component
-      :is="previewType === 'video' ? 'video' : 'img'"
-      :src="mediaPreview"
-      class="max-w-[90vw] max-h-[85vh] rounded-lg shadow-xl"
-      v-bind="previewType === 'video' ? { controls: true } : {}"/>
-    <button
-      @click="mediaPreview = null"
-      class="absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full text-white hover:bg-opacity-70"
-      title="Close">
-      <Icon icon="ic:round-close" class="w-6 h-6" />
-      </button>
-      </div>
-      </div>
+v-if="mediaPreview"
+class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+<div class="relative">
+<component
+:is="previewType === 'video' ? 'video' : 'img'" 
+:src="mediaPreview"
+class="max-w-[90vw] max-h-[85vh] rounded-lg shadow-xl"
+v-bind="previewType === 'video' ? { controls: true } : {}"/>
+<button
+@click="mediaPreview = null"
+class="absolute top-2 right-2 bg-black bg-opacity-50 p-2 rounded-full text-white hover:bg-opacity-70"
+title="Close">
+<Icon icon="ic:round-close" class="w-6 h-6" />
+</button>
+</div>
+</div>
 
 
 
 <!-- Delete Button (Visible on Hover) -->
-
 <button
   class="absolute top-1 right-1 text-white text-xs bg-black bg-opacity-50 p-1 rounded-full hidden group-hover:block"
   @click="deleteMessage(index)"
-  title="Delete"
->
-  🗑
+  title="Delete">
 </button>
-
-
 
 <!-- Forward Button -->
 <button
   class="absolute bottom-1 right-8 text-xs text-white bg-blue-500 hover:bg-blue-600 rounded-full p-1 hidden group-hover:block"
   @click="forwardMessage(msg)"
-  title="Forward"
->
+  title="Forward">
   
 </button>
 
 <!-- Forward Modal -->
 <div v-if="forwardingMessage" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white rounded-xl p-4 w-80 shadow-lg">
-    <h2 class="text-lg font-semibold mb-3">Forward to:</h2>
-    <ul class="space-y-2">
-      <li
-        v-for="friend in friends"
-        :key="friend.id"
-        class="cursor-pointer hover:bg-gray-100 px-3 py-2 rounded"
-        @click="sendForwardTo(friend)"
-      >
-        {{ friend.name }}
-      </li>
-    </ul>
-    <button class="mt-4 text-sm text-red-500" @click="forwardingMessage = null">Cancel</button>
-  </div>
+<div class="bg-white rounded-xl p-4 w-80 shadow-lg">
+<h2 class="text-lg font-semibold mb-3">Forward to:</h2>
+<ul class="space-y-2">
+<li
+v-for="friend in friends"
+:key="friend.id"
+class="cursor-pointer hover:bg-gray-100 px-3 py-2 rounded"
+ @click="sendForwardTo(friend)">
+{{ friend.name }}
+</li>
+</ul><button class="mt-4 text-sm text-red-500" @click="forwardingMessage = null">Cancel</button> 
+</div>
 </div>
 
 
 <!--Time Stamp-->
-    <p class="text-[11px] text-right opacity-70 mt-1">{{ msg.time }}</p>
-    </div>
-    </div>
-    </div>
+<p class="text-[11px] text-right opacity-70 mt-1">{{ msg.time }}</p>
+</div>
+</div>
+</div>
 
 
 
 <!-- Input Area -->
-<div class="border-t px-1 py-4 bg-white flex items-center gap-9">
-  <!-- Input with Mic Icon -->
-<div class="flex items-start flex-1 bg-transparent px-4 gap-2 py-2 text-sm md:text-base shadow-sm">
+<div class=" px-2 py-3 bg-white flex items-center gap-2">
+<!-- Outer rounded box containing textarea + icons -->
+<div class="flex items-center flex-1 bg-white border border-gray-400 rounded-full px-3 py-2 shadow-sm gap-2">
     
-    <!-- Mic Button -->
-  <button
-      @click="toggleRecording"
-      class="text-gray-500 hover:text-red-500 transition mt-2"
-      :title="isRecording ? 'Stop recording' : 'Start recording'"
-    >
-      <Icon :icon="isRecording ? 'mdi:stop-circle-outline' : 'material-symbols:mic'" class="w-5 h-5" />
+<!-- Mic -->
+<button
+@click="toggleRecording"
+class="text-gray-500 hover:text-red-500 transition"
+:title="isRecording ? 'Stop recording' : 'Start recording'">
+<Icon :icon="isRecording ? 'mdi:stop-circle-outline' : 'material-symbols:mic'" class="w-5 h-5" />
+</button>
+
+<!-- Textarea -->
+<textarea
+  v-model="newMessage"
+  placeholder="Write something..."
+  class="flex-1 bg-transparent text-sm text-black resize-none overflow-y-auto leading-snug align-top max-h-40 outline-none"
+  rows="1"
+  @input="autoResize"
+  @keydown.enter.prevent="sendMessage">
+  </textarea>
+
+    <!-- Photo/Video -->
+    <label class="cursor-pointer">
+    <Icon icon="tabler:photo" class="w-5 h-5 text-gray-500 hover:text-green-500" />
+    <input type="file" accept="image/*,video/*" multiple hidden @change="handleMediaUpload" />
+    </label>
+
+    <!-- Emoji -->
+    <button @click="toggleEmojiPicker" title="Insert Emoji">
+      <Icon icon="fa-regular:smile" class="w-5 h-5 text-gray-500 hover:text-yellow-500" />
     </button>
 
-    <!-- Multiline Textarea -->
-    <textarea
-      v-model="newMessage"
-      placeholder="Write something..."
-      class="w-full bg-white  px-4 py-2 text-sm text-black resize-none overflow-y-auto  shadow-sm leading-snug align-top max-h-40"
-      rows="1"
-      @input="autoResize"
-      @keydown.enter.prevent="sendMessage"
-    ></textarea>
+    <!-- File Attach -->
+    <button @click="triggerFileInput" title="Attach File" class="text-gray-500 hover:text-gray-800">
+    <Icon icon="tdesign:attach" class="w-5 h-5" />
+    </button>
+    <input
+      ref="fileInput"
+      type="file"
+      accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
+      hidden
+      @change="handleFileUpload"/>
 
+  <!-- Send -->
+<button @click="sendMessage" class="text-blue-500 hover:text-blue-700">
+<Icon icon="ic:round-send" class="w-5 h-5" />
+</button>
+</div>
+</div>
+
+<!-- Emoji Picker Overlay -->
+<div
+  v-if="showEmojiPicker"
+  class="fixed inset-0 flex items-center justify-center z-50"
+  @click.self="showEmojiPicker = false">
+  <div class="bg-white p-3 rounded-xl shadow-lg border w-80 max-h-[80vh] overflow-y-auto">
+  <EmojiPicker @select="addEmoji" />
   </div>
+
+
+
+
 
 <!-- Floating Voice Waveform Bar -->
 <div
-  v-if="isRecording"
-  class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50
-         bg-blue-600 rounded-full px-6 py-2 shadow-lg
-         flex items-center justify-between gap-4 h-12 w-[360px] max-w-[90vw]"
->
-  <!-- Animated Bars -->
-  <div class="flex items-end gap-[2px] flex-1">
-    <div
-      v-for="(bar, i) in waveformData"
-      :key="i"
-      :style="{ height: `${bar}px` }"
-      class="w-[2px] bg-white rounded-sm transition-all duration-75 "
-    />
+v-if="isRecording"
+class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50   
+bg-blue-600 rounded-full px-6 py-2 shadow-lg
+flex items-center justify-between gap-4 h-12 w-[360px] max-w-[90vw]">
+
+         
+<!-- Animated Bars -->
+<div class="flex items-end gap-[2px] flex-1">
+<div
+v-for="(bar, i) in waveformData"
+:key="i"
+:style="{ height: `${bar}px` }"
+class="w-[2px] bg-white rounded-sm transition-all duration-75 "/>
   </div>
 
 <!-- Timer Floating -->
@@ -253,74 +300,13 @@
 </div>
 </div>
 
-
-
-
-<!-- Unified Media Upload (Image + Video + Multi) -->
-<label class="cursor-pointer">
-<Icon icon="tabler:photo" class="w-5 h-5 hover:text-green-500" />
-
-<input type="file" accept="image/*,video/*" multiple hidden @change="handleMediaUpload" />
-</label>
-<input
-  type="file"
-  accept="image/*,video/*"
-  multiple
-  hidden
-  @change="handleMediaUpload"
-   @click="openMediaPreview(msg.image)"/>
-
-
-
- <!-- Emoji Picker -->
-<div class="relative" title="Insert Emoji">
-  <button @click="toggleEmojiPicker">
-    <Icon icon="fa-regular:smile" class="w-5 h-5" />
-  </button>
-
-  <!-- Fullscreen overlay -->
-  <div
-    v-if="showEmojiPicker"
-    class="fixed inset-0 flex items-center justify-center z-50"
-    @click.self="showEmojiPicker = false">
-    <div class="bg-white p-3 rounded-xl shadow-lg border w-80 max-h-[80vh] overflow-y-auto">
-    <EmojiPicker @select="addEmoji" />
-    </div>
-  </div>
+</div>
+<slot>
+</slot>
+</div>
+</div>
 </div>
 
-        
-<!-- Paperclip Button (click to open file input) -->
-<button
-  @click="triggerFileInput"
-  class="text-gray-500 hover:text-gray-800"
-  title="Attach File"
->
-  <Icon icon="tdesign:attach"  class=" w-5 h-5"/>
-</button>
-
-<!-- Hidden File Input -->
-<input
-  ref="fileInput"
-  type="file"
-  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar"
-  hidden
-  @change="handleFileUpload"
-/>
-
-
-
-
-
-
-
-  <!-- Send Button -->
-  <button @click="sendMessage">
-   <Icon icon="ic:round-send" class="w-5 h-5"/>
-  </button>
-  </div>
-   </main>
-  </div>
 </template>
 
 <script setup>
@@ -329,6 +315,29 @@ import { ref, nextTick } from 'vue'
 import { Icon } from '@iconify/vue'
 import EmojiPicker from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
+
+
+const props = defineProps({
+  currentUser: Object,
+  friends: Array,
+});
+
+
+
+const searchQuery = ref('');
+const chatStarted = ref(false);
+const selectedUser = ref(null);
+
+const filteredFriends = computed(() => {
+  return props.friends.filter(friend =>
+    friend.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  );
+});
+
+function selectFriend(friend) {
+  selectedUser.value = friend;
+  chatStarted.value = true;
+}
 
 
 
@@ -354,11 +363,6 @@ const currentUser = ref({
 })
 
 
-const selectedUser = ref({
-  name: 'Konsreypov',
-  status: 'Online',
-  avatar: story4
-})
 
 
 // Friend List
@@ -368,6 +372,7 @@ const friends = [
   { id: 3, name: 'ycn_lovekhm', time: '01:12 PM', avatar: story3 },
   { id: 4, name: 'Konsreypov', time: '1:12 PM', avatar: story4 },
   { id: 5, name: 'Kon_Khmer', time: '1:12 PM', avatar: story5 }
+
 ]
 
 
@@ -688,6 +693,9 @@ const autoResize = (e) => {
   el.style.height = el.scrollHeight + 'px'
 }
 
+
+//
+
 </script>
 
 
@@ -695,5 +703,10 @@ const autoResize = (e) => {
 /* Optional fallback to make modal clickable */
 .z-50 {
   z-index: 9999;
+
+
+
+
 }
+
 </style>
