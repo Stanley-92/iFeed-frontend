@@ -1,6 +1,7 @@
 
 <template>
 <div class="flex min-h-screen  bg-white">
+
  <!-- Left Sidebar -->
 <aside class="w-72 bg-white border-2 p-10 hidden xl:block sticky top-0 h-screen overflow-y-auto">
 <h1 class="text-4xl font-bold text-green-500 mb-4">iFeed</h1>
@@ -10,7 +11,6 @@ class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
  @click="handleSearch">
 <Icon icon="codex:search" class="w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors" />
 </div>
-
  <input
   type="text"
   v-model="searchQuery"
@@ -20,16 +20,16 @@ class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
 </div>
 <nav class="space-y-2 px-3  py-8  text-gray-700 gap-3">
 <div class="flex items-center gap-3 p-2 cursor-pointer  hover:text-blue-500">
-<Icon icon="material-symbols:home" class="w-8 h-8  text-gray-600 "/>  <!---Home-->
+<Icon icon="material-symbols:home" class="w-8 h-8 text-gray-500 transition-colors  duration-200 hover:text-gray-600"/>  <!---Home-->
 </div>
  <div class="flex items-center gap-3 p-2 cursor-pointer border-gray-300 hover:text-blue-500">
-<Icon icon="mdi:heart-outline" class="w-8 h-8 text-gray-400 transition-colors  duration-200 " />  <!---Heart-->
+<Icon icon="solar:heart-outline" class="w-8 h-8 text-gray-500 transition-colors   duration-200 hover:text-gray-600 " />  <!---Heart-->
 </div>    
 
 <div @click="openPostModal"  class="w-10 h-10 flex items-center  justify-center   border-gray-300 ">
-<Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 transition-colors bg-green-300  border-2 border-blue-200 rounded-xl duration-200 hover:text-gray-600" /> 
-</div>  <!--create-->
-
+<Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 transition-colors bg-green-300    border-2 border-blue-200 rounded-xl duration-200 hover:text-gray-600" /> 
+</div> 
+ <!--create-->
 
 
 <teleport to="body">
@@ -68,6 +68,8 @@ class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
 </div>
 </div>
 
+
+
 <!-- Action Icons + Post (Right aligned) -->
 <div class="flex justify-end items-center gap-4 text-gray-600 mb-3 px-2">
 <!-- Location Icon Button -->
@@ -89,6 +91,9 @@ tabindex="-1"
 <div
 class="bg-white rounded-2xl shadow-xl w-[420px] max-w-[92vw] h-[70vh] max-h-[720px] overflow-hidden flex flex-col"
 @click.stop>
+
+
+
 <!-- Header -->
 <div class="h-12 flex items-center justify-center border-b relative">
 <button
@@ -113,8 +118,8 @@ aria-label="Close">
 <!-- Body -->
 <div class="p-4 flex-1">
 <div class="relative">
-  <input
-  ref="locationInputRef"
+<input
+ref="locationInputRef"
  v-model="locationInput"
  type="text"
  placeholder="Add Location..."
@@ -128,6 +133,10 @@ aria-label="Send">
 <Icon icon="mdi:send-outline" class="w-5 h-5" />
 </button>
 </div>
+
+
+
+
 <!-- Optional suggestions list -->
 <div v-if="suggestions.length" class="mt-4 space-y-2 overflow-y-auto max-h-[48vh] pr-1">
 <button
@@ -143,12 +152,11 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 </div>
 </div>
 </teleport>
-
-
 <!-- Location Popup Modal -->
 
 
-<!-- Upload -->
+<!-- Upload Post  -->
+
 <label class="cursor-pointer" title="Upload Media">
 <Icon icon="mdi:image-outline" class="w-5 h-5" />
 <input type="file" accept="image/*,video/*" multiple class="hidden" @change="handleFileUpload" />
@@ -168,14 +176,13 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 <EmojiPicker @select="addEmoji" />
 </div>
 </div>
-<!-- Post -->
 
-<button class="text-sm font-semibold text-gray-700 hover:text-green-600" @click="submitPost(); showPostModal = false">
+<!-- Post -->
+<button class="text-sm font-semibold text-gray-700 hover:text-blue-600" @click="submitPost(); showPostModal = false">
  Post
 </button>
-
 </div>
-
+<!-- Post -->
 
 
 
@@ -220,11 +227,10 @@ class="relative">
 </div>
 </div> 
 <!--When  Post a Composer -->
+
 </div>
 </div>
 </teleport>
-
-
 
 
 <!-- Follower Button Trigger -->
@@ -296,10 +302,8 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
 </teleport>
 </nav>
 
-
-
-
 <div class="mt-8 relative">
+
   <!-- Settings Icon -->
   <div 
     @click="toggleSettings"  
@@ -308,7 +312,6 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
   <Icon icon="basil:edit-outline" class="w-8 h-8 transition-colors duration-200" />
   </div>
  </div>
-
 </aside>   
  <div>
 
@@ -372,54 +375,48 @@ v-if="showSettings"
 
 
 <!-- MainiFeed -->
-<main class="flex-1 max-w-2xl mx-auto px-4 py-5 ">
+<main class="flex-5 max-w-2xl mx-auto px-4 py-5 ">
     
 <div class="max-w-2xl mx-auto bg-white border rounded-xl shadow-sm p-6 relative mb-1">
-<!-- Scrollable Stories Container -->
+
+
+<!--  Stories Container -->
 <div
 ref="storyScrollRef"
-class="flex items-center gap-4 overflow-x-auto scroll-smooth no-scrollbar relative">
+class="flex items-center gap-5 overflow-x-auto scroll-smooth no-scrollbar relative ">
 <div
 v-for="(story, i) in stories"
 :key="story.id"
 @click="openStory(i)" >
 <img
 :src="story.media"
-class="w-20 h-20 rounded-full border-2 border-purple-600 object-cover" />
-<span class="text-xs mt-2 text-gray-600 truncate w-20 text-center">
+class="w-20 h-20 rounded-full border-2 border-purple-600 object-cover " />
+<span class="text-xs mt-2 mb-2 text-gray-600  truncate w-20 text-center">
 {{ story.username }}
-    </span>
-    </div>
-    </div>
-    <!-- Left Arrow -->
+</span>
+</div>
+</div>
+
+<!-- Left Arrow -->
     <button
       @click="scrollStories('left')"
       class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-1 rounded-full z-10">
       <Icon icon="ic:round-chevron-left" class="w-5 h-5" />
     </button>
 
-    <!-- Right Arrow -->
+ <!-- Right Arrow -->
   <button
    @click="scrollStories('right')"
   class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white shadow p-1 rounded-full z-10" >
   <Icon icon="ic:round-chevron-right" class="w-5 h-5" />
   </button>
   </div>
-
-
-
-
-
-
-
-
 <!-- Post a Composer 1 -->
+
+
 
 <!--End Post a Composer 1 -->
  
-
-
-
   <!--Main  Post Composer 2 -->
 <div v-for="(post, index) in posts" :key="post.id" class="bg-white border rounded-sl shadow-sm p-4  relative  ">
    <!-- Post Header -->
@@ -457,10 +454,13 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 
 
   <!-- Dropdown Menu -->
+   
     <div
-    v-if="activeMenuIndex === index"
-    v-click-outside="closeDropdown"
-     class="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
+   
+  v-if="activeMenuIndex === index"
+     class="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50" 
+ @click.self="activeMenuIndex = false">
+  
     <ul class="text-sm text-gray-700 py-2">
     <li
      @click="startEditPost(index)"
@@ -473,7 +473,7 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
           class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer">
           Delete Post
           <Icon icon="fluent:delete-32-regular" class="w-4 h-4" />
-          </li>
+          </li> 
           <li
           @click="OffComment(index)"
           class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -490,7 +490,7 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
           @click="shareTo(index)"
           class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"> 
           Share to...
-        <Icon icon="ri:link" class="w-4 h-4" />
+        <Icon icon="ri:link" class="w-4 h-4" />  
         </li>
         </ul>
 
@@ -520,8 +520,8 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 
 
     <!-- Caption or Editable -->
-        <div class="mb-4">
-        <div v-if="editingIndex === index">
+  <div class="mb-4">
+  <div v-if="editingIndex === index">
         <input v-model="editedCaption" class="w-full border px-3 py-1 rounded focus:outline-none" />
         <div class="text-right mt-1">
         <button class="text-green-600 text-sm font-semibold hover:underline mr-2" @click="saveEditedPost(index)">Save</button>
@@ -531,21 +531,32 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
         <p v-else> {{ post.caption }}</p>
         </div>
 
-<!-- Open Photo Grid Media (No Scrollbar, Snap + Drag Scroll) -->
- <div
+
+
+
+<!-- Open Photo Post Media  sinayun_xyn 1h ago ) -->
+
+
+
+<div
   ref="scrollContainer"
-  class="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer">
+  class="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer"
+>
   <component
     v-for="(media, i) in post.media"
     :key="i"
     :is="media.type.startsWith('video') ? 'video' : 'img'"
     :src="media.url"
-    class="w-48 h-64 object-cover rounded-xl flex-shrink-0 snap-start hover:brightness-75 transition"
-    controls 
-    @click="openMediaModal(media,post.media)"/>
-  </div>
-
-
+    :class="[
+      'rounded-xl flex-shrink-0 snap-start hover:brightness-75 transition',
+      media.type.startsWith('video')
+      ? 'h-72 max-w-full object-contain'
+      : 'h-72 object-contain'
+    ]"
+    controls
+    @click="openMediaModal(media, post.media)"
+  />
+</div>
 
 
 <!-- Media Fullscreen Viewer with Navigation -->
@@ -554,10 +565,13 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
   class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
   @touchstart="handleTouchStart"
   @touchend="handleTouchEnd">
-      <!-- Close -->
+
+
+
+<!-- Close -->
  <button
-        @click="closeMediaModal"
-        class="cursor-pointer absolute top-4 right-4 z-50 text-white bg-black bg-opacity-60 p-2 rounded-full hover:bg-opacity-80">
+  @click="closeMediaModal"
+  class="cursor-pointer absolute top-4 right-4 z-50 text-white bg-black bg-opacity-60 p-2 rounded-full hover:bg-opacity-80">
 <Icon icon="mdi:close" class="w-6 h-6 text-white" />
 </button>
 
@@ -600,18 +614,18 @@ v-if="selectedIndex > 0"
 
 
 <!-- Post Actions  ICon heart comment share -->
-    <div class="flex items-center gap-5 text-gray-500 text-sm mt-4 mb-10">
+<div class="flex items-center gap-4 text-gray-500 text-sm mt-4 mb-10">
       
 <!-- Like -->
 <div class="flex items-center gap-4 cursor-pointer hover:text-red-500" @click="toggleLike(index)">
 
  <!--Heart Like RedColor-->
-    <Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'" class="w-5 h-5" />
-    <span>{{ formatCount(post.likes||[]) }}</span>
-    </div>
+<Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'" class="w-5 h-5" />
+<span>{{ formatCount(post.likes||[]) }}</span>
+</div>
   <!-- Comment -->
 <div class="flex items-center gap-2 cursor-pointer hover:text-blue-500" @click="toggleComment(index)">
-  <Icon icon="iconamoon:comment" class="w-5 h-5"/>
+<Icon icon="tdesign:chat-bubble" class="w-5 h-5"/>
 <span>{{ formatCount(post.commentsList?.length ||[]) }}</span>
 </div>  
  <div>
@@ -623,11 +637,11 @@ v-if="selectedIndex > 0"
 <button 
 @click.stop="showRepostPopup = true" 
  class="p-2 hover:text-gray-500 relative z-10  duration-100">
-<Icon icon="mi:repeat" class="w-5 h-5" />
+<Icon icon="fluent:arrow-shuffle-16-regular" class="w-6 h-6" />
 </button>
 
 <!-- Teleported Popup -->
-     <teleport to="body">
+<teleport to="body">
 <div 
  v-if="showRepostPopup" 
 class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -750,13 +764,12 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 
 
  <!-- Comment Reply Box -->
-  <div v-if="post.showComments" class="max-w-xl mx-auto px-4 py-6">
+  <div v-if="post.showComments" class="max-w-sl rounded-full mx-auto px-4 py-4">
     <!-- View All Toggle -->
     <div
-      class="text-gray-400 text-sm mb-2 cursor-pointer hover:underline"
+    class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
       @click="post.viewAll = !post.viewAll">
-   Show all {{ countTotalComments(post.commentsList ||[])  }} comments here
-
+   Show all {{countTotalComments (post.commentsList) }} comments 
     </div>
 
   <!-- Comment List -->
@@ -769,12 +782,12 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
   @reply-added="updateCommentCount"/>
 
 <!-- Add New Comment Input -->
-<div class="mt-3 flex gap-2 items-center">
-<img :src="post.avatar" class="w-8 h-8 rounded-full border" />
+<div class="mt-3 flex gap-1 items-center">
+<img :src="post.avatar" class="w-8 h-8 rounded-full border-2 " />
 <textarea
 v-model="post.newComment"
 placeholder="Add a comment..."
-class=" flex-1 px-3 py-2 text-sm bg-white rounded-xl resize-none focus:outline-none w-full border "
+class="w-80 py-2 px-2 text-sm bg-white rounded-xl resize-none focus:outline-none border-2 border-gray-200"
        
 @input="autoResize($event)"
 @keyup.enter.exact="addCommentToPost(index)">
@@ -815,7 +828,7 @@ icon="basil:comment-outline"  class="w-6 h-6 transition"/>
 <teleport to="body">
 <transition name="slide-in">
 <ChatPanel
-v-if="showChatPopup"
+v-if="showChatPopup" 
 :friends="suggestedFriends"
 :selectedUser="selectedUser"
 @close="showChatPopup = false"
@@ -939,8 +952,8 @@ v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true,
       <button
         @click="nextStory"
         class="absolute right-0 top-0 h-full w-1/4 hover:bg-white/5 transition z-10"
-        aria-label="Next"
-      ></button>
+        aria-label="Next">
+    </button>
 
       <!-- Arrow hints (optional) -->
       <div class="absolute left-2 top-1/2 -translate-y-1/2 text-white/90 z-20">
@@ -967,8 +980,8 @@ v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true,
 
 
 
-  <!-- Your existing template code goes here -->
-  <!-- The dropdown menu and other template parts remain unchanged -->
+
+  <!--  -->
 
 
 <script>
@@ -1074,7 +1087,7 @@ export default {
         { id: 2, avatar: story2, username: 'នារី_lovekhmer' },
         { id: 3, avatar: story3, username: 'Chakriya_konsreypov' },
         { id: 4, avatar: story4, username: 'ycn_lovekhm' },
-        { id: 5, avatar: story5, username: 'Kon_Khmer' },
+        { id: 5, avatar: story5, username: 'Kon_Khmer' },     
       ],
       currentUser: {
         name: 'sinayun_xyn',
@@ -1192,6 +1205,9 @@ export default {
     toggleEmojiPicker() {
       this.showEmojiPicker = !this.showEmojiPicker;
     },
+
+
+    
     submitPost() {
       const extractedTags = this.newPost.match(/@\w+/g) || [];
       if (!this.newPost.trim() && !this.mediaPreviews.length) return;
@@ -1207,7 +1223,7 @@ export default {
         likes: 0,
         shares: 0,
         liked: false,
-        showComments: false,
+        showComments: false ,
         showShare: false,
         newComment: '',
         commentsList: [],
@@ -1225,6 +1241,7 @@ export default {
         count++;
         if (comment.replies?.length) {
           count += this.countTotalComments(comment.replies);
+          
         }
       }
       return count;
@@ -1245,6 +1262,7 @@ export default {
       const text = post.newComment.trim();
       if (!text) return;
       if (!Array.isArray(post.commentsList)) post.commentsList = [];
+
       post.commentsList.push({
         user: this.currentUser.name,
         avatar: this.currentUser.avatar,
@@ -1259,6 +1277,10 @@ export default {
       el.style.height = 'auto';
       el.style.height = el.scrollHeight + 'px';
     },
+
+
+  //Location
+
     getLocation() {
       this.showLocationPopup = true;
       if (navigator.geolocation) {
@@ -1355,7 +1377,7 @@ export default {
     },
     copyLink() {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        alert('🔗 Link copied to clipboard!');
+        alert('Link copied to clipboard!');
       });
     },
     shareToFacebook() {
@@ -1513,7 +1535,7 @@ export default {
 textarea {
   overflow: hidden;
   resize: none;
-}
+}ម
 
 /*PopupChat*/
 .slide-in-enter-active {
