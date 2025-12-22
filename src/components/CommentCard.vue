@@ -17,7 +17,7 @@
       <!-- Text or Editing -->
       <div v-if="!isEditing">
         <p class="text-sm text-gray-800 whitespace-pre-wrap break-words mb-2">
-          {{ localComment.text }}
+        {{ localComment.text }}
         </p>
       </div>
       <div v-else>
@@ -25,8 +25,8 @@
           v-model="editText"
           class="w-full text-sm px-3 py-2  mb-2 resize-none"
           rows="2"
-          @input="autoResize"
-        ></textarea>
+          @input="autoResize">
+        </textarea>
         <div class="flex gap-2 text-xs">
           <button class="text-green-600 font-semibold" @click="saveEdit">Save</button>
           <button class="text-gray-400" @click="cancelEdit">Cancel</button>
@@ -35,11 +35,18 @@
 
       <!-- Actions -->
       <div class="flex gap-4 text-xs text-gray-500 mb-2">
-        <button @click="toggleLike">
-          <Icon :icon="localComment.liked ? 'fluent-color:heart-16-filled' : 'mdi:heart-outline'" class="w-4 h-4" />
+        <button @click="toggleLike" class="flex items-center gap-1 hover:text-red-500">
+          <Icon :icon="localComment.liked ? 'fluent-emoji-flat:broken-heart' : 'solar:heart-linear'" :class="['w-4 h-4', { 'text-red-500': localComment.liked }]" />
+         
         </button>
-        <button @click="replyOpen = !replyOpen">Reply</button>
-        <button @click="isEditing = true">Edit</button>
+        <button @click="replyOpen = !replyOpen" class="flex items-center gap-1 hover:text-blue-500">
+          <Icon icon="basil:comment-outline" class="w-4 h-4" />
+          
+        </button>
+        <button @click="isEditing = true" class="flex items-center gap-1 hover:text-green-500">
+          <Icon icon="mdi:pencil-outline" class="w-4 h-4" />
+          <span class="font-semibold">Edit</span>
+        </button>
       </div>
 
       <!-- icon Confirm Delete -->
@@ -51,16 +58,28 @@
       </div>
 
       <!-- Reply Input -->
-      <div v-if="replyOpen" class="mt-3 flex gap-2 items-start w-full">
-        <img :src="currentUser.avatar" class="w-7 h-7 rounded-full mt-1" />
-        <textarea
-          v-model="replyText"
-          class="flex-1 px-3 py-2 text-sm bg-gray-100 rounded-xl resize-none focus:outline-none w-full"
-          placeholder="Write a reply..."
-          rows="1"
-          @input="autoResize"
-          @keyup.enter.exact="submitReply"
-        ></textarea>
+      <div v-if="replyOpen" class="mt-3 flex flex-col w-full">
+        <p class="text-xs text-gray-500 mb-1 ml-1">
+          Replying to <span class="font-semibold">{{ localComment.user }}</span>
+        </p>
+        <div class="relative flex items-center">
+          <textarea
+            v-model="replyText"
+            class="flex-1 px-4 py-2 text-sm bg-gray-100 rounded-full resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
+            placeholder="Write a reply..."
+            rows="1"
+            @input="autoResize"
+            @keyup.enter.exact="submitReply">
+          </textarea>
+
+          <button
+            @click="submitReply"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-700 disabled:text-gray-400"
+            :disabled="!replyText.trim()">
+            <Icon icon="mdi:send-circle" class="w-7 h-7" />
+          </button>
+
+        </div>
       </div>
 
       <!-- Recursive Replies -->
