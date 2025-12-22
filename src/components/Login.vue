@@ -6,7 +6,7 @@
         <h1 class="text-5xl font-bold text-green-600 mb-4">iFeed</h1>
         <p class="text-gray-600">Connect with the people in your Life 
           and to the Worlds.<br>
-        Secirity and more Safe for sharing your activity.</p>
+        Security and more Safe for sharing your activity.</p>
       </div>
 
       <!-- Right side: Login form -->
@@ -15,21 +15,22 @@
           type="text"
           placeholder="Email or Phone number"
           class="w-full mb-4 px-4 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          v-model="email"/>
         <input
           type="password"
           placeholder="password"
           class="w-full mb-4 px-4 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
-        />
+          v-model="password"/>
         <button
-          class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 mb-2" >
+          class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 mb-2" 
+          @click="login">
           Login
         </button>
-        <p class="text-sm text-center text-gray-500 mb-4">
+        <router-link to="/forgot-password" class="text-sm text-center text-gray-500 mb-4 block">
           Forgot your Password
-        </p>
+        </router-link>
         <hr class="mb-4" />
-      <!-- ✅ Router link to Create Account -->
+      <!-- Router link to Create Account -->
       <router-link to="/create" class="w-full block">
       <button class="bg-green-600 text-white w-full py-2 rounded text-sm font-semibold hover:bg-green-700">
        Create your account
@@ -39,9 +40,45 @@
       </div>
     </div>
   </div>
-
-
-
 </template>
+
+<script>
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase'
+
+export default {
+  name: 'Login',
+
+  data() {
+    return {
+      email: '',
+      password: ''
+    }
+  },
+
+  methods: {
+    async login() {
+      if (!this.email || !this.password) {
+        alert('Please enter both email and password.')
+        return
+      }
+
+      try {
+        await signInWithEmailAndPassword(
+          auth,
+          this.email,
+          this.password
+        )
+
+        // Redirect to main feed
+        this.$router.push('/feed')
+
+      } catch (error) {
+        alert(error.message)
+      }
+    }
+  }
+}
+</script>
 
 
