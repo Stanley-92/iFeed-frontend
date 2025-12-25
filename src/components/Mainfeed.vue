@@ -652,11 +652,6 @@ v-if="selectedIndex > 0"
 
 
 
-
-
-
-
-
 <!-- Post Actions  ICon heart comment share -->
 <div class="flex items-center gap-4 text-gray-500 text-sm mt-4 mb-10">
       
@@ -670,7 +665,7 @@ v-if="selectedIndex > 0"
 <span>{{ formatCount(post.likes||[]) }}</span>
 </div>
 <!-- Comment -->
-<div class="flex items-center gap-2 cursor-pointer hover:text-blue-500" @click="toggleCommentSection(index)">
+<div class="flex items-center gap-4 cursor-pointer hover:text-blue-500" @click="toggleCommentSection(index)">
 <Icon icon="tdesign:chat-bubble" class="w-5 h-5"/>
 <span>{{ formatCount(post.commentsList?.length ||[]) }}</span>
 </div>  
@@ -678,86 +673,13 @@ v-if="selectedIndex > 0"
 
 
 
-
-<!-- Button Repost  popup 
-<button 
-@click.stop="showRepostPopup = true" 
- class="p-2 hover:text-gray-500 relative z-10  duration-100">
-<Icon icon="grommet-icons:power-cycle" class="w-5 h-5" />
-</button>  -->
-
-<!-- Teleported Popup -->
-<teleport to="body">
-<div 
- v-if="showRepostPopup" 
-class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-@click="closePopup">
-<!-- Popup Content -->
-<div 
-class="bg-white rounded-xl p-4 w-[420px] relative"
-@click.stop>
-<!-- Header -->
-
-<div class="flex justify-between items-center mb-3">
-<h2 class="text-lg font-bold">iFeed</h2>
-<button @click="closePopup" class="text-gray-500 hover:text-black"> 
-<Icon icon="ri:close-line"/>
-</button>
-</div>
-
-<!-- Post Input -->                                                                                                                                        <!-- Repost Button  -->
-<div class="flex items-center space-x-3 mb-4">
-<img :src="currentUser.avatar" class="w-10 h-10 rounded-full" />
-<input type="text" placeholder="Write something..." class="flex-1 border rounded px-2 py-1" />
-</div>
-
-
-
-
-<!-- Sent to Friend -->
-<div class="mb-4">
-<p class="font-semibold mb-1">Sent to Friend</p>
-<div class="flex space-x-2">
-<img v-for="(friend, index) in friends" :key="index" :src="friend" class="w-10 h-10 rounded-full" />
-</div>
-</div>
-
-<!-- Share To -->
- 
-<div>
-<p class="font-semibold mb-1">Share To</p>
-<div class="flex space-x-4">
-<button class="flex flex-col items-center text-sm">
-<Icon icon="ri:link" class="w-10 h-10"/>
-<span>Copy</span>
-</button>
-<button class="flex flex-col items-center text-sm">
-  <Icon icon="logos:telegram" class="w-10 h-10"/>
-<span>Telegram</span>
-</button>
-<button class="flex flex-col items-center text-sm">
-  <Icon icon="logos:facebook" class="w-10 h-10"/>
-<span>Facebook</span>
-</button>
-<button class="flex flex-col items-center text-sm item-center">
-<Icon icon="tdesign:chat-bubble" class="w-10 h-10 text-white transition-colors bg-green-500 border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600"/>
-<span>iFeed</span>
-</button>
-</div>
-</div>
-</div>
-</div>
-</teleport>
- 
-
-</div>
-        
-<!-- Share Button and Dropdown -->
+       
+<!-- Share Plan Icon Button and Dropdown -->
 
 <div class="relative">
 <button 
 @click.stop="showRepostPopup = true" 
- class="p-2 hover:text-gray-500 relative z-10  duration-100">
+ class="p-2 hover:text-gray-500 relative z-10  duration-100 ">
 <Icon icon="mage:direction-up-right-2" class="w-5 h-5"/> <!-- Air Plan Share Popup -->
 </button>
 
@@ -820,6 +742,10 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 </div>
 </teleport>
 
+ 
+
+</div>
+ 
 
 </div>
 </div>
