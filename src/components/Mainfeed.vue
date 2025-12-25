@@ -110,6 +110,7 @@ class="flex-1 inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
 <!-- Floating Composer Modal -->
 <div v-if="showPostModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]" @click.self="closePostModal">
 <div class=" fixed  bg-opacity-50 w-full max-w-xl rounded-xl p-6 relative ">
+
 <!-- Close Button -->
 <button @click.self="closePostModal" class="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"> 
 <Icon icon="basil:cross-solid "/>
@@ -275,7 +276,7 @@ class="fixed top-6 right-6 z-50 text-white bg-black bg-opacity-50   p-2 rounded-
 </button>
 <component
 :is="activePreview.type.startsWith('video') ? 'video' : 'img'"
-:src="activePreview.url"
+:src="media.url"
 class="w-auto max-w-full max-h-[90vh] object-contain mx-auto rounded-xl"
 controls
 autoplay/>
@@ -286,6 +287,7 @@ autoplay/>
 
 
 <!-- Media Previews -->
+
 <div v-if="mediaPreviews.length" class="grid grid-cols-2 gap-2 mt-2">
 <div
 v-for="(file, index) in mediaPreviews"
@@ -298,10 +300,13 @@ class="relative group rounded-lg overflow-hidden border cursor-pointer"
 class="w-full h-48 object-cover"
 controls/>
 <button
- @click.stop="removeMedia(index)"
+@click.stop="removeMedia(index)"
 class="relative">
 <Icon icon="mdi:close" class="w-4 h-4" />
 </button>
+
+
+
  </div>
 </div>
 </div> 
@@ -320,7 +325,7 @@ class="relative">
   <div 
     @click="toggleSettings"  
     class="flex items-center gap-8 p-4 cursor-pointer hover:text-blue-500 mb-8">
-  <Icon icon="basil:edit-outline" class="w-8 h-8 transition-colors duration-200 " />
+  <Icon icon="famicons:reorder-three-outline" class="w-8 h-8 transition-colors duration-200 " />
   </div>
  </div>
 </aside>   
@@ -388,6 +393,7 @@ class="relative">
 
 
 <!-- MainiFeed -->
+
 <main class="flex-5 max-w-2xl mx-auto px-4 py-5 ">
     
 <div class="max-w-2xl mx-auto bg-white border rounded-xl shadow-sm p-6 relative mb-1">
@@ -468,67 +474,62 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
     {{ post.isFollowing ? 'Following' : 'Follow' }}
   </button>
 
+
+
+ 
   <!-- Three-dot Menu -->
-  <div class="relative">
-    <button
-      @click="toggleMenu(index)"
-      class="p-1 hover:bg-gray-100 rounded-full"
-    >
-      <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
-    </button>
-  </div>
-
-
-
-
-
-
+<div class="relative z-20 pointer-events-auto">
+  <button
+    type="button"
+    @click.stop="toggleMenu(index)"
+    class="p-1 hover:bg-gray-100 rounded-full"
+>
+    <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
+  </button>
 
   <!-- Dropdown Menu -->
-   
-    <div
-   
-  v-if="activeMenuIndex === index"
-     class="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50" 
- @click.self="activeMenuIndex = false">
-  
+  <div
+    v-if="activeMenuIndex === index"
+  class="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg z-50">
     <ul class="text-sm text-gray-700 py-2">
-    <li
-     @click="startEditPost(index)"
-      class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
-      Edit Caption
-      <Icon icon="lucide:edit" class="w-4 h-4"/>
+
+      <li
+        @click="startEditPost(index)"
+        class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
+        Edit Caption
+        <Icon icon="lucide:edit" class="w-4 h-4"/>
       </li>
-          <li
-          @click="confirmDelete(index)"
-          class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer">
-          Delete Post
-          <Icon icon="fluent:delete-32-regular" class="w-4 h-4" />
-          </li> 
-          <li
-          v-if="!post.commentsDisabled"
-          @click="OffComment(index)"
-          class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
-          Off Comment
-        <Icon icon="fluent:comment-off-48-regular" class="w-4 h-4" />
-        </li>
-         <li
-          @click="copylink(index)"
-          class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
-          Copy Link
+      
+      <li
+        @click="confirmDelete(index)"
+        class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 text-red-600 cursor-pointer">
+        Delete Post
+        <Icon icon="fluent:delete-32-regular" class="w-4 h-4" />
+      </li>
+
+<li
+  @click="toggleComment(index)"
+  class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
+  {{ posts[index].commentsDisabled ? 'On Comment' : 'Off Comment' }}
+  <Icon
+    :icon="posts[index].commentsDisabled ? 'fluent:comment-48-regular' : 'fluent:comment-off-48-regular'"
+    class="w-4 h-4"/>
+</li>
+
+      <li
+        @click="copylink(index)"
+        class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
+        Copy Link
         <Icon icon="ri:link" class="w-4 h-4" />
-        </li>
-         <li
-          @click="shareTo(index)"
-          class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer"> 
-          Report Post
-        <Icon icon="ri:link" class="w-4 h-4" />  
-        </li>
-        </ul>
-
-
-
-
+      </li>
+      <li
+        @click="shareTo(index)"
+        class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
+        Report Post
+        <Icon icon="ri:link" class="w-4 h-4" />
+      </li>
+    </ul>
+  </div>
 
 <!----Open Model sent to frien-->
   <div v-if="showShareModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
@@ -663,11 +664,13 @@ v-if="selectedIndex > 0"
 <div class="flex items-center gap-4 cursor-pointer hover:text-red-500" @click="toggleLike(index)">
 
  <!--Heart Like RedColor-->
+ 
 <Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'" class="w-5 h-5" />
+
 <span>{{ formatCount(post.likes||[]) }}</span>
 </div>
 <!-- Comment -->
-<div class="flex items-center gap-2 cursor-pointer hover:text-blue-500" @click="toggleComment(index)">
+<div class="flex items-center gap-2 cursor-pointer hover:text-blue-500" @click="toggleCommentSection(index)">
 <Icon icon="tdesign:chat-bubble" class="w-5 h-5"/>
 <span>{{ formatCount(post.commentsList?.length ||[]) }}</span>
 </div>  
@@ -1256,7 +1259,6 @@ computed: {
   
   //Method 
   methods: {
-    
 
  getYouTubeId(url) {
     const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -1313,6 +1315,11 @@ computed: {
     user.followers = user.followers.filter(id => id !== this.currentUser.id);
   }
 },
+//Comment
+toggleMenu(index) {
+  this.activeMenuIndex =
+    this.activeMenuIndex === index ? null : index;
+},
 
 
     //Follow in post
@@ -1334,6 +1341,8 @@ computed: {
         this.showSearch = false
       }
     },
+
+
 
     handleSearch() {
       console.log('Search:', this.searchQuery)
@@ -1530,9 +1539,6 @@ handleDrop(e) {
       post.liked = !post.liked;
       post.likes += post.liked ? 1 : -1;
     },
-    toggleComment(index) {
-      this.posts[index].showComments = !this.posts[index].showComments;
-    },
     toggleSharePopup(index) {
       this.posts[index].showShare = !this.posts[index].showShare;
     },
@@ -1609,9 +1615,23 @@ handleDrop(e) {
     updateCommentCount() {
       console.log('Reply added!');
     },
-    toggleMenu(index) {
-      this.activeMenuIndex = this.activeMenuIndex === index ? null : index;
-    },
+
+
+toggleCommentSection(index) {
+    this.posts[index].showComments = !this.posts[index].showComments;
+
+  // close menu if open
+  this.activeMenuIndex = null;
+},
+
+
+toggleComment(index) {
+  this.posts[index].commentsDisabled =
+  !this.posts[index].commentsDisabled;
+
+  this.activeMenuIndex = null; // close menu
+},
+
     confirmDelete(index) {
       this.posts.splice(index, 1);
       this.activeMenuIndex = null;
@@ -1681,6 +1701,7 @@ handleDrop(e) {
         }
       });
     },
+    
     OffComment(index) {
       this.posts[index].commentsDisabled = true;
       this.activeMenuIndex = null;
