@@ -1,31 +1,82 @@
 
 <template>
-<div class="flex min-h-screen  bg-white">
+<div class="flex flex-col md:flex-row min-h-[100dvh] bg-white">
 
- <!-- Left Sidebar -->
-<aside class="w-72 bg-white border-2 p-10 hidden xl:block sticky top-0 h-screen overflow-y-auto">
+
+<!-- Left Sidebar -->
+<aside
+  class="w-25 bg-white border-2 p-6 hidden md:block sticky top-0 h-[100dvh]">
 <h1 class="text-4xl font-bold text-green-500 mb-4 cursor-pointer" @click="goToMainfeed">iFeed</h1>
-<div class="relative mb-32">
+
+
+
+<div class="relative mb-65">
 <div 
-class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
+class="flex-1 inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
  @click="handleSearch">
-<Icon icon="codex:search" class="w-5 h-5 text-gray-400 hover:text-gray-600 transition-colors" />
+<!-- Search Icon -->
+ <button
+    @click="toggleSearch"
+    class="p-2 rounded-full hover:bg-gray-100 z-50">
+    <Icon icon="solar:magnifer-outline" class="w-6 h-6 text-gray-600 " />
+  </button>
+
+
 </div>
+ <!-- Search Input -->
  <input
   type="text"
   v-model="searchQuery"
   placeholder="Search"
-  class="w-full border rounded-full  px-3 py-2 pl-10 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-100"
- @keyup.enter="handleSearch" />
+  class="absolute left-10 top-1/2 -translate-y-1/2
+         w-15 bg-white border border-gray-300
+         rounded-xl px-4 py-2 text-sm
+         shadow-md z-40
+         transition-all duration-300 ease-out
+         focus:outline-none focus:ring-2 focus:ring-green-300"
+  :class="showSearch
+    ? 'opacity-100 translate-x-0 pointer-events-auto'
+    : 'opacity-0 -translate-x-6 pointer-events-none'"
+  @keyup.enter="handleSearch"
+  @blur="closeIfEmpty"/>
+
+  <!-- Search Results -->
+<div
+  v-if="showResults && filteredSearchUsers.length"
+  class="absolute top-14 left-0 w-72 bg-white
+         border rounded-xl shadow-lg z-50
+         max-h-72 overflow-y-auto">
+
+  <div
+    v-for="user in filteredSearchUsers"
+    :key="user.id"
+    @mousedown.prevent="selectSearchUser(user)"
+    class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer">
+
+    <img
+      :src="user.avatar"
+      class="w-10 h-10 rounded-full border object-cover" />
+
+    <span class="text-sm font-medium">
+      {{ user.username }}
+    </span>
+  </div>
+</div>
+
+
 </div>
 <nav class="space-y-2 px-3  py-8  text-gray-700 gap-3">
 <div class="flex items-center gap-3 p-2 cursor-pointer  hover:text-blue-500">
-<Icon icon="material-symbols:home" class="w-8 h-8 text-gray-500 transition-colors  duration-200 hover:text-gray-600"/>  <!---Home-->
+
+<!---Home icon-->
+<Icon icon="material-symbols:home" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Home-->
 </div>
 
   <button
     @click="showNotify = true"
-    class="relative z-50 p-3 hover:bg-gray-100 rounded-xl">
+
+  class="relative z-50 p-3 hover:bg-gray-100 rounded-xl">
+<!---Heart icon-->
 <Icon icon="solar:heart-outline" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>
 <span v-if="notifications.length > 0" class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
   {{ notifications.length }}
@@ -37,16 +88,19 @@ class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
 </div>    
 
 
- <!-- Heart icon -->
 
 
-  <!-- Reusable Notification Popup -->
+
+  <!-- Reusable Notification Popup  -->
   <Notify
     v-model="showNotify"
-    :notifications="notifications"/>
+    :notifications="notifications"/> 
+
+
 
 
 <div @click="openPostModal"  class="w-10 h-10 flex items-center  justify-center   border-gray-300 ">
+<!-- Plus icon -->
 <Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 transition-colors bg-green-300    border-2 border-blue-200 rounded-xl duration-200 hover:text-gray-600" /> 
 </div> 
  <!--create-->
@@ -64,6 +118,7 @@ class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
 
 
 <!--When On you Mind  Wrap  Post a Composer -->
+
 <div class="bg-white p-4 rounded-xl shadow-sm mb-6" @dragover.prevent @drop.prevent="handleDrop">
 <!-- Avatar + Textarea -->
 <div class="flex items-start gap-3 mb-3">
@@ -73,9 +128,8 @@ class="absolute inset-y-0 left-0 flex items-center pl-3 cursor-pointer"
   v-model="newPost"
   placeholder="What's on your mind?"
   class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-  @input="handleMentionInput">
-
-     
+  @input="handlePostInput">
+  
 </textarea>
 </div>
 <div v-if="showMentionList" class="absolute bg-white border rounded shadow w-48 mt-1 z-50">
@@ -87,6 +141,8 @@ class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
 {{ '@' + user.name }}
 </div>
 </div>
+
+
 
 
 
@@ -183,9 +239,10 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
     accept="image/*,video/*"
     multiple
     class="hidden"
-    @change="handleFileUpload($event)"
-  />
+    @change="handleFileUpload($event)"/>
 </label>
+
+
 <!-- Comment -->                                                     
 <button @click="toggleReplyComment" title="Comment">
 <Icon icon="iconamoon:comment" class="w-5 h-5 " />
@@ -255,73 +312,6 @@ class="relative">
 </teleport>
 
 
-<!-- Follower Button Trigger -->
-<div @click="toggleFollowerPopup" class="flex items-center gap-4 p-2 cursor-pointer  hover:text-blue-500" >
-<Icon icon="mingcute:user-follow-2-line"  class="w-8 h-8 text-gray-500 "/>
-<!-- Add Follower here  -->
-</div>
-
-<!-- Follower Popup Modal (Teleport to body) -->
-<teleport to="body">
-<div v-if="showFollowerPopup" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-50 "
- @click.self="toggleFollowerPopup">
-<div class="bg-white w-full max-w-sm rounded-lg shadow-lg p-6 relative">
-  
-<!-- Close Button -->
-<button @click="toggleFollowerPopup" class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl">
-
-<Icon icon="ri:close-line"/>
-</button>
-<h2 class="text-xl font-medium-bold mb-4">Followers</h2>
-
-<!-- Tabs -->
-<div class="flex border-b mb-4">
-<button
-@click="switchTab('followers')"
-:class="activeTab === 'followers' ? 'border-b-2 border-blue-500 text-green-600' : 'text-gray-600'"
-class="flex-1 py-2 text-center font-semibold">
-Followers
-</button>
-<button
-@click="switchTab('following')"
-:class="activeTab === 'following' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'"
-class="flex-1 py-2 text-center font-semibold">
-Following
-</button>
-</div>
-
-
-<!-- Followers List -->
-<div v-if="activeTab === 'followers'" class="space-y-3 max-h-64 overflow-y-auto">
-<div
-v-for="(user, index) in followers"
-:key="'follower-' + index"
-class="flex items-center gap-3 p-2 border rounded justify-between">
-<div class="flex items-center gap-3">
-<img :src="user.avatar" class="w-10 h-10 rounded-full" />
-<span class="font-medium">{{ user.name }}</span>
-</div>
-<button class="px-3 py-2 text-sm bg-blue-500 text-white rounded-full hover:bg-blue-600">Following</button>
-</div>
-</div>
-
-
-<!-- Following List -->
-<div v-if="activeTab === 'following'" class="space-y-3 max-h-64 overflow-y-auto">
-<div
-v-for="(user, index) in following"
-:key="'following-' + index"
-class="flex items-center gap-3 p-2 border rounded justify-between">
-<div class="flex items-center gap-3">
-<img :src="user.avatar" class="w-10 h-10 rounded-full" />
-<span class="font-medium">{{ user.name }}</span>
-</div>
-<button class="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600">Following</button>
-</div>
-</div>
-</div>
-</div>
-</teleport>
 </nav>
 
 <div class="mt-8 relative">
@@ -343,12 +333,10 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
   <div
     v-if="showSettings"
     class="fixed inset-0 z-40"
-    @click.self="showSettings = false"
-  >
+    @click.self="showSettings = false">
     <!-- Popup -->
     <div
-      class="absolute top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 z-50"
-    >
+      class="absolute top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 z-50">
 
       <!-- Menu Sections -->
       <div class="divide-y bg-white">
@@ -446,17 +434,15 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
   </button>
 </div>
 
-<!-- Post a Composer 1 -->
+<!-- Post a Composer 1  box Media post -->
+
+<div v-for="(post, index) in posts" :key="post.id" class="bg-white border rounded-xl shadow-sm p-4  relative  ">
+<!-- Post Header -->
+
+<div class="flex items-center justify-between mb-2 rounded-xl">
 
 
-
-  <!--Main  Post Composer 2 -->
-<div v-for="(post, index) in posts" :key="post.id" class="bg-white border rounded-sl shadow-sm p-4  relative  ">
-   <!-- Post Header -->
-<div class="flex items-center justify-between mb-2">
-
-
-<!-- Avatar / User Info -->
+<!-- Avatar  User Info -->
 <div class="flex items-center gap-2 ">
 <img
 :src="post.avatar"
@@ -467,18 +453,30 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <p class="text-xs text-gray-400">{{ post.time }}</p>
 <!---Location text-->
 <p v-if="post.location" class="text-xs text-gray-400">{{ post.location }}</p>
-  
+
 </div>
 </div>
 
+<div class="flex items-center gap-2">
+  <!-- Follow Button -->
+  <button
+    @click="toggleFollow(index)"
+    class="text-sm px-3 py-1"
+    :class="post.isFollowing
+      ? 'text-gray-700'
+      : 'text-gray-700 hover:text-blue-500'">
+    {{ post.isFollowing ? 'Following' : 'Follow' }}
+  </button>
 
   <!-- Three-dot Menu -->
   <div class="relative">
     <button
-    @click="toggleMenu(index)"
-    class="p-1 hover:bg-gray-100 rounded-full">
-  <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
-  </button>
+      @click="toggleMenu(index)"
+      class="p-1 hover:bg-gray-100 rounded-full"
+    >
+      <Icon icon="bi:three-dots" class="w-5 h-5 text-gray-600" />
+    </button>
+  </div>
 
 
 
@@ -567,6 +565,23 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 
 
 
+  <!-- Website Link -->
+  <a
+    v-if="post && post.link && post.link.type === 'website' && post.link.url"
+    :href="post.link.url"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="block mt-2 text-blue-600 underline truncate hover:text-blue-800" >
+    {{ post.link.url }}
+  </a>
+
+  <!-- YouTube Link -->
+  <iframe
+    v-if="post && post.link && post.link.type === 'youtube' && post.link.url"
+    :src="`https://www.youtube.com/embed/${getYouTubeId(post.link.url)}`"
+    class="w-full aspect-video rounded-xl mt-2"
+    allowfullscreen>
+</iframe>
 
 <!-- Open Photo Post Media  sinayun_xyn 1h ago ) -->
 
@@ -651,7 +666,7 @@ v-if="selectedIndex > 0"
 <Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'" class="w-5 h-5" />
 <span>{{ formatCount(post.likes||[]) }}</span>
 </div>
-  <!-- Comment -->
+<!-- Comment -->
 <div class="flex items-center gap-2 cursor-pointer hover:text-blue-500" @click="toggleComment(index)">
 <Icon icon="tdesign:chat-bubble" class="w-5 h-5"/>
 <span>{{ formatCount(post.commentsList?.length ||[]) }}</span>
@@ -661,12 +676,12 @@ v-if="selectedIndex > 0"
 
 
 
-<!-- Button Repost  popup -->
+<!-- Button Repost  popup 
 <button 
 @click.stop="showRepostPopup = true" 
  class="p-2 hover:text-gray-500 relative z-10  duration-100">
 <Icon icon="grommet-icons:power-cycle" class="w-5 h-5" />
-</button>
+</button>  -->
 
 <!-- Teleported Popup -->
 <teleport to="body">
@@ -683,7 +698,8 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 <div class="flex justify-between items-center mb-3">
 <h2 class="text-lg font-bold">iFeed</h2>
 <button @click="closePopup" class="text-gray-500 hover:text-black"> 
-<Icon icon="ri:close-line"/></button>
+<Icon icon="ri:close-line"/>
+</button>
 </div>
 
 <!-- Post Input -->                                                                                                                                        <!-- Repost Button  -->
@@ -691,6 +707,9 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 <img :src="currentUser.avatar" class="w-10 h-10 rounded-full" />
 <input type="text" placeholder="Write something..." class="flex-1 border rounded px-2 py-1" />
 </div>
+
+
+
 
 <!-- Sent to Friend -->
 <div class="mb-4">
@@ -814,7 +833,7 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
     class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
       @click="post.viewAll = !post.viewAll">
    Show all {{countTotalComments (post.commentsList) }} comments 
-    </div>
+  </div>
 
   <!-- Comment List -->
   <CommentCard
@@ -825,16 +844,16 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
   :current-user="currentUser"
   @reply-added="updateCommentCount"/>
 
-<!-- Add New Comment Input   // class="flex-1 px-4 py-2 text-sm bg-gray-100 rounded-full resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-            placeholder="Write a reply..."-->                            
+
+
+<!-- Add New Comment Input "-->                            
 <div v-if="!post.commentsDisabled" class=" mt-2 flex gap-1 items-center ">
 <img :src="post.avatar" class="w-10 h-10 rounded-full border-2 " />
+
 <textarea
-v-model="post.newComment"
+v-model="post.newComment" 
 placeholder="Add a comment..." 
 class="flex-1 px-2 text-sm bg-gray-100 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-blue-400 w-full  " 
-
-       
 @input="autoResize($event)"
 @keyup.enter.exact="addCommentToPost(index)">
 </textarea>
@@ -859,9 +878,9 @@ class="flex-1 px-2 text-sm bg-gray-100 rounded-xl resize-none focus:outline-none
   alt="Profile"
   class="w-16 h-16 rounded-full object-cover border-4" />
   <div>
-    <button @click="goToProfileUser" class="font-medium text-blue-600 hover:text-gray-800">
-    View profile
-    </button>
+  <button @click="goToProfileUser" class="font-medium text-blue-600 hover:text-gray-800">
+  View profile
+  </button>
     
   <p class="text-sm text-gray-500">{{ currentUser.name }}</p>
   </div>
@@ -980,10 +999,10 @@ v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true,
 
           
           <button class="p-2 rounded-full bg-white/10 hover:bg-white/20">
-            <Icon icon="mdi:heart-outline" class="w-5 h-5 text-white" />
+          <Icon icon="solar:heart-linear" class="w-5 h-5 text-white" />
           </button>
           <button class="p-2 rounded-full bg-white/10 hover:bg-white/20" @click="sendReply">
-            <Icon icon="mdi:send" class="w-5 h-5 text-white" />
+          <Icon icon="meteor-icons:paper-plane" class="w-5 h-5 text-white" />
           </button>
 </div>
 </div>
@@ -1021,6 +1040,7 @@ v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true,
   </div>
    </div>
  <!-- Story Modal -->
+
 </template>
 
 
@@ -1033,7 +1053,7 @@ v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true,
 
 
 
-  <!--  -->
+
 
 
 <script>
@@ -1052,7 +1072,7 @@ import story5 from '@/assets/story5.jpg';
 import sinayun from '@/assets/jeny3.jpg';
 import aesp from '@/assets/aesp.jpg';
 
-import { useToast } from "vue-toastification";
+
 
 export default {
   name: '',
@@ -1063,12 +1083,19 @@ export default {
     CommentCard,
     ChatPanel,
   },
-  setup() {
-    const toast = useToast();
-    return { toast };
-  },
+ 
   data() {
     return {
+      following:[], // stores userIds you follow
+
+      showSearch: false,
+      searchQuery: '',
+      showResults: false,
+
+      postLink:  null,
+ 
+      
+
       showLikes: false,
       showNotify: false,
       notifications: [],
@@ -1117,17 +1144,20 @@ export default {
       { name: 'nita_lovekhmer' },
       { name: 'chakriya' },
       { name: 'konkhmer' },
+       { id: 1, username: 'sinayun', avatar: sinayun },
+       // Foller
+  { id: 2, username: 'nayun', avatar: story2 },
+  { id: 3, username: 'nita_lovekhmer', avatar: story3 },
+  { id: 4, username: 'chakriya', avatar: story4 },
+  { id: 5, username: 'konkhmer', avatar: story5 },
+
+  {
+    id: 'u_2',
+    username: 'nayun_ndo',
+    followers: ['u_1', 'u_4'],
+  },
       ],
-      showFollowerPopup: false,
-      activeTab: 'followers',
-      followers: [
-      { name: 'story5', avatar: '/images/default-avatar.jpg' },
-      { name: 'story3', avatar: '/images/default-avatar.jpg' },
-      ],
-      following: [
-      { name: 'mini1', avatar: '/images/default-avatar.jpg' },
-      { name: 'mini3', avatar: '/images/default-avatar.jpg' },
-      ],
+     
       showPostModal: false,
       showChatPopup: false,
       selectedUser: {},
@@ -1139,16 +1169,19 @@ export default {
         { id: 5, name: 'Kon_Khmer', time: '1:12 PM', avatar: story5 },
       ],
       showSettings: false,
-      showRepostPopup: false, 
-       friends: ['friend1.jpg', 'friend2.jpg', 'friend3.jpg'],                                                   //Show repost 
-      showSharePopup: false,                                                                        
+      showRepostPopup: null, 
+      friends: ['friend1.jpg', 'friend2.jpg', 'friend3.jpg'],                                                   //Show repost 
+      showSharePopup: null,                                                                        
   
       replyText: '',
       stories: [
         { id: 1, username: 'user_1', media: story1, type: 'image', time: '1h ago' },
         { id: 2, username: 'user_2', media: story2, type: 'video', time: '2h ago' },
-        { id: 3, username: 'user_3', media: story5, type: 'image', time: '3h ago' },
-        { id: 4, username: 'user_3', media: story5, type: 'image', time: '3h ago' },
+        { id: 3, username: 'user_3', media: story3, type: 'image', time: '3h ago' },
+        { id: 4, username: 'user_4', media: story4, type: 'image', time: '3h ago' },
+        { id: 5, username: 'user_5', media: story5, type: 'image', time: '3h ago' },
+        { id: 6, username: 'user_6', media: story5, type: 'image', time: '3h ago' },
+        { id: 1, username: 'user_1', media: story1, type: 'image', time: '1h ago' },
       ],
       suggestedUsers: [
         { id: 1, avatar: sinayun, username: 'nita_lovekhmer' },
@@ -1161,10 +1194,13 @@ export default {
         name: 'sinayun_xyn',
         avatar: story4,
       },
+
+
       posts: [
         {
           id: 1,
-          user: 'sinayun_xyn',
+          userId:'u_2',
+          user: 'nayun_ndo',
           avatar: aesp,
           caption: 'A design room for myself',
           media: [{ url: story5, type: 'image' }],
@@ -1172,20 +1208,24 @@ export default {
           likes: 0,
           shares: 0,
           liked: false,
+          isFollowing: false, //Follow in post
           showComments: false,
           showShare: false,
           newComment: '',
           commentsList: [],
           commentsDisabled: false,
+        
         },
         {
           id: 2,
-          user: 'nayun_ndo',
+          userId:'u_3',
+          user: 'nita_lovekhmer',
           avatar: story2,
           caption: 'My girlfriend so cute ',
           media: [{ url: story3, type: 'image' }],
           time: '1m ago',
           likes: 999,
+          isFollowing: false, //Follow in post
           shares: 0,
           liked: false,
           showComments: false,
@@ -1198,9 +1238,119 @@ export default {
     };
   },
 
+
+  
+//Show Result Search 
+
+computed: {
+  filteredSearchUsers() {
+    if (!this.searchQuery) return [];
+    return this.users.filter(u =>
+      u.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+},
+
+  
+
   
   //Method 
   methods: {
+    
+
+ getYouTubeId(url) {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return match && match[7].length === 11 ? match[7] : null;
+  },
+  
+  //Link post 
+
+
+  handlePostInput() {
+      this.handleMentionInput?.(); // keep existing mention logic if exists
+
+      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      const match = this.newPost.match(urlRegex);
+
+      if (match) {
+        this.postLink = this.detectLinkType(match[0]);
+      } else {
+        this.postLink = null;
+      }
+    },
+
+    detectLinkType(url) {
+      const isYoutube =
+        url.includes('youtube.com') || url.includes('youtu.be');
+
+      return {
+        url,
+        type: isYoutube ? 'youtube' : 'website',
+      };
+    },
+
+ 
+
+
+//toglle User 
+
+  toggleFollowUser(userId) {
+  if (userId === this.currentUser.id) return;
+
+  const user = this.users.find(u => u.id === userId);
+  if (!user) return;
+
+  user.followers ||= [];
+
+  const i = this.following.indexOf(userId);
+
+  if (i === -1) {
+    this.following.push(userId);
+    user.followers.push(this.currentUser.id);
+  } else {
+    this.following.splice(i, 1);
+    user.followers = user.followers.filter(id => id !== this.currentUser.id);
+  }
+},
+
+
+    //Follow in post
+    toggleFollow(index) {
+  const post = this.posts[index];
+
+  // prevent following yourself 
+  if (post.user === this.currentUser.name) return;
+
+  post.isFollowing = !post.isFollowing;
+},
+
+     toggleSearch() {
+      this.showSearch = !this.showSearch
+    },
+
+    closeIfEmpty() {
+      if (!this.searchQuery) {
+        this.showSearch = false
+      }
+    },
+
+    handleSearch() {
+      console.log('Search:', this.searchQuery)
+    },
+    onSearchFocus() {
+  this.showResults = true;
+},
+
+selectSearchUser(user) {
+  this.searchQuery = '';
+  this.showResults = false;
+  this.showSearch = false;
+
+  // go to user profile
+  this.$router.push(`/profile/${user.username}`);
+},
+
 
     //Heart Notify
     listenRealtime() {
@@ -1318,35 +1468,50 @@ handleDrop(e) {
     },
 
 
-    
-    submitPost() {
-      const extractedTags = this.newPost.match(/@\w+/g) || [];
-      if (!this.newPost.trim() && !this.mediaPreviews.length) return;
-      this.posts.unshift({
-        id: Date.now(),
-        user: 'sinayun_xyn',
-        avatar: this.currentUser.avatar,
-        location: this.postLocation.trim(),
-        caption: this.newPost,
-        media: [...this.mediaPreviews],
-        tags: extractedTags,
-        time: 'Just now',
-        likes: 0,
-        shares: 0,
-        liked: false,
-        showComments: false ,
-        showShare: false,
-        newComment: '',
-        commentsList: [],
-        commentsDisabled: false,
-      });
-      this.newPost = '';
-      this.mediaPreviews = [];
-      this.tags = [];
-      this.showEmojiPicker = false;
-      this.postLocation = '';
-      this.showLocation = false;
-    },
+// Submit Post 
+  submitPost() {
+  // Prevent empty post
+  if (!this.newPost.trim() && !this.mediaPreviews.length && !this.postLink) return;
+
+  const linkCopy = this.postLink ? { ...this.postLink } : null; // always make link object or null
+
+  // Extract tags (@username)
+  const extractedTags = this.newPost.match(/@\w+/g) || [];
+
+  // Create new post object
+  const newPostObj = {
+    id: Date.now(),
+    user: 'sinayun_xyn',
+    avatar: this.currentUser.avatar,
+    location: this.postLocation.trim(),
+    caption: this.newPost,
+    media: [...this.mediaPreviews],
+    link: linkCopy, // store the link safely
+    tags: extractedTags,
+    time: 'Just now',
+    likes: 0,
+    shares: 0,
+    liked: false,
+    isFollowing: false,
+    showComments: false,
+    showShare: false,
+    newComment: '',
+    commentsList: [],
+    commentsDisabled: false,
+  };
+
+  // Add new post at the top
+  this.posts.unshift(newPostObj);
+
+  // Reset input fields
+  this.newPost = '';
+  this.mediaPreviews = [];
+  this.tags = [];
+  this.showEmojiPicker = false;
+  this.postLocation = '';
+  this.showLocation = false;
+  this.postLink = null;
+},
     countTotalComments(comments) {
       let count = 0;
       for (const comment of comments) {
@@ -1358,6 +1523,8 @@ handleDrop(e) {
       }
       return count;
     },
+
+
     toggleLike(index) {
       const post = this.posts[index];
       post.liked = !post.liked;
@@ -1488,7 +1655,7 @@ handleDrop(e) {
     },
     copyLink() {
       navigator.clipboard.writeText(window.location.href).then(() => {
-        alert('Link copied to clipboard!');
+        alert('Link copied to ');
       });
     },
     shareToFacebook() {
@@ -1532,7 +1699,7 @@ handleDrop(e) {
     toggleReplyComment() {
       this.replyCommentVisible = !this.replyCommentVisible;
     },
-    handleMentionInput(e) {
+    handleInput(e) {
       const cursorPos = e.target.selectionStart;
       const textUpToCursor = this.newPost.substring(0, cursorPos);
       const mentionMatch = textUpToCursor.match(/@(\w*)$/);
@@ -1562,9 +1729,7 @@ handleDrop(e) {
         this.showMentionList = false;
       });
     },
-    toggleFollowerPopup() {
-      this.showFollowerPopup = !this.showFollowerPopup;
-    },
+  
     switchTab(tab) {
       this.activeTab = tab;
     },
@@ -1620,6 +1785,7 @@ handleDrop(e) {
     this.posts = this.posts.map((post) => ({
       ...post,
       liked: false,
+      isFollowing:false, //Follow post
       showComments: false,
       showShare: false,
       newComment: '',
