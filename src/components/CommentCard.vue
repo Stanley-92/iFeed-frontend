@@ -2,10 +2,10 @@
   <div class="relative mb-1 w-full">
     <!-- Comment Box -->
     <div
-      class="w-full border-l border-gray-300 p-1 rounded-sm"
-      :style="{ marginLeft: depth > -2 ? `${depth}px` : '0px' }"
-    >
-      <!-- Header -->
+      class="w-full border-l border-gray-300 p-2 rounded-xl items-center"
+      :style="{ marginLeft: depth > -2 ? `${depth}px` : '0px' }">
+      
+      <!-- Header User comment -->
       <div class="flex items-start gap-3 mb-2">
         <img :src="localComment.avatar" class="w-8 h-8 rounded-full" />
         <div class="flex-1 min-w-0">
@@ -14,33 +14,35 @@
         </div>
       </div>
 
-      <!-- Text or Editing -->
+      <!-- Text or Editing and box reply Comment  -->
       <div v-if="!isEditing">
-        <p class="text-sm text-gray-800 whitespace-pre-wrap break-words mb-2">
+        <p class="text-sm px-4 py-2 text-gray-800 whitespace-pre-wrap break-words mb-2">
         {{ localComment.text }}
-        </p>
+      </p>
       </div>
       <div v-else>
         <textarea
           v-model="editText"
-          class="w-full text-sm px-3 py-2  mb-2 resize-none"
+          class="flex-1 px-1  text-sm bg-white-400 rounded-full resize-none focus:outline-none focus:ring-2 focus:ring-white w-full"  
           rows="2"
           @input="autoResize">
         </textarea>
-        <div class="flex gap-2 text-xs">
+        <div class="flex gap-4 text-xs">
           <button class="text-green-600 font-semibold" @click="saveEdit">Save</button>
           <button class="text-gray-400" @click="cancelEdit">Cancel</button>
         </div>
       </div>
 
-      <!-- Actions -->
+
+      
+      <!-- Post  Actions -->
       <div class="flex gap-4 text-xs text-gray-500 mb-2">
         <button @click="toggleLike" class="flex items-center gap-1 hover:text-red-500">
-          <Icon :icon="localComment.liked ? 'fluent-emoji-flat:broken-heart' : 'solar:heart-linear'" :class="['w-4 h-4', { 'text-red-500': localComment.liked }]" />
+        <Icon :icon="localComment.liked ? 'fluent-emoji-flat:broken-heart' : 'solar:heart-linear'" :class="['w-4 h-4', { 'text-red-500': localComment.liked }]" />
          
         </button>
         <button @click="replyOpen = !replyOpen" class="flex items-center gap-1 hover:text-blue-500">
-          <Icon icon="basil:comment-outline" class="w-4 h-4" />
+          <Icon icon="basil:comment-outline" class="w-5 h-5" />
           
         </button>
         <button @click="isEditing = true" class="flex items-center gap-1 hover:text-green-500">
@@ -54,13 +56,15 @@
 
       <!-- Reply Count -->
       <div v-if="localComment.replies?.length" class="text-xs text-gray-400 ml-3 mb-2">
-        {{ countReplies(localComment.replies) }} {{ countReplies(localComment.replies) === 1 ? 'reply' : 'replies' }}
+      {{ countReplies(localComment.replies) }} {{ countReplies(localComment.replies) === 1 ? 'reply' : 'replies' }}
       </div>
 
+
+      
       <!-- Reply Input -->
       <div v-if="replyOpen" class="mt-3 flex flex-col w-full">
-        <p class="text-xs text-gray-500 mb-1 ml-1">
-          Replying to <span class="font-semibold">{{ localComment.user }}</span>
+        <p class="text-xs text-gray-500 mb-2 ml-1">
+        <span class="font-semibold">{{ localComment.user }}</span>
         </p>
         <div class="relative flex items-center">
           <textarea
@@ -76,11 +80,12 @@
             @click="submitReply"
             class="absolute right-2 top-1/2 -translate-y-1/2 text-blue-500 hover:text-blue-700 disabled:text-gray-400"
             :disabled="!replyText.trim()">
-            <Icon icon="mdi:send-circle" class="w-7 h-7" />
+            <Icon icon="famicons:paper-plane-outline" class="w-5 h-5" />
           </button>
-
         </div>
       </div>
+
+
 
       <!-- Recursive Replies -->
       <div v-if="localComment.replies?.length" class="mt-4 space-y-3 w-full mb-1">
@@ -136,20 +141,20 @@ const submitReply = () => {
     text,
     liked: false,
     time: 'Just now',
-    replies: []
+    replies: [],
   }
 
   if (!Array.isArray(localComment.value.replies)) localComment.value.replies = []
 
   localComment.value.replies.push(reply)
-  replyText.value = ''
+  replyText.value = '',
   replyOpen.value = false
   emit('reply-added')
 }
 
 const autoResize = (e) => {
   e.target.style.height = 'auto'
-  e.target.style.height = `${e.target.scrollHeight}px`
+  e.target.style.height = '${e.target.scrollHeight}px'
 }
 
 const saveEdit = () => {
