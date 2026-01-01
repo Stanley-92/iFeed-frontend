@@ -1,8 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center border-8 border-blue-400">
-    <div class="w-full max-w-md bg-white p-8 rounded-md shadow-md text-center border border-gray-300">
-      <h1 class="text-3xl font-bold text-green-600 mb-1">iFeed</h1>
-      <p class="text-xs text-gray-700 mb-6">Create a new account</p>
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center ">
+
+
+    <div class="w-full max-w-md bg-white p-8 rounded-md    
+    bg-gray p-8 rounded-xl shadow-md
+     w-full max-w-sm border mb-50
+     shadow-md text-center border border-gray-300 "><!---Box Create Acc-->
+
+      
+<div class=" w-65 hidden md:block max-w-full">
+<button class=" flex-1 items-center pl-3 cursor-pointer ">
+<Icon icon="tdesign:chat-bubble" 
+class="w-14 h-14 text-white transition-colors bg-green-500
+ border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
+
+ @click="goToMainfeed"/>
+</button>
+</div>
+      <p class="text-xl font-semibold text-gray-700 mb-6">Create a new account</p>
 
       <!-- First + Last Name -->
       <div class="flex gap-2 mb-2">
@@ -14,17 +29,17 @@
       <p v-if="errors.name" class="text-red-500 text-xs mb-2">{{ errors.name }}</p>
 
       <!-- DOB -->
-      <div class="text-left text-xs text-gray-600 mb-1">Date of Birth</div>
+      <div class="text-left text-xs font-medium text-gray-600 mb-1">Date of Birth</div>
       <div class="flex gap-2 mb-2">
-        <select v-model="form.dobDay" class="w-1/3 border text-xs border-gray-400 px-2 py-2 rounded-md">
+        <select v-model="form.dobDay" class="w-1/3 border text-xs font-medium border-gray-400 px-2 py-2 rounded-md">
           <option value="">Day</option>
           <option v-for="d in 31" :key="d" :value="String(d).padStart(2, '0')">{{ d }}</option>
         </select>
-        <select v-model="form.dobMonth" class="w-1/3 border text-xs border-gray-400 px-2 py-2 rounded-md">
+        <select v-model="form.dobMonth" class="w-1/3 border  font-medium text-xs border-gray-400 px-2 py-2 rounded-md">
           <option value="">Month</option>
           <option v-for="m in 12" :key="m" :value="String(m).padStart(2, '0')">{{ m }}</option>
         </select>
-        <select v-model="form.dobYear" class="w-1/3 border text-xs border-gray-400 px-2 py-2 rounded-md">
+        <select v-model="form.dobYear" class="w-1/3 border  font-medium text-xs border-gray-400 px-2 py-2 rounded-md">
           <option value="">Year</option>
           <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
         </select>
@@ -32,14 +47,14 @@
       <p v-if="errors.dob" class="text-red-500 text-xs mb-2">{{ errors.dob }}</p>
 
       <!-- Gender -->
-      <div class="text-left text-xs text-gray-600 mb-1">Gender</div>
+      <div class="text-left font-medium text-xs text-gray-600 mb-1">Gender</div>
       <div class="flex gap-2 mb-2">
         <button
           v-for="g in ['Female', 'Male', 'Other']"
           :key="g"
           @click="form.gender = g"
           :class="[
-            'flex-1 border text-xs px-2 py-2 rounded-md',
+            'flex-1 border  font-medium text-xs px-2 py-2 rounded-md',
             form.gender === g ? 'border-green-500 bg-green-100' : 'border-gray-400'
           ]">
           {{ g }}
@@ -60,7 +75,7 @@
 
       <!-- Submit -->
       <button @click="handleSubmit"
-        class="w-full bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-md hover:bg-green-600">
+        class="w-full bg-blue-500 text-gray text-xl  font-semibold px-4 py-2 rounded-xl hover:text-white">
         Create Your Account
       </button>
     </div>
@@ -70,11 +85,13 @@
 
 
 <script>
+import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 export default {
   name: 'CreateAccount',
+     components: { Icon },
 
   data() {
     return {
@@ -125,6 +142,7 @@ export default {
       if (!this.errors.name && !this.errors.dob && !this.errors.gender && !this.errors.contact && !this.errors.password) {
         if (emailRegex.test(this.form.contact)) {
           try {
+            
             // Firebase create user
             await createUserWithEmailAndPassword(auth, this.form.contact, this.form.password)
 
