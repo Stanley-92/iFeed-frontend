@@ -16,10 +16,12 @@ class="w-25 bg-white border-2 p-6 hidden md:block sticky top-0 h-[100dvh]">
 <div 
 class="flex-1 inset-y-0 left-0 flex items-center pl-3  cursor-pointer"
  @click="handleSearch">
+
 <!-- Search Icon -->
  <button
   @click="toggleSearch"
-  class="relative z-50 p-2 hover:bg-gray-100 rounded-xl"> <!---Hover Style background icon -->
+  class="relative  z-50 p-2 hover:bg-gray-100 rounded-xl">
+   <!---Hover Style background icon -->
   <Icon icon="solar:magnifer-outline" class="w-6 h-6 text-gray-600  " />
   </button>
 </div>
@@ -41,11 +43,10 @@ class="flex-1 inset-y-0 left-0 flex items-center pl-3  cursor-pointer"
     ? 'opacity-100 translate-x-0 pointer-events-auto'
     : 'opacity-0 -translate-x-6 pointer-events-none'"
   @keyup.enter="handleSearch"
-  @blur="closeIfEmpty"
-/>
+  @blur="closeIfEmpty"/>
 
 
-  <!-- Search Results -->
+<!-- Search Results -->
 <div
   v-if="showResults && filteredSearchUsers.length"
   class="absolute top-14 left-0 w-72 bg-white
@@ -76,6 +77,8 @@ class="flex-1 inset-y-0 left-0 flex items-center pl-3  cursor-pointer"
 <div 
 
 class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style background -->
+
+
 <!---Home icon-->
 <Icon icon="material-symbols:home" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Home-->
 </div>
@@ -86,7 +89,10 @@ class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style backg
   class="relative z-50 p-3 hover:bg-gray-200 rounded-xl">
 <!---Heart icon-->
 <Icon icon="solar:heart-outline" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>
-<span v-if="notifications.length > 0" class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+<span v-if="notifications.length > 0"
+   class="absolute top-0 
+   right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold 
+   rounded-full w-5 h-5 flex items-center justify-center">
 {{ notifications.length }}
 </span>
 </button>
@@ -154,7 +160,7 @@ class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
 
 
 
-<!-- Action Icons + Post (Right aligned) -->
+<!-- Action Icons  Post Right aligned -->
 <div class="flex justify-end items-center gap-4 text-gray-600 mb-3 px-2">
 <!-- Location Icon Button -->
 <button @click="getLocation" title="Location">
@@ -192,6 +198,7 @@ aria-label="Back">
 class="absolute right-2 p-2 rounded hover:bg-gray-100"
 @click="closeLocation"
 aria-label="Close">
+
 <Icon icon="material-symbols:close"/>
 </button>
 </div>
@@ -214,7 +221,7 @@ class="w-full px-4 py-2 pr-10 rounded-lg bg-gray-200/70 text-sm outline-none"
 class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-gray-100 text-gray-600 hover:text-green-600"
 @click="confirmLocation"
 aria-label="Send">
-<Icon icon="mdi:send-outline" class="w-5 h-5" />
+<Icon icon="ph:paper-plane-tilt-duotone" class="w-5 h-5" />
 </button>
 </div>
 
@@ -236,6 +243,8 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 </div>
 </div>
 </teleport>
+
+
 <!-- Location Popup Modal -->
 
 
@@ -273,14 +282,18 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 
 
 <!-- Post -->
-<button class="text-sm font-semibold text-gray-700 hover:text-blue-600" @click="submitPost(); showPostModal = false">
+<button 
+class="text-sm font-semibold text-gray-700 hover:text-blue-600"
+ @click="submitPost(); showPostModal = false">
  Post
 </button>
 </div>
 <!-- Post -->
 
 <!-- Preview Modal for Media before  post  -->
-<div v-if="activePreview" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+<div
+ v-if="activePreview"
+ class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
 <div class="relative max-w-3xl w-full max-h-[90vh]">
 <button
 @click="closePreview"
@@ -326,8 +339,10 @@ class="relative">
  </div>
 </div>
 </div> 
-<!--When  Post a Composer -->
 
+
+
+<!--When  Post a Composer -->
 </div>
 </div>
 </teleport>
@@ -375,7 +390,9 @@ class="relative">
         <!-- Section 2 -->
         <div>
           <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-200 px-2 rounded">
-            <button>iFeed</button>
+            <button>
+              iFeed
+            </button>
             <Icon icon="ooui:next-ltr"/>
           </div>
           <div class="py-3 px-2 cursor-pointer hover:bg-gray-200 rounded">Feedback</div>
@@ -384,7 +401,7 @@ class="relative">
           </div>
         </div>
 
-        <!-- Logout -->
+<!-- Logout -->
         <div>
           <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 rounded text-red-500 flex items-center gap-2">
             <Icon
@@ -409,52 +426,64 @@ class="relative">
 
 
 <!-- MainiFeed -->
-
 <main class="flex-5 max-w-2xl mx-auto px-4 py-5 ">
-    
-<div class="max-w-2xl mx-auto bg-white border rounded-xl shadow-sm p-6 relative mb-1">
 
 
-<!--  Stories Container -->
-<div
-  
+
+
+
+
+<!-- STORIES WRAPPER -->
+<div class="relative w-full mb-4">
+
+  <!-- Stories Container -->
+  <div
     ref="storyScrollRef"
-    class="flex gap-4 overflow-x-auto scroll-smooth px-2 no-scrollbar" >
+    class="flex gap-4 overflow-x-auto 
+    scroll-smooth px-2 no-scrollbar">
     <div
       v-for="(story, i) in stories"
       :key="story.id"
       @click="openStory(i)"
-      class="flex flex-col items-center flex-shrink-0 w-[90px]">
+      class="flex flex-col items-center 
+      flex-shrink-0 w-[90px] cursor-pointer">
       <!-- Gradient Border -->
       <div
         class="w-20 h-20 rounded-xl p-[2px]
-               bg-gradient-to-tr from-purple-500 to-pink-500">
+        bg-gradient-to-tr from-purple-500
+        to-pink-500">
         <img
           :src="story.media"
           class="w-full h-full rounded-lg object-cover bg-white"/>
       </div>
 
-      <span
-        class="text-xs mt-2 text-gray-700 truncate w-full text-center">
-        {{ story.username }}
-      </span>
+      <p
+      class="text-xs mt-2 text-gray-700 truncate w-full text-center">
+      {{ story.username }}
+    </p>
     </div>
   </div>
 
-  <!-- Left Arrow -->
+  <!-- LEFT ARROW -->
   <button
     @click="scrollStories('left')"
-    class="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-10">
+    class="absolute left-1 top-1/2 -translate-y-1/2
+           bg-white shadow rounded-full p-1 z-20">
     <Icon icon="ic:round-chevron-left" class="w-5 h-5" />
   </button>
 
-  <!-- Right Arrow -->
+  <!-- RIGHT ARROW -->
   <button
     @click="scrollStories('right')"
-    class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-10">
+    class="absolute right-1 top-1/2 -translate-y-1/2
+    bg-white shadow rounded-full p-1 z-20">
     <Icon icon="ic:round-chevron-right" class="w-5 h-5" />
   </button>
-</div>
+  </div>
+
+
+
+
 
 <!-- Post a Composer 1  box Media post -->
 
@@ -617,7 +646,6 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
     @click="openMediaModal(media, post.media)"/>
 </div>
 
-
 <!-- Media Fullscreen Viewer with Navigation -->
   <div
   v-if="selectedMedia"
@@ -711,9 +739,13 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 <!-- Header -->
 
 <div class="flex justify-between items-center mb-3">
-<h2 class="text-lg font-bold">iFeed</h2>
-<button @click="closePopup" class="text-gray-500 hover:text-black"> 
-<Icon icon="ri:close-line"/></button>
+<h2 class="text-lg font-bold">
+iFeed
+</h2>
+<button
+ @click="closePopup" class="text-gray-500 hover:text-black"> 
+<Icon icon="ri:close-line"/>
+</button>
 </div>
 
 <!-- Post Input -->                                                                                                                                        <!-- Repost Button  -->
@@ -724,9 +756,13 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 
 <!-- Sent to Friend -->
 <div class="mb-4">
-<p class="font-semibold mb-1">Sent to Friend</p>
+<p class="font-semibold mb-1">
+  Sent to Friend
+</p>
 <div class="flex space-x-2">
-<img v-for="(friend, index) in friends" :key="index" :src="friend" class="w-10 h-10 rounded-full" />
+<img
+ v-for="(friend, index) in friends" :key="index" :src="friend"
+  class="w-10 h-10 rounded-full" />
 </div>
 </div>
 
@@ -741,7 +777,9 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 </button>
 <button class="flex flex-col items-center text-sm">
   <Icon icon="logos:telegram" class="w-10 h-10"/>
-<span>Telegram</span>
+<span>
+  Telegram
+</span>
 </button>
 <button class="flex flex-col items-center text-sm">
   <Icon icon="logos:facebook" class="w-10 h-10"/>
@@ -749,7 +787,10 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 </button>
 <button class="flex flex-col items-center text-sm item-center">
 <Icon icon="tdesign:chat-bubble"
- class="w-10 h-10 text-white transition-colors bg-green-500 border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600"/>
+ class="w-10 h-10 text-white 
+ transition-colors bg-green-500 
+ border-4 border-green-500 rounded-xl
+  duration-200 hover:text-gray-600"/>
 <span>iFeed</span>
 </button>
 </div>
@@ -772,12 +813,14 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 
 
  <!-- Comment Reply Box -->
-  <div v-if="post.showComments" class="max-w-sl rounded-full mx-auto px-4 py-4">
+  <div v-if="post.showComments" 
+  class="max-w-sl rounded-full mx-auto px-4 py-4">
+
     <!-- View All Toggle -->
     <div
     class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
-      @click="post.viewAll = !post.viewAll">
-   Show all {{countTotalComments (post.commentsList) }} comments 
+   @click="post.viewAll = !post.viewAll">
+   All {{countTotalComments (post.commentsList) }} comments 
   </div>
 
   <!-- Comment List -->
@@ -796,12 +839,12 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 <img :src="post.avatar" class="w-10 h-10 rounded-full border-2 " />
 
 <!-- Add New Comment Input "-->  
-<div class="relative flex items-end gap-2 w-full">
+<div class="relative flex-1 items-end gap-8 w-full">
 
   <textarea
     v-model="post.newComment"
     placeholder="Add a comment..."
-    class="flex-1 px-3 pr-24 py-2 text-sm bg-gray-100 rounded-xl resize-none
+    class="flex-1 px-2 pr-24 py-2 text-sm bg-gray-100 rounded-xl resize-none
            focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
     @input="autoResize($event)"
     @keyup.enter.exact.prevent="addCommentToPost(index)">
@@ -813,7 +856,7 @@ class="bg-white rounded-xl p-4 w-[420px] relative"
 <button
   class="absolute right-16 bottom-2 text-gray-500 hover:text-blue-500"
   @click.stop="toggleEmojiPicker(index)">
-  <Icon icon="proicons:emoji" class="w-5 h-5 text-yellow-500" />
+  <Icon icon="proicons:emoji" class="w-5 h-5" />
 </button>
 
 <!-- Emoji Picker -->
@@ -935,103 +978,128 @@ TeamDevOP.Sihanouk Ville City.Cambodia
 
 
 
-<!--Open Story Modal view  -->
+
+
+<!-- OPEN STORY MODAL -->
 <div
-v-if="activeStory"
-class="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]"
-@click.self="closeStory">
-<div
- 
+  v-if="activeStory"
+  class="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]"
+  @click.self="closeStory">
 
- class="relative w-[90vw] max-w-[430px] aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-2xl">
-<!-- Phone Fram 9:6 -->
+  <!-- PHONE FRAME -->
+  <div
+    class="relative w-[90vw] max-w-[430px] aspect-[9/16]
+    bg-black rounded-2xl overflow-hidden shadow-2xl">
 
-<!-- Top overlay: user + close + progress -->
-
-<div class="absolute inset-x-0 top-0 p-3 z-20">
-   <!-- progress bar (fake timer, bind width if you want) -->
-<div class="h-1 w-full bg-white/20 rounded">
-<div class="h-full bg-white rounded" :style="{ width: progress + '%' }">
-</div>
-
-</div>
-
-<div class="mt-3 flex items-center justify-between">
-<div class="flex items-center gap-2 text-white">
-<img :src="activeStory.avatar" class="w-7 h-7 rounded-full ring-2 ring-purple-500" />
-<div class="leading-tight">
-<p class="text-sm font-semibold">{{ activeStory.username }}</p>
-<p class="text-[11px] text-white/70">{{ activeStory.time }}</p>
-</div>
-</div>
-<button @click="closeStory" class="p-2 hover:bg-white/10 rounded-full">
-<Icon icon="material-symbols:close" class="w-5 h-5 text-white" />
-</button>
-</div>
-</div>
-
-<!-- Media  View Stroy-->
-<div class="absolute inset-0">
-<component
-:is="activeStory.type === 'video' ? 'video' : 'img'"
-:src="activeStory.media"
-class="w-full h-full object-cover"
-v-bind="activeStory.type === 'video'? { autoplay: true, muted: true, loop: true, playsinline: true } 
-  :{}"/>
-  </div>
-
-  <!-- Bottom composer -->
-      <div class="absolute inset-x-0 bottom-0 p-4 z-20">
-        <div class="flex items-center gap-3">
-          <input
-            v-model="replyText"
-            type="text"
-            placeholder="Send message..."
-            class="flex-1 bg-white/90 text-[13px] rounded-full px-4 py-2 outline-none placeholder:text-gray-500"
-            @keydown.enter.prevent="sendReply"/>
-
-          
-          <button class="p-2 rounded-full bg-white/10 hover:bg-white/20">
-          <Icon icon="solar:heart-linear" class="w-5 h-5 text-white" />
-          </button>
-          <button class="p-2 rounded-full bg-white/10 hover:bg-white/20" @click="sendReply">
-          <Icon icon="meteor-icons:paper-plane" class="w-5 h-5 text-white" />
-          </button>
-</div>
+    <!-- MEDIA NON INTERACTIVE) -->
+  
+<div class="absolute inset-0 z-0">
+  <component
+    :is="activeStory.type === 'video' ? 'video' : 'img'"
+    :src="activeStory.media"
+    class="w-full h-full object-cover pointer-events-none"
+    v-bind="activeStory.type === 'video'
+      ? { autoplay: true, muted: true, loop: true, playsinline: true }
+      : {}"
+  />
 </div>
 
 
- <!-- Next -->
-      <button
-        @click="nextStory"
-        class="hidden sm:flex items-center justify-center text-white/80 hover:text-white ml-2"
-        aria-label="Next story">
-      <Icon icon="weui:arrow-filled-right" class="w-7 h-7" />
-      </button>
-
-      <!-- Left/Right click zones -->
-      <button
-        @click="prevStory"
-        class="absolute left-0 top-0 h-full w-1/4 hover:bg-white/5 transition z-10"
-        aria-label="Previous">
-      </button>
-
-      <button
-        @click="nextStory"
-        class="absolute right-0 top-0 h-full w-1/4 hover:bg-white/5 transition z-10"
-        aria-label="Next">
-    </button>
-
-      <!-- Arrow hints (optional) -->
-      <div class="absolute left-2 top-1/2 -translate-y-1/2 text-white/90 z-20">
-        <Icon icon="weui:arrow-filled-left" class="w-6 h-6" />
+    <!-- TOP OVERLAY: Avatar + Username + Time + Close -->
+    <div class="absolute inset-x-0 top-0 p-3 z-20">
+      <!-- Progress Bar -->
+      <div class="h-1 w-full bg-white/20 rounded mb-3">
+        <div class="h-full bg-white rounded" :style="{ width: progress + '%' }"></div>
       </div>
-      <div class="absolute right-2 top-1/2 -translate-y-1/2 text-white/90 z-20">
-        <Icon icon="weui:arrow-filled-right" class="w-6 h-6" />
+
+      <!-- Avatar, Username, Time -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2 text-white">
+          <!-- Avatar -->
+          <img
+            :src="activeStory.avatar"
+            alt="Poster Avatar"
+            class="w-8 h-8 rounded-full ring-2 ring-purple-500" />
+          <!-- Username + Time -->
+          <div class="leading-tight">
+            <p class="text-sm font-semibold">{{ activeStory.username }}</p>
+            <p class="text-[11px] text-white/70">{{ activeStory.time }}</p>
+          </div>
+        </div>
+
+        <!-- Close Button -->
+        <button @click="closeStory" class="p-2 hover:bg-white/10 rounded-full">
+          <Icon icon="material-symbols:close" class="w-5 h-5 text-white" />
+        </button>
       </div>
     </div>
+
+
+    <!-- CLICK ZONES (LOWER LAYER) -->
+    <button
+      @click="prevStory"
+      class="absolute left-0 top-0 h-full w-1/4 z-10">
+  </button>
+
+    <button
+      @click="nextStory"
+      class="absolute right-0 top-0 h-full w-1/4 z-10">
+      
+  </button>
+
+    <!-- LEFT ARROW (CLICKABLE) -->
+    <button
+      @click="prevStory"
+      class="absolute left-3 top-1/2 -translate-y-1/2 z-40
+      p-2 rounded-full bg-black/30 hover:bg-black/50">
+      <Icon icon="ooui:next-rtl" class="w-6 h-6 text-white" />
+    </button>
+
+    <!-- RIGHT ARROW (CLICKABLE) -->
+    <button
+      @click="nextStory"
+      class="absolute right-3 top-1/2 -translate-y-1/2 z-40
+      p-2 rounded-full bg-black/30 hover:bg-black/50">
+      <Icon icon="ooui:next-ltr" class="w-6 h-6 text-white" />
+    </button>
+
+    <!-- BOTTOM COMPOSER -->
+    <div class="absolute inset-x-0 bottom-0 p-4 z-50">
+      <div class="flex items-center gap-3">
+        <input
+          v-model="replyText"
+          type="text"
+          placeholder="Send message..."
+          class="flex-1 bg-white/90 text-[13px]
+                 rounded-full px-4 py-2 outline-none"
+          @keydown.enter.prevent="sendReply"/>
+
+<!-- Heart Button -->
+<button
+  @click="toggleLike"
+  class="p-2 rounded-full hover:bg-white/20 transition-colors">
+  <Icon
+    icon="solar:heart-linear"
+    :class="[
+      'w-5 h-5 transition-transform transition-colors',
+      activeStory.liked ? 'text-red-500 scale-125' : 'text-white scale-100'
+    ]"
+  />
+</button>
+
+
+        <button
+          class="p-2 rounded-full bg-white/10 hover:bg-white/20"
+          @click="sendReply">
+          <Icon icon="meteor-icons:paper-plane" class="w-5 h-5 text-white" />
+        </button>
+      </div>
+    </div>
+
   </div>
-   </div>
+</div>
+</div>
+  
  <!-- Story Modal -->
 
 </template>
@@ -1076,6 +1144,7 @@ export default {
     EmojiPicker,
     CommentCard,
     ChatPanel,
+
   },
  
   data() {
@@ -1121,6 +1190,7 @@ export default {
       scrollContainer: null,
       showLocationPopup: false,
       locationInput: '',
+      
       suggestions: [
       { name: 'Phnom Penh', desc: 'Cambodia' },
       { name: 'Siem Reap', desc: 'Angkor Wat' },
@@ -1139,7 +1209,8 @@ export default {
       { name: 'chakriya' },
       { name: 'konkhmer' },
        { id: 1, username: 'sinayun', avatar: sinayun },
-       // Foller
+
+  // Foller
   { id: 2, username: 'nayun', avatar: story2 },
   { id: 3, username: 'nita_lovekhmer', avatar: story3 },
   { id: 4, username: 'chakriya', avatar: story4 },
@@ -1168,15 +1239,25 @@ export default {
       showSharePopup: null,                                                                        
   
       replyText: '',
-      stories: [
-        { id: 1, username: 'user_1', media: story1, type: 'image', time: '1h ago' },
-        { id: 2, username: 'user_2', media: story2, type: 'video', time: '2h ago' },
-        { id: 3, username: 'user_3', media: story3, type: 'image', time: '3h ago' },
-        { id: 4, username: 'user_4', media: story4, type: 'image', time: '3h ago' },
-        { id: 5, username: 'user_5', media: story5, type: 'image', time: '3h ago' },
-        { id: 6, username: 'user_6', media: story5, type: 'image', time: '3h ago' },
-        { id: 1, username: 'user_1', media: story1, type: 'image', time: '1h ago' },
-      ],
+
+
+
+// Story 
+
+    stories: [
+  { id:1, username:'nayun', avatar: sinayun, media: story1, type:'image', time:'1h ago', liked: false },
+  { id: 2, username: 'user_2', media: story2, type: 'video', time: '2h ago', liked: false },
+  { id: 3, username: 'user_3', media: story3, type: 'image', time: '3h ago', liked: false },
+  { id: 4, username: 'user_4', media: story4, type: 'image', time: '3h ago', liked: false },
+  { id: 5, username: 'user_5', media: story5, type: 'image', time: '3h ago', liked: false },
+  { id: 6, username: 'user_6', media: story5, type: 'image', time: '3h ago', liked: false },
+  { id: 7, username: 'user_1', media: story1, type: 'image', time: '1h ago', liked: false },
+  { id: 8, username: 'Konsreypov', media: story1, type: 'image', time: '1h ago', liked: false },
+],
+
+
+
+
       suggestedUsers: [
         { id: 1, avatar: sinayun, username: 'nita_lovekhmer' },
         { id: 2, avatar: story2, username: 'នារី_lovekhmer' },
@@ -1185,11 +1266,13 @@ export default {
         { id: 5, avatar: story5, username: 'Kon_Khmer' },     
       ],
       currentUser: {
-        name: 'sinayun_xyn',
-        avatar: story4,
+      name: 'sinayun_xyn',
+      avatar: story4,
+      username: 'myUsername',
+ 
       },
 
-
+//Post
       posts: [
         {
           id: 1,
@@ -1234,10 +1317,19 @@ export default {
   },
 
 
+
+
+
+   
+    
   
+
 //Show Result Search 
 
 computed: {
+
+
+
   filteredSearchUsers() {
     if (!this.searchQuery) return [];
     return this.users.filter(u =>
@@ -1251,7 +1343,6 @@ computed: {
   
   //Method 
   methods: {
-
 
     
 
@@ -1289,12 +1380,12 @@ computed: {
   const post = this.posts[index]
 
   // SAFETY
-  if (!post.tempCommentMedia) {
+  if (!post.commentMedia) {
     this.$set(post, 'commentMedia', [])
   }
 
   files.forEach(file => {
-    post.tempCommentMedia.push({
+    post.commentMedia.push({
       url: URL.createObjectURL(file),
       type: file.type.startsWith('video') ? 'video' : 'image'
     })
@@ -1408,7 +1499,7 @@ selectSearchUser(user) {
           username: "new_user",
           action: "Love your post",
           time: new Date().toLocaleTimeString(),
-          avatar: "https://i.pravatar.cc/100"
+          avatar: "" // friend Lisdt here 
         };
 
         this.notifications.unshift(newNotification);
@@ -1430,7 +1521,7 @@ selectSearchUser(user) {
 
    },
    goLogin(){
-    this.$router.push('/login'); //Go to Profile
+    this.$router.push('/'); //Go to Profile
 
    },
     handleTouchStart(e) {
@@ -1482,13 +1573,11 @@ selectSearchUser(user) {
     removeMedia(index) {
       this.mediaPreviews.splice(index, 1);
     },
-    scrollStories(direction) {
-      const container = this.storyScrollRef;
-      const amount = 150;
-      if (container) {
-        container.scrollLeft += direction === 'right' ? amount : -amount;
-      }
-    },
+
+   
+
+
+
  handleFileUpload(e) {
   const files = Array.from(e.target.files);
   this.mediaPreviews = files.map((file) => ({
@@ -1594,15 +1683,26 @@ addEmojiToComment(emoji, index) {
       return count;
     },
 
-
+// Toggle Like 
     toggleLike(index) {
       const post = this.posts[index];
       post.liked = !post.liked;
       post.likes += post.liked ? 1 : -1;
+
+      //story like Heart
+      if (!this.activeStory) return;
+    // Toggle active story
+    this.activeStory.liked = !this.activeStory.liked;
+
+    // Optional update the main stories array to persist
+    this.stories[this.currentStoryIndex].liked = this.activeStory.liked;
     },
+
+
     toggleSharePopup(index) {
       this.posts[index].showShare = !this.posts[index].showShare;
     },
+
     addCommentToPost(index) {
       const post = this.posts[index];
       const text = post.newComment.trim();
@@ -1712,14 +1812,53 @@ toggleComment(index) {
     cancelEdit() {
       this.editingIndex = null;
     },
+
+
+
+
+     // Scrolling Story Next icon 
+     scrollStories(direction) {
+    const el = this.$refs.storyScrollRef;
+    if (!el) return;
+
+    const scrollAmount = 120; // width of one story card
+
+    if (direction === 'left') {
+      el.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    } else {
+      el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  },
+
+  //Story  Disable arrows at edges 
+    canScrollLeft() {
+    const el = this.$refs.storyScrollRef;
+    return el && el.scrollLeft > 0;
+  },
+  canScrollRight() {
+    const el = this.$refs.storyScrollRef;
+    return el && el.scrollLeft + el.clientWidth < el.scrollWidth;
+  },
+
+
+
+
+    //Story open
     openStory(index) {
       this.currentStoryIndex = index;
       this.activeStory = this.stories[index];
+      this.activeStory = this.stories[index];
+    this.progress = 0; // reset progress
     },
+
+    //Story close
     closeStory() {
       this.activeStory = null;
       clearTimeout(this.autoCloseTimer);
+      this.progress = 0;
     },
+    
+    //Story next
     nextStory() {
       if (this.currentStoryIndex < this.stories.length - 1) {
         this.openStory(this.currentStoryIndex + 1);
@@ -1727,16 +1866,25 @@ toggleComment(index) {
         this.closeStory();
       }
     },
+
+    //Story pre
     prevStory() {
       if (this.currentStoryIndex > 0) {
         this.openStory(this.currentStoryIndex - 1);
       }
     },
+
+    //Sotry
     sendReply() {
       const text = this.replyText.trim();
       if (!text) return;
       this.replyText = '';
     },
+
+
+
+
+
     copyLink() {
       navigator.clipboard.writeText(window.location.href).then(() => {
         alert('Link copied to ');
