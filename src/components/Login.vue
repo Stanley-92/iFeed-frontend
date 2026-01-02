@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-300 flex items-center justify-center">
+  <div class="min-h-screen bg-gray flex items-center justify-center">
     <div class="flex w-full max-w-6xl items-center justify-between px-8 gap-10">
 
       <!-- LEFT TEXT -->
@@ -23,7 +23,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green
 </div>
 
    <!-- ACTION MENU -->
-        <div class="flex flex-col gap-6 text-black">
+    <!-----  <div class="flex flex-col gap-6 text-black">
           <div class="flex items-center gap-3">
           </div>
       
@@ -32,16 +32,13 @@ class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green
             <span class="text-xl font-semibold">Share</span>
           </div>
         </div>
-
+--->
       </div>
 
       <!-- ACTION + STORY STACK -->
       <div class="relative items-center mt-10 p-2  ">
-
-     
-
     <!-- CENTER STORY STACK -->
-      <div class="relative   items-center w-[360px] h-[320px] mt-50 p-2 ">
+      <div class="relative   items-center w-[360px] h-[320px] mt-10 px-4 ">
         <img
           v-for="(story, i) in stories"
           :key="i"
@@ -68,21 +65,21 @@ class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green
 
 
       <!-- LOGIN FORM -->
-      <div class="bg-gray p-8 rounded-xl shadow-md w-full max-w-sm border mb-50">
+      <div class=" border-2   p-8 rounded-xl shadow-md w-full max-w-sm  mb-50">
         <input
           type="text"
           placeholder="Email or Phone number"
-          class="w-full mb-4 px-4 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
           v-model="email"/>
 
         <input
           type="password"
           placeholder="Password"
-          class="w-full mb-4 px-4 py-2 border rounded outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
           v-model="password" />
 
         <button
-          class="w-full bg-blue-600 text-white font-bold py-2 rounded hover:bg-blue-700 mb-2"
+          class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 mb-2"
           @click="login" >
           Login
         </button>
