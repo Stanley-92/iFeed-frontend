@@ -1,13 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center ">
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center border-8 ">
 
-
-    <div class="w-full max-w-md bg-white p-8 rounded-md    
+  
+      <div class="w-full max-w-md bg-white p-8 rounded-md    
     bg-gray p-8 rounded-xl shadow-md
-     w-full max-w-sm border mb-50
-     shadow-md text-center border border-gray-300 "><!---Box Create Acc-->
+     w-full max-w-sm border-2 mb-50
+     shadow-md text-center border "><!---Box Create Acc-->
 
-      
+      <!-- Back to Main Feed Button (optional) -->
+   
 <div class=" w-65 hidden md:block max-w-full">
 <button class=" flex-1 items-center pl-3 cursor-pointer ">
 <Icon icon="tdesign:chat-bubble" 
@@ -16,82 +17,84 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 
  @click="goToMainfeed"/>
 </button>
-</div>
-      <p class="text-xl font-semibold text-gray-700 mb-6">Create a new account</p>
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Create a new account</h2>
 
       <!-- First + Last Name -->
-      <div class="flex gap-2 mb-2">
-        <input v-model="form.firstName" type="text" placeholder="First name"
-          class="w-1/2 border text-xs border-gray-400 px-2 py-2 rounded-md focus:outline-none" />
-        <input v-model="form.lastName" type="text" placeholder="Last name"
-          class="w-1/2 border text-xs border-gray-400 px-2 py-2 rounded-md focus:outline-none" />
+      <div class="flex gap-3 mb-3">
+        <input v-model.trim="form.firstName" type="text" placeholder="First name"
+          class="w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
+        <input v-model.trim="form.lastName" type="text" placeholder="Last name"
+          class="w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
       </div>
-      <p v-if="errors.name" class="text-red-500 text-xs mb-2">{{ errors.name }}</p>
+      <p v-if="errors.name" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.name }}</p>
 
-      <!-- DOB -->
-      <div class="text-left text-xs font-medium text-gray-600 mb-1">Date of Birth</div>
-      <div class="flex gap-2 mb-2">
-        <select v-model="form.dobDay" class="w-1/3 border text-xs font-medium border-gray-400 px-2 py-2 rounded-md">
-          <option value="">Day</option>
+      <!-- Date of Birth -->
+      <div class="text-left text-sm font-medium text-gray-600 mb-2">Date of Birth</div>
+      <div class="flex gap-3 mb-3">
+        <select v-model="form.dobDay"
+          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled>Day</option>
           <option v-for="d in 31" :key="d" :value="String(d).padStart(2, '0')">{{ d }}</option>
         </select>
-        <select v-model="form.dobMonth" class="w-1/3 border  font-medium text-xs border-gray-400 px-2 py-2 rounded-md">
-          <option value="">Month</option>
+        <select v-model="form.dobMonth"
+          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled>Month</option>
           <option v-for="m in 12" :key="m" :value="String(m).padStart(2, '0')">{{ m }}</option>
         </select>
-        <select v-model="form.dobYear" class="w-1/3 border  font-medium text-xs border-gray-400 px-2 py-2 rounded-md">
-          <option value="">Year</option>
+        <select v-model="form.dobYear"
+          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          <option value="" disabled>Year</option>
           <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
         </select>
       </div>
-      <p v-if="errors.dob" class="text-red-500 text-xs mb-2">{{ errors.dob }}</p>
+      <p v-if="errors.dob" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.dob }}</p>
 
       <!-- Gender -->
-      <div class="text-left font-medium text-xs text-gray-600 mb-1">Gender</div>
-      <div class="flex gap-2 mb-2">
-        <button
-          v-for="g in ['Female', 'Male', 'Other']"
-          :key="g"
-          @click="form.gender = g"
+      <div class="text-left text-sm font-medium text-gray-600 mb-2">Gender</div>
+      <div class="flex gap-3 mb-3">
+        <button v-for="g in ['Female', 'Male', 'Other']" :key="g" @click="form.gender = g"
           :class="[
-            'flex-1 border  font-medium text-xs px-2 py-2 rounded-md',
-            form.gender === g ? 'border-green-500 bg-green-100' : 'border-gray-400'
+            'flex-1 py-3 px-4 rounded-lg border-2 text-sm font-medium transition',
+            form.gender === g
+              ? 'border-green-500 bg-green-50 text-green-700'
+              : 'border-gray-300 hover:border-gray-400'
           ]">
           {{ g }}
         </button>
-
       </div>
-      <p v-if="errors.gender" class="text-red-500 text-xs mb-2">{{ errors.gender }}</p>
+      <p v-if="errors.gender" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.gender }}</p>
 
-      <!-- Email / Phone -->
-      <input v-model="form.contact" type="text" placeholder="Email or Phone number"
-        class="w-full border text-xs border-gray-400 px-2 py-2 rounded-md mb-2" />
-      <p v-if="errors.contact" class="text-red-500 text-xs mb-2">{{ errors.contact }}</p>
+      <!-- Email -->
+      <input v-model.trim="form.contact" type="text" placeholder="Email address"
+        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-3 text-sm" />
+      <p v-if="errors.contact" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.contact }}</p>
 
       <!-- Password -->
-      <input v-model="form.password" type="password" placeholder="New password"
-        class="w-full border text-xs border-gray-400 px-2 py-2 rounded-md mb-4" />
-      <p v-if="errors.password" class="text-red-500 text-xs mb-2 -mt-3">{{ errors.password }}</p>
+      <input v-model="form.password" type="password" placeholder="Create password "
+        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-4 text-sm" />
+      <p v-if="errors.password" class="text-red-500 text-xs mb-4 -mt-3">{{ errors.password }}</p>
 
-      <!-- Submit -->
-      <button @click="handleSubmit"
-        class="w-full bg-blue-500 text-gray text-xl  font-semibold px-4 py-2 rounded-xl hover:text-white">
-        Create Your Account
+      <!-- Submit Button with Loading -->
+      <button @click="handleSubmit" :disabled="isLoading"
+        class="w-full py-4 bg-blue-600 text-white font-bold text-lg rounded-xl hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition flex items-center justify-center">
+        <span v-if="isLoading">Creating Account...</span>
+        <span v-else>Create Your Account</span>
       </button>
+
     </div>
   </div>
 </template>
 
-
-
 <script>
 import { Icon } from '@iconify/vue';
-import { auth } from '@/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default {
   name: 'CreateAccount',
-     components: { Icon },
+  components: { Icon },
 
   data() {
     return {
@@ -102,7 +105,7 @@ export default {
         dobMonth: '',
         dobYear: '',
         gender: '',
-        contact: '',
+        contact: '', // email only for now
         password: ''
       },
       errors: {
@@ -112,67 +115,113 @@ export default {
         contact: '',
         password: ''
       },
-      years: Array.from({ length: 100 }, (_, i) => `${new Date().getFullYear() - i}`)
-    }
+      isLoading: false,
+      years: Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i)
+    };
   },
 
   methods: {
+    goToMainfeed() {
+      this.$router.push('/'); // or your main feed route
+    },
+
     async handleSubmit() {
       // Reset errors
-      this.errors.name = ''
-      this.errors.dob = ''
-      this.errors.gender = ''
-      this.errors.contact = ''
-      this.errors.password = ''
+      this.errors = { name: '', dob: '', gender: '', contact: '', password: '' };
 
       // Validation
-      if (!this.form.firstName || !this.form.lastName) this.errors.name = 'First and Last name are required.'
-      if (!this.form.dobDay || !this.form.dobMonth || !this.form.dobYear) this.errors.dob = 'Complete date of birth is required.'
-      if (!this.form.gender) this.errors.gender = 'Please select a gender.'
+      if (!this.form.firstName.trim() || !this.form.lastName.trim()) {
+        this.errors.name = 'First and last name are required.';
+      }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      const phoneRegex = /^[0-9]{6,15}$/
-      if (!this.form.contact || (!emailRegex.test(this.form.contact) && !phoneRegex.test(this.form.contact)))
-        this.errors.contact = 'Enter a valid email or phone number.'
+      if (!this.form.dobDay || !this.form.dobMonth || !this.form.dobYear) {
+        this.errors.dob = 'Please select your full date of birth.';
+      }
 
-      if (!this.form.password || this.form.password.length < 6)
-        this.errors.password = 'Password must be at least 6 characters.'
+      if (!this.form.gender) {
+        this.errors.gender = 'Please select your gender.';
+      }
 
-      // Proceed if valid
-      if (!this.errors.name && !this.errors.dob && !this.errors.gender && !this.errors.contact && !this.errors.password) {
-        if (emailRegex.test(this.form.contact)) {
-          try {
-            
-            // Firebase create user
-            await createUserWithEmailAndPassword(auth, this.form.contact, this.form.password)
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!this.form.contact || !emailRegex.test(this.form.contact)) {
+        this.errors.contact = 'Please enter a valid email address.';
+      }
 
-            // Save email to localStorage for Verify.vue
-            localStorage.setItem('verifyEmail', this.form.contact)
+      if (!this.form.password || this.form.password.length < 6) {
+        this.errors.password = 'Password must be at least 6 characters.';
+      }
 
-            // Call backend to send verification code
-            const res = await fetch('http://localhost:3001/send-code', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: this.form.contact })
-            })
-            const data = await res.json()
+      // Stop if errors
+      if (Object.values(this.errors).some(err => err)) return;
 
-            if (data.success) {
-              // Redirect to Verify page
-              this.$router.push({ path: '/verify' })
-            } else {
-              this.errors.contact = data.message || 'Failed to send verification code.'
-            }
+      this.isLoading = true;
 
-          } catch (err) {
-            this.errors.contact = 'Account already exists or invalid email.'
-            console.error(err.message)
-          }
-        } else {
-          this.errors.contact = 'Phone signup not supported yet.'
+      try {
+        // Create user in Firebase Authentication
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          this.form.contact,
+          this.form.password
+        );
+
+        const user = userCredential.user;
+        const uid = user.uid;
+
+        // Prepare full profile data
+        const profileData = {
+          uid: uid,
+          email: this.form.contact,
+          firstName: this.form.firstName.trim(),
+          lastName: this.form.lastName.trim(),
+          fullName: `${this.form.firstName.trim()} ${this.form.lastName.trim()}`,
+          dateOfBirth: `${this.form.dobYear}-${this.form.dobMonth}-${this.form.dobDay}`,
+          gender: this.form.gender,
+          createdAt: new Date().toISOString(),
+          emailVerified: false
+        };
+
+        //  Send profile to backend → save in MongoDB
+        const response = await fetch('http://localhost/api/users/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profileData)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || 'Failed to save profile data');
         }
+
+        console.log('Profile successfully saved in MongoDB:', result);
+
+        // Optional: Store UID for quick access
+        localStorage.setItem('userUid', uid);
+        localStorage.setItem('userEmail', this.form.contact);
+
+        // 4. Redirect to Profile Page
+        this.$router.push({ name: 'ProfileUser' }); // Make sure this route name exists in router
+
+      } catch (error) {
+        console.error('Signup error:', error);
+
+        if (error.code === 'auth/email-already-in-use') {
+          this.errors.contact = 'This email is already registered.';
+        } else if (error.code === 'auth/weak-password') {
+          this.errors.password = 'Password is too weak.';
+        } else if (error.code === 'auth/invalid-email') {
+          this.errors.contact = 'Invalid email address.';
+        } else {
+          this.errors.contact = error.message || 'Signup failed. Please try again.';
+        }
+      } finally {
+        this.isLoading = false;
       }
     }
   }
-}
+};
 </script>
+
+<style scoped>
+/* Optional: Add any custom styles here */
+</style>
