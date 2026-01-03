@@ -103,6 +103,11 @@ class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style backg
 
 
 
+<!--Create Button Plus -->
+<div @click="openPostModal" class="relative z-40 p-2 hover:bg-gray-200 rounded-xl cursor-pointer">
+  <Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 bg-green-300 border-2 border-blue-200 rounded-xl" /> 
+  <p class="mt-1 text-xs font-medium text-gray-700">Add post</p>
+</div>
 
 
 <!-- Reusable Notification Popup  -->
@@ -110,51 +115,71 @@ class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style backg
     v-model="showNotify"
     :notifications="notifications"/> 
 
- 
-<div @click="openPostModal" 
- class="relative z-40 p-2 hover:bg-gray-200 rounded-xl">
-<!-- Plus icon -->
-<Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 transition-colors bg-green-300    border-2 border-blue-200 rounded-xl duration-200 hover:text-gray-600" /> 
-</div> 
- <!--create-->
+
+
+
 
 
 <teleport to="body">
 <!-- Floating Composer Modal -->
-<div v-if="showPostModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]" @click.self="closePostModal">
-<div class=" fixed  bg-opacity-50 w-full max-w-xl rounded-xl p-6 relative ">
+ <div
+      v-if="showPostModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
+      @click.self="closePostModal">
+      <div class="bg-white w-full max-w-xl rounded-xl p-6 relative" @click.stop>
 
-<!-- Close Button -->
-<button @click.self="closePostModal" class="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"> 
-<Icon icon="basil:cross-solid "/>
-</button>
+        <!-- Close Button -->
+        <button @click="closePostModal" class="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl">
+          <Icon icon="basil:cross-solid" />
+        </button>
+
+        <!-- Story / Post Selector -->
+        <div v-if="!composerType" class="bg-white w-full max-w-md rounded-xl p-6 space-y-4">
+          <h2 class="text-center font-semibold text-lg">Create</h2>
+          <button @click="composerType = 'story'" class="w-full flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-100">
+            <Icon icon="fluent-color:history-32" class="w-8 h-8 text-green-600" />
+            <p class="font-medium">Create Story</p>
+          </button>
+          <button @click="composerType = 'post'" class="w-full flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-100">
+            <Icon icon="system-uicons:postcard" class="w-8 h-8 text-blue-500" />
+            <span class="font-medium">Create Post</span>
+          </button>
+        </div>
+
+        <!-- Composer UI -->
+        <div v-if="composerType">
+          <!-- Caption / Textarea -->
+
+
+          <textarea
+            ref="textareaRef"
+            v-model="newPost"
+            :placeholder="composerType === 'story' ? 'Add a caption to your story...' : 'What\'s on your mind?'"
+            class="w-full border border-gray-300 rounded-xl 
+            p-3 focus:outline-none focus:ring-2 
+            focus:ring-blue-300 resize-none mb-4 bg-white/90">
+        </textarea>
+
+          <!-- Upload Media -->
+          <label class="cursor-pointer flex items-center gap-2 mb-4" title="Upload Media">
+            <Icon icon="system-uicons:postcard" class="w-8 h-8 text-blue-500" />
+          
+            <span class="font-medium">
+              
+              {{ composerType === 'story' ? 'Add to Story' : 'Upload Post' }}</span>
+            <input
+              type="file"
+              accept="image/*,video/*"
+              multiple
+              class="hidden"
+              @change="handleFileUpload"/>
+              
+          </label>
 
 
 
-<!--When On you Mind  Wrap  Post a Composer -->
-
-<div class="bg-white p-4 rounded-xl shadow-sm mb-6" @dragover.prevent @drop.prevent="handleDrop">
-<!-- Avatar + Textarea -->
-<div class="flex items-start gap-3 mb-3">
-<img :src="currentUser.avatar" class="w-10 h-10 rounded-full border" />
-<textarea
-  ref="textareaRef"
-  v-model="newPost"
-  placeholder="What's on your mind?"
-  class="w-full border border-gray-300 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-  @input="handlePostInput">
-  
-</textarea>
-</div>
-<div v-if="showMentionList" class="absolute bg-white border rounded shadow w-48 mt-1 z-50">
-<div
-v-for="(user, index) in filteredUsers"
-:key="index"
-class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
-@click="selectMention(user.name)">
-{{ '@' + user.name }}
-</div>
-</div>
+          
+<!----->
 
 
 
@@ -166,7 +191,6 @@ class="px-3 py-2 cursor-pointer hover:bg-gray-100 text-sm"
 <button @click="getLocation" title="Location">
 <Icon icon="mynaui:location" class="w-5 h-5" />
 </button>
-
 
 <!-- Location Popup Modal -->
 <teleport to="body">
@@ -248,23 +272,15 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 <!-- Location Popup Modal -->
 
 
-<!-- Upload Post -->                                                                                                                   <!-- Upload Post -->
-<label class="cursor-pointer " title="Upload Media">
-  <Icon icon="mdi:image-outline" class="w-5 h-5" />
-  <input
-    type="file"
-    accept="image/*,video/*"
-    multiple
-    class="hidden"
-    @change="handleFileUpload($event)"/>
-</label>
 
 
-<!-- Comment -->                                                     
+
+<!-- Comment icon -->                                                     
 <button @click="toggleReplyComment" title="Comment">
 <Icon icon="iconamoon:comment" class="w-5 h-5 " />
 </button>
-<!-- Emoji Picker -->
+
+<!-- Emoji Picker icon -->
 <div class="relative" ref="emojiWrapper">
   <button
     @click.stop="toggleEmojiPicker('composer')"
@@ -281,14 +297,38 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 </div>
 
 
-<!-- Post -->
-<button 
-class="text-sm font-semibold text-gray-700 hover:text-blue-600"
- @click="submitPost(); showPostModal = false">
- Post
+<!-- Post Buuuton-->
+<button
+  class="text-sm font-semibold text-gray-700 hover:text-blue-600"
+  @click="submitPost">
+  {{ composerType === 'story' ? 'Share Story' : 'Post' }}
 </button>
+
 </div>
 <!-- Post -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- Preview Modal for Media before  post  -->
 <div
@@ -439,47 +479,38 @@ class="relative">
   <!-- Stories Container -->
   <div
     ref="storyScrollRef"
-    class="flex gap-4 overflow-x-auto 
-    scroll-smooth px-2 no-scrollbar">
+    class="flex gap-4 overflow-x-auto scroll-smooth px-2 no-scrollbar">
     <div
       v-for="(story, i) in stories"
       :key="story.id"
       @click="openStory(i)"
-      class="flex flex-col items-center 
-      flex-shrink-0 w-[90px] cursor-pointer">
+      class="flex flex-col items-center flex-shrink-0 w-[90px] cursor-pointer">
       <!-- Gradient Border -->
-      <div
-        class="w-20 h-20 rounded-xl p-[2px]
-        bg-gradient-to-tr from-purple-500
-        to-pink-500">
+      <div class="w-20 h-20 rounded-xl p-[2px] bg-gradient-to-tr from-purple-500 to-pink-500">
         <img
           :src="story.media"
           class="w-full h-full rounded-lg object-cover bg-white"/>
       </div>
-
-      <p
-      class="text-xs mt-2 text-gray-700 truncate w-full text-center">
-      {{ story.username }}
-    </p>
+      <p class="text-xs mt-2 text-gray-700 truncate w-full text-center">
+        {{ story.username }}
+      </p>
     </div>
   </div>
 
   <!-- LEFT ARROW -->
   <button
     @click="scrollStories('left')"
-    class="absolute left-1 top-1/2 -translate-y-1/2
-           bg-white shadow rounded-full p-1 z-20">
+    class="absolute left-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-20">
     <Icon icon="ic:round-chevron-left" class="w-5 h-5" />
   </button>
 
   <!-- RIGHT ARROW -->
   <button
     @click="scrollStories('right')"
-    class="absolute right-1 top-1/2 -translate-y-1/2
-    bg-white shadow rounded-full p-1 z-20">
+    class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-20">
     <Icon icon="ic:round-chevron-right" class="w-5 h-5" />
   </button>
-  </div>
+</div>
 
 
 
@@ -834,7 +865,7 @@ iFeed
 
 
 
-<!-- Add New Comment  "-->                            
+<!-- Add New Comment "-->                            
 <div v-if="!post.commentsDisabled" class=" mt-2 flex gap-1 items-center ">
 <img :src="post.avatar" class="w-10 h-10 rounded-full border-2 " />
 
@@ -1144,6 +1175,7 @@ export default {
     EmojiPicker,
     CommentCard,
     ChatPanel,
+    name: 'PostComposer',
 
   },
  
@@ -1156,6 +1188,14 @@ export default {
       showResults: false,
 
       postLink:  null,
+      //Story
+      composerType: null, // null | 'post' | 'story'
+      uploadedFiles: [],
+  
+  
+
+
+  
  
       
 
@@ -1196,6 +1236,8 @@ export default {
       { name: 'Siem Reap', desc: 'Angkor Wat' },
       { name: 'Kampot', desc: 'Riverside town' },                                              //Location Limit
       ],
+
+
       locationInputRef: null,
       tags: [],
       showMentionList: false,
@@ -1344,6 +1386,9 @@ computed: {
   //Method 
   methods: {
 
+
+    //Story Add composer
+  
     
 
   //commment Uploaod Post
@@ -1395,7 +1440,7 @@ computed: {
 },
   
   //Link post 
-
+//Youtube
 
   handlePostInput() {
       this.handleMentionInput?.(); // keep existing mention logic if exists
@@ -1579,12 +1624,31 @@ selectSearchUser(user) {
 
 
  handleFileUpload(e) {
-  const files = Array.from(e.target.files);
-  this.mediaPreviews = files.map((file) => ({
-    url: URL.createObjectURL(file),
-    type: file.type,
+
+
+   const files = Array.from(e.target.files);
+
+  // map files to preview objects
+  const newFiles = files.map((file) => ({
+  url: URL.createObjectURL(file),
+  type: file.type,          // e.g., "image/jpeg" or "video/mp4"
+  raw: file,
+  name: file.name,
+  size: file.size
   }));
+
+  // append to mediaPreviews
+  this.mediaPreviews.push(...newFiles);
 },
+
+  removeFile(index) {
+      URL.revokeObjectURL(this.mediaPreviews[index].url)
+      this.mediaPreviews.splice(index, 1)
+  },
+
+
+
+
 handleDrop(e) {
   const files = Array.from(e.dataTransfer.files);
   this.mediaPreviews = files.map((file) => ({
@@ -1619,7 +1683,7 @@ addEmojiToComment(emoji, index) {
   }
 
   this.posts[index].newComment += emoji.i;
-  this.showEmojiPickerIndex = null
+  this.showEmojiPickerIndex = null;
 },
 
 
@@ -1627,47 +1691,75 @@ addEmojiToComment(emoji, index) {
 
 // Submit Post 
   submitPost() {
-  // Prevent empty post
-  if (!this.newPost.trim() && !this.mediaPreviews.length && !this.postLink) return;
 
-  const linkCopy = this.postLink ? { ...this.postLink } : null; // always make link object or null
+//Story Commposer 
+ if (!this.newPost.trim() && this.mediaPreviews.length === 0 && !this.postLink) {
+    alert('Please add text or media before submitting.');
+    return;
+  }
 
-  // Extract tags (@username)
-  const extractedTags = this.newPost.match(/@\w+/g) || [];
-// Create new post with previews (temporary solution)
+  if (this.composerType === 'story') {
+    // === STORY ONLY ===
+    this.stories.unshift({
+      id: Date.now(),
+      username: this.currentUser.username,
+      avatar: this.currentUser.avatar,
+      media: this.mediaPreviews[0]?.url || '',
+      type: this.mediaPreviews[0]?.type.startsWith('video') ? 'video' : 'image',
+      time: 'Just now',
+      liked: false,
+    });
+
+    this.$nextTick(() => {
+      const container = this.$refs.storyScrollRef;
+      if (container) container.scrollLeft = 0;
+    });
+
+    // Reset everything
+    this.resetComposer();
+    return; // ← VERY IMPORTANT: Stop here, don't create a post!
+  }
+
+  // REGULAR POST ONLY 
+  const linkCopy = this.postLink ? { ...this.postLink } : null;
+
   const newPostObj = {
     id: Date.now(),
-    user: 'sinayun_xyn',
+    user: this.currentUser.name,
     avatar: this.currentUser.avatar,
     location: this.postLocation.trim(),
     caption: this.newPost,
-    media: this.mediaPreviews.map(preview => ({ ...preview })), // deep copy
+    media: this.mediaPreviews.map(preview => ({
+    url: preview.url,
+    type: preview.type
+    })),
     link: linkCopy,
-    tags: extractedTags,
     time: 'Just now',
     likes: 0,
     shares: 0,
     liked: false,
     isFollowing: false,
     showComments: false,
-    showShare: false,
     newComment: '',
-    commentMedia: [],
     commentsList: [],
     commentsDisabled: false,
+    viewAll: false,
   };
 
   this.posts.unshift(newPostObj);
 
   // Reset
-  this.newPost = '';
-  this.mediaPreviews = []; // ← clear previews
-  this.postLocation = '';
-  this.postLink = null;
-  this.showPostModal = false;
+  this.resetComposer();
 },
 
-
+resetComposer() {
+ 
+  this.newPost = '';
+  this.postLocation = '';
+  this.postLink = null;
+  this.composerType = null;
+  this.showPostModal = false;
+},
 
 
 
@@ -1682,6 +1774,9 @@ addEmojiToComment(emoji, index) {
       }
       return count;
     },
+
+
+
 
 // Toggle Like 
     toggleLike(index) {
@@ -1996,15 +2091,39 @@ toggleComment(index) {
     switchTab(tab) {
       this.activeTab = tab;
     },
+
+
     openPostModal() {
+        //Story
+      this.composerType = null
+      this.uploadedFiles = [],
+       this.showPostModal = true
+      this.composerType = null
+      this.newPost = ''
+      this.mediaPreviews = []
+      
+      //
+
       this.showPostModal = true;
       nextTick(() => {
         const textarea = document.querySelector('textarea[placeholder="What\'s on your mind?"]');
         textarea?.focus();
       });
     },
+
+    
     closePostModal() {
-      this.showPostModal = false;
+      // Revoke only on cancel
+  this.mediaPreviews.forEach(preview => URL.revokeObjectURL(preview.url));
+  this.mediaPreviews = [];
+  this.newPost = '';
+  this.postLocation = '';
+  this.postLink = null;
+  this.composerType = null;
+  this.showPostModal = false;
+
+
+  
     },
     handleFriendSelected(friend) {
       this.selectedUser = friend;
@@ -2115,6 +2234,7 @@ textarea {
 .slide-in-leave-to {
   transform: translateX(100%);
 }
+
 
 
 
