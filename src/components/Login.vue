@@ -38,7 +38,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green
       <!-- ACTION + STORY STACK -->
       <div class="relative items-center mt-10 p-2  ">
     <!-- CENTER STORY STACK -->
-      <div class="relative   items-center w-[360px] h-[320px] mt-10 px-4 ">
+      <div class="relative   items-center w-[360px] h-[320px] mt-10 px-4 mr-80  p-2">
         <img
           v-for="(story, i) in stories"
           :key="i"
@@ -131,8 +131,9 @@ export default {
       email: '',
       password: '',
       loading: false,
+      showPassword: false,
       stories: [
-          { img: story2, rotate: '-14deg', right: '70px', z: 2 },
+        { img: story2, rotate: '-14deg', right: '70px', z: 2 },
         { img: story1, rotate: '12deg', left: '300px', z: 1},
       
         { img: story3, rotate: '-2deg', left: '168px', z: 1 }
