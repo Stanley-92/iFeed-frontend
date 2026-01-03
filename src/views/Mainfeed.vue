@@ -154,7 +154,9 @@ class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style backg
           <textarea
             ref="textareaRef"
             v-model="newPost"
-            :placeholder="composerType === 'story' ? 'Add a caption to your story...' : 'What\'s on your mind?'"
+            @input="handlePostInput"
+            :placeholder="composerType === 'story' ? 'Add a caption to your story...'
+             : 'What\'s on your mind?'"
             class="w-full border border-gray-300 rounded-xl 
             p-3 focus:outline-none focus:ring-2 
             focus:ring-blue-300 resize-none mb-4 bg-white/90">
@@ -297,7 +299,7 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 </div>
 
 
-<!-- Post Buuuton-->
+<!-- Post Button-->
 <button
   class="text-sm font-semibold text-gray-700 hover:text-blue-600"
   @click="submitPost">
@@ -395,7 +397,8 @@ class="relative">
   <div 
     @click="toggleSettings"  
     class="relative z- hover:bg-gray-200 rounded-xl">
-  <Icon icon="famicons:reorder-three-outline"  class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Setting-->
+  <Icon icon="famicons:reorder-three-outline"  
+  class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Setting-->
   </div>
  </div>
 </aside>   
@@ -423,8 +426,10 @@ class="relative">
             <span class="font-medium">Switch Mode</span>
             <Icon icon="ooui:next-ltr"/>
           </div>
-          <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 rounded">Daily Review</div>
-          <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 rounded">Setting</div>
+          <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 
+          rounded">Daily Review</div>
+          <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 
+          rounded">Setting</div>
         </div>
 
         <!-- Section 2 -->
@@ -518,7 +523,8 @@ class="relative">
 
 <!-- Post a Composer 1  box Media post -->
 
-<div v-for="(post, index) in posts" :key="post.id" class="bg-white border rounded-xl shadow-sm p-4  relative  ">
+<div v-for="(post, index) in posts" :key="post.id"
+ class="bg-white border rounded-xl shadow-sm p-4  relative  ">
 <!-- Post Header -->
 
 <div class="flex items-center justify-between mb-2 rounded-xl">
@@ -597,6 +603,7 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
         Copy Link
         <Icon icon="ri:link" class="w-4 h-4" />
       </li>
+
       <li
         @click="shareTo(index)"
         class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
@@ -609,7 +616,8 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <!----Open Model sent to frien-->
   <div v-if="showShareModal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
   <div class="bg-white w-96 p-6 rounded-xl shadow-xl relative">
-  <button @click="showShareModal = false" class="absolute top-2 right-2">
+  <button @click="showShareModal = false"
+   class="absolute top-2 right-2">
   <Icon icon="mdi:close" class="w-5 h-5" />
   </button>
   <h2 class="text-lg font-semibold mb-4">Report</h2>
@@ -630,10 +638,13 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <!-- Caption or Editable -->
   <div class="mb-4">
   <div v-if="editingIndex === index">
-        <input v-model="editedCaption" class="w-full border px-3 py-1 rounded focus:outline-none" />
+        <input v-model="editedCaption"
+         class="w-full border px-3 py-1 rounded focus:outline-none" />
         <div class="text-right mt-1">
-        <button class="text-green-600 text-sm font-semibold hover:underline mr-2" @click="saveEditedPost(index)">Save</button>
-        <button class="text-gray-500 text-sm hover:underline" @click="cancelEdit">Cancel</button>
+        <button class="text-green-600 text-sm font-semibold hover:underline mr-2"
+         @click="saveEditedPost(index)">Save</button>
+        <button class="text-gray-500 text-sm hover:underline"
+         @click="cancelEdit">Cancel</button>
         </div>
         </div>
         <p v-else> {{ post.caption }}</p>
@@ -641,15 +652,26 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 
 
 
-  <!-- Website Link -->
-  <a
-    v-if="post && post.link && post.link.type === 'website' && post.link.url"
-    :href="post.link.url"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="block mt-2 text-blue-600 underline truncate hover:text-blue-800" >
-    {{ post.link.url }}
-  </a>
+
+
+<!-- Website Link Preview Card -->
+<div
+  v-if="post.link && post.link.type === 'website'"
+  class="mt-4 border rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
+  @click="window.open(post.link.url, '_blank')">
+  <div v-if="post.link.image" class="w-full h-48 bg-gray-200">
+    <img :src="post.link.image" class="w-full h-full object-cover" />
+  </div>
+  <div class="p-3 bg-white">
+    <p class="text-sm font-medium text-gray-900 line-clamp-2">
+      {{ post.link.title || 'Untitled' }}</p>
+    <p v-if="post.link.description" 
+    class="text-xs text-gray-600 mt-1 line-clamp-2">
+      {{ post.link.description }}</p>
+    <p class="text-xs text-gray-500 mt-2 truncate">
+      {{ post.link.domain }}</p>
+  </div>
+</div>
 
   <!-- YouTube Link -->
   <iframe
@@ -660,8 +682,6 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 </iframe>
 
 <!-- Open Photo Post Media  sinayun_xyn 1h ago ) -->
-
-
 
 <div
   ref="scrollContainer"
@@ -689,7 +709,8 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <!-- Close -->
  <button
   @click="closeMediaModal"
-  class="cursor-pointer absolute top-4 right-4 z-50 text-white bg-black bg-opacity-60 p-2 rounded-full hover:bg-opacity-80">
+  class="cursor-pointer
+   absolute top-4 right-4 z-50 text-white bg-black bg-opacity-60 p-2 rounded-full hover:bg-opacity-80">
 <Icon icon="mdi:close" class="w-6 h-6 text-white" />
 </button>
 
@@ -730,18 +751,23 @@ v-if="selectedIndex > 0"
 <div class="flex items-center gap-4 text-gray-500 text-sm mt-4 mb-10">
       
 <!-- Like -->
-<div class="flex items-center gap-4 cursor-pointer hover:text-red-500" @click="toggleLike(index)">
+
+<div class="flex items-center gap-4 cursor-pointer hover:text-red-500"
+ @click="toggleLike(index)">
 
  <!--Heart Like RedColor-->
  
-<Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'" class="w-5 h-5" />
+<Icon :icon="post.liked ? 'fluent-emoji:red-heart' : 'octicon:heart-24'"
+ class="w-5 h-5" />
 
-<span>{{ formatCount(post.likes||[]) }}</span>
+<p>{{ formatCount(post.likes||[]) }}</p>
 </div>
+
 <!-- Comment -->
-<div class="flex items-center gap-4 cursor-pointer hover:text-blue-500" @click="toggleCommentSection(index)">
+<div class="flex items-center gap-4 cursor-pointer hover:text-blue-500"
+ @click="toggleCommentSection(index)">
 <Icon icon="tdesign:chat-bubble" class="w-5 h-5"/>
-<span>{{ formatCount(post.commentsList?.length ||[]) }}</span>
+<p>{{ formatCount(post.commentsList?.length ||[]) }}</p>
 </div>  
  <div>
 
@@ -848,7 +874,7 @@ iFeed
   class="max-w-sl rounded-full mx-auto px-4 py-4">
 
     <!-- View All Toggle -->
-    <div
+  <div
     class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
    @click="post.viewAll = !post.viewAll">
    All {{countTotalComments (post.commentsList) }} comments 
@@ -856,7 +882,8 @@ iFeed
 
   <!-- Comment List -->
   <CommentCard
-  v-for="(comment, i) in post.viewAll ? post.commentsList : post.commentsList.slice(0, 1)"
+  v-for="(comment, i) in post.viewAll ? post.commentsList :
+   post.commentsList.slice(0, 1)"
   :key="i"
   :comment="comment"
   :depth="0"
@@ -865,63 +892,79 @@ iFeed
 
 
 
-<!-- Add New Comment "-->                            
-<div v-if="!post.commentsDisabled" class=" mt-2 flex gap-1 items-center ">
-<img :src="post.avatar" class="w-10 h-10 rounded-full border-2 " />
-
-<!-- Add New Comment Input "-->  
-<div class="relative flex-1 items-end gap-8 w-full">
-
-  <textarea
-    v-model="post.newComment"
-    placeholder="Add a comment..."
-    class="flex-1 px-2 pr-24 py-2 text-sm bg-gray-100 rounded-xl resize-none
-           focus:outline-none focus:ring-2 focus:ring-blue-400 w-full"
-    @input="autoResize($event)"
-    @keyup.enter.exact.prevent="addCommentToPost(index)">
-</textarea>
-
-
-<!---Add Comment Media Emoji -->
-
-<button
-  class="absolute right-16 bottom-2 text-gray-500 hover:text-blue-500"
-  @click.stop="toggleEmojiPicker(index)">
-  <Icon icon="proicons:emoji" class="w-5 h-5" />
-</button>
-
-<!-- Emoji Picker -->
-<div
-  v-if="showEmojiPickerIndex === index"
-  class="absolute z-50 bottom-12 right-0"
-  @click.stop>
-<EmojiPicker @select="emoji => addEmojiToComment(emoji, index)" />
-</div>
 
 
 
 
 
 
-  <!-- Image Upload -->
-  <label
-    class="absolute right-10 bottom-2 cursor-pointer text-gray-500 hover:text-blue-500">
-    <Icon icon="tabler:photo" class="w-5 h-5"/>
-    <input
-      type="file"
-      accept="image/* video/*"
-      class="hidden"
-      @change="addCommentImage($event, index)"/>
-  </label>
 
-  <!-- Send Button -->
-  <button
-    type="button"
-    class="absolute right-3 bottom-2 text-blue-500 hover:text-blue-600"
-    @click="addCommentToPost(index)">
-    <Icon icon="famicons:paper-plane-outline" class="w-5 h-5"/>
-  </button>
-</div>
+<!-- Add New Comment -->
+ 
+<div v-if="!post.commentsDisabled" class="mt-4">
+
+  <div class="flex gap-3 items-start">
+    <img :src="currentUser.avatar" class="w-10 h-10 rounded-full border-2 flex-shrink-0" />
+
+    <div class="flex-1 relative">
+      <textarea
+        v-model="post.newComment"
+        placeholder="Write a comment..."
+        class="w-full px-12 py-3 pr-16 text-sm bg-gray-100 rounded-2xl resize-none
+               focus:outline-none focus:ring-2 focus:ring-blue-400"
+        rows="1"
+        @input="autoResize($event)"
+        @keyup.enter.exact.prevent="addCommentToPost(index)">
+      </textarea>
+
+      <!-- Emoji Button -->
+      <button
+        class="absolute left-3 bottom-3 text-gray-500 hover:text-blue-500"
+        @click.stop="toggleEmojiPicker(index)">
+        <Icon icon="proicons:emoji" class="w-5 h-5" />
+      </button>
+
+      <!-- Photo Upload -->
+      <label class="absolute right-12 bottom-3 cursor-pointer text-gray-500 hover:text-blue-500">
+        <Icon icon="tabler:photo" class="w-5 h-5" />
+        <input type="file" accept="image/*,video/*" class="hidden" @change="addCommentImage($event, index)" />
+      </label>
+
+      <!-- Send Button -->
+      <button
+        v-if="post.newComment?.trim() || post.commentMedia?.length"
+        class="absolute right-3 bottom-3 text-blue-500 hover:text-blue-600"
+        @click="addCommentToPost(index)">
+        <Icon icon="famicons:paper-plane-outline" class="w-6 h-6" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Attached Media Preview -->
+  <div v-if="post.commentMedia?.length" class="mt-3 flex flex-wrap gap-2">
+    <div v-for="(media, i) in post.commentMedia" :key="i" class="relative">
+      <component
+        :is="media.type.startsWith('video') ? 'video' : 'img'"
+        :src="media.url"
+        class="w-24 h-24 object-cover rounded-lg border"
+        controls />
+      <button
+        @click.stop="removeCommentMedia(index, i)"
+        class="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1">
+        <Icon icon="mdi:close" class="w-4 h-4" />
+      </button>
+    </div>
+  </div>
+
+
+  
+
+  <!-- Emoji Picker -->
+  <div v-if="showEmojiPickerIndex === index" class="relative">
+    <div class="absolute bottom-full right-0 mb-2 z-50" @click.stop>
+      <EmojiPicker @select="emoji => addEmojiToComment(emoji, index)" />
+    </div>
+  </div>
 
 
 </div>
@@ -1385,6 +1428,76 @@ computed: {
   
   //Method 
   methods: {
+    // Improved async link detection
+  async handlePostInput() {
+    // Keep any existing mention logic
+    this.handleMentionInput?.();
+
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const match = this.newPost.match(urlRegex);
+
+    if (match) {
+      const url = match[0].trim();
+
+      // Avoid re-processing the same URL
+      if (this.postLink?.url === url) return;
+
+      // Show loading state (optional, but nice UX)
+      this.postLink = { url, type: 'loading' };
+
+      const enrichedLink = await this.detectLinkType(url);
+      this.postLink = enrichedLink;
+    } else {
+      this.postLink = null;
+    }
+  },
+
+  async detectLinkType(url) {
+    // Clean trailing punctuation
+    let cleanUrl = url.replace(/\.,;!?]+$/, '');
+
+    // YouTube detection
+    if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
+      return { url: cleanUrl, type: 'youtube' };
+    }
+
+    // Use Microlink.io API — works without API key (free daily quota)
+    try {
+      const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(cleanUrl)}`);
+      const data = await response.json();
+
+      if (data.data) {
+        const info = data.data;
+        return {
+          url: info.url || cleanUrl,
+          type: 'website',
+          title: info.title || null,
+          description: info.description || null,
+          image: info.image?.url || info.screenshot?.url || null, // fallback to screenshot if no og:image
+          domain: new URL(info.url || cleanUrl).hostname.replace('www.', '')
+        };
+      }
+    } catch (err) {
+      console.log('Link preview failed:', err);
+    }
+
+    // Final fallback
+    try {
+      const domain = new URL(cleanUrl).hostname.replace('www.', '');
+      return {
+        url: cleanUrl,
+        type: 'website',
+        title: domain.charAt(0).toUpperCase() + domain.slice(1),
+        description: cleanUrl,
+        image: null,
+        domain
+      };
+    } catch {
+      return { url: cleanUrl, type: 'website', title: 'Link', description: '', image: null, domain: 'unknown' };
+    }
+  },
+
+
 
 
     //Story Add composer
@@ -1441,29 +1554,6 @@ computed: {
   
   //Link post 
 //Youtube
-
-  handlePostInput() {
-      this.handleMentionInput?.(); // keep existing mention logic if exists
-
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
-      const match = this.newPost.match(urlRegex);
-
-      if (match) {
-        this.postLink = this.detectLinkType(match[0]);
-      } else {
-        this.postLink = null;
-      }
-    },
-
-    detectLinkType(url) {
-      const isYoutube =
-        url.includes('youtube.com') || url.includes('youtu.be');
-
-      return {
-        url,
-        type: isYoutube ? 'youtube' : 'website',
-      };
-    },
 
  
 
@@ -1615,12 +1705,21 @@ selectSearchUser(user) {
     closePreview() {
       this.activePreview = null;
     },
+
+
+
     removeMedia(index) {
       this.mediaPreviews.splice(index, 1);
     },
 
-   
-
+//Remove Comment
+removeCommentMedia(postIndex, mediaIndex) {
+  const post = this.posts[postIndex];
+  if (post.commentMedia && post.commentMedia[mediaIndex]) {
+    URL.revokeObjectURL(post.commentMedia[mediaIndex].url);
+    post.commentMedia.splice(mediaIndex, 1);
+  }
+},
 
 
  handleFileUpload(e) {
@@ -1670,9 +1769,7 @@ handleDrop(e) {
 
 
 toggleEmojiPicker(index) {
-  this.showEmojiPickerIndex = !this.showEmojiPickerIndex;
-  this.showEmojiPickerIndex =
- 
+ this.showEmojiPickerIndex = this.showEmojiPickerIndex === index ? null : index;
   this.showEmojiPickerIndex === index ? null : index;
 },
 //add Emoji commet
@@ -1741,6 +1838,7 @@ addEmojiToComment(emoji, index) {
     isFollowing: false,
     showComments: false,
     newComment: '',
+    commentMedia: [],
     commentsList: [],
     commentsDisabled: false,
     viewAll: false,
@@ -1803,6 +1901,7 @@ resetComposer() {
       const text = post.newComment.trim();
       if (!text) return;
       if (!Array.isArray(post.commentsList)) post.commentsList = [];
+      if (!Array.isArray(post.commentMedia)) post.commentMedia = [];
 
       post.commentsList.push({
         user: this.currentUser.name,
@@ -2138,7 +2237,23 @@ toggleComment(index) {
       this.showRepostPopup = false;
     },
   },
+
+
+
   watch: {
+    newPost(newVal, oldVal) {
+    //  URL 
+    if (newVal !== oldVal) {
+      this.handlePostInput();
+    }
+  },
+
+
+
+
+
+
+
     selectedMedia(newVal) {
       if (newVal) {
         window.addEventListener('keydown', this.handleKeydown);
@@ -2234,7 +2349,22 @@ textarea {
 .slide-in-leave-to {
   transform: translateX(100%);
 }
+/* Smooth textarea height animation */
+textarea {
+  transition: all 0.2s ease;
+  min-height: 44px;
+  max-height: 120px;
+  overflow-y: auto !important;
+}
 
+/* Hide scrollbar but keep functionality */
+textarea::-webkit-scrollbar {
+  display: none;
+}
+textarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 
 
