@@ -25,6 +25,29 @@
         class="w-9 h-9 rounded-full object-cover flex-shrink-0 z-10 shadow-sm"/>
 
 <!-- Comment Body -->
+
+
+
+<!-- Comment Media (Images/Videos) -->
+<div v-if="comment.media?.length" class="mt-2 flex flex-wrap gap-2">
+  <div
+    v-for="(media, i) in comment.media"
+    :key="i"
+    class="rounded-lg overflow-hidden border shadow-sm">
+    <component
+  :is="media.type.startsWith('video') ? 'video' : 'img'"
+  :src="media.url"
+  class="max-w-64 max-h-64 object-cover rounded-lg"
+  controls
+  playsinline
+  muted />
+
+  </div>
+</div>
+
+
+
+
       <div class="flex-1 ">
         <!-- Bubble -->
         <div class="bg-gray-100 rounded-2xl px-4 py-3 shadow-sm">
@@ -112,6 +135,8 @@
                 class="text-blue-500 disabled:text-gray-300 transition">
                 <Icon icon="solar:paper-plane-bold" class="w-5 h-5" />
               </button>
+
+
 <!---Iamge Upolod -->
               <button>
                 <Icon icon="material-symbols-light:heart-smile-rounded" class="w-5 h-5"/>
