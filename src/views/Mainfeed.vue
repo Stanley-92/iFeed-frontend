@@ -1,6 +1,6 @@
 
 <template>
-<div class="flex flex-col md:flex-row min-h-[100dvh] bg-white ">
+<div class=" w-95 flex flex-col md:flex-row min-h-[100dvh] bg-white ">
 
 
 <!-- Left Sidebar -->
@@ -22,8 +22,8 @@ class="w-10 h-10 text-white transition-colors bg-green-500
 
     <FriendSearch
     :users="friends"
-    action-text="Add Friend"
-    @select="handleAddFriend"
+    action-text="Follow"
+    @select="handleFollow"
   />
   </div>
 
