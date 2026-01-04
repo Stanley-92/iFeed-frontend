@@ -1,119 +1,73 @@
 
 <template>
-<div class="flex flex-col md:flex-row min-h-[100dvh] bg-white">
+<div class="flex flex-col md:flex-row min-h-[100dvh] bg-white ">
 
 
 <!-- Left Sidebar -->
-<aside
-class="w-25 bg-white border-2 p-6 hidden md:block sticky top-0 h-[100dvh]">
+<aside class="w-20 bg-white border-r border-gray-200 sticky top-0 h-[100dvh] flex flex-col items-center py-8 space-y-8 hidden md:flex">
 
-<button class="flex-1 flex-col items-center text-sm item-center mt-4  inset-y-0 left-0 flex items-center pl-3 cursor-pointer ">
-<Icon icon="tdesign:chat-bubble" class="w-10 h-10 text-white transition-colors bg-green-500 border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
- @click="goToMainfeed"/>
-</button>
-
-<div class="relative mb-65">
-<div 
-class="flex-1 inset-y-0 left-0 flex items-center pl-3  cursor-pointer"
- @click="handleSearch">
-
-<!-- Search Icon -->
- <button
-  @click="toggleSearch"
-  class="relative  z-50 p-2 hover:bg-gray-100 rounded-xl">
-   <!---Hover Style background icon -->
-  <Icon icon="solar:magnifer-outline" class="w-6 h-6 text-gray-600  " />
+  <!-- 1. Logo / Chat Icon (Top) -->
+  <button 
+    @click="goToMainfeed"
+    class="p-2 rounded-xl hover:bg-green-50 transition-all duration-200 group">
+    <Icon icon="tdesign:chat-bubble" 
+class="w-10 h-10 text-white transition-colors bg-green-500
+ border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
+    />
   </button>
-</div>
+
+  <!-- Search Icon -->
+  <div class="relative">
 
 
-
- <!-- Search Input -->
-<input
-  type="text"
-  v-model="searchQuery"
-  placeholder="Search"
-  class="absolute left-12 top-1/2 -translate-y-1/2
-         w-40 bg-white border border-gray-300
-         rounded-xl pl-10 pr-4 py-2 text-sm
-         shadow-md z-40
-         transition-all duration-300 ease-out
-         focus:outline-none focus:ring-2 focus:ring-green-300"
-  :class="showSearch
-    ? 'opacity-100 translate-x-0 pointer-events-auto'
-    : 'opacity-0 -translate-x-6 pointer-events-none'"
-  @keyup.enter="handleSearch"
-  @blur="closeIfEmpty"/>
-
-
-<!-- Search Results -->
-<div
-  v-if="showResults && filteredSearchUsers.length"
-  class="absolute top-14 left-0 w-72 bg-white
-         border rounded-xl shadow-lg z-50
-         max-h-95 overflow-y-auto">
-
-  <div
-    v-for="user in filteredSearchUsers"
-    :key="user.id"
-    @mousedown.prevent="selectSearchUser(user)"
-    class="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer">
-
-    <img
-      :src="user.avatar"
-      class="w-10 h-10 rounded-full border object-cover" />
-
-    <span class="text-sm font-medium">
-      {{ user.username }}
-    </span>
+    <FriendSearch
+    :users="friends"
+    action-text="Add Friend"
+    @select="handleAddFriend"
+  />
   </div>
-</div>
 
 
 
+  <!-- Navigation Icons -->
+  <nav class="flex-1 flex flex-col items-center space-y-6 justify-center">
+    
+    <!-- Notifications  heart icon  -->
+    <button @click="showNotify = true"
+            class="relative p-3 rounded-xl hover:bg-gray-100 transition-all duration-200 group">
+      <Icon icon="solar:heart-outline" class="w-7 h-7 text-gray-600 group-hover:text-gray-900"/>
+      <span v-if="notifications.length > 0"
+            class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
+        {{ notifications.length > 99 ? '99+' : notifications.length }}
+      </span>
+    </button>
 
-</div>
-<nav class="space-y-2 px-3  py-14 text-gray-700 gap-3">
-<div 
+    <!-- Home -->
+    <button class="p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 group">
+      <Icon icon="proicons:home" 
+      class="w-7 h-7 text-gray-600 group-hover:text-gray-900"/>
+    </button>
 
-class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style background -->
+    <!-- Create Post-->
+    <button @click="openPostModal"
+            class="p-4 rounded-xl hover:bg-gray-50 transition-all duration-300 group">
+      <div class="p-1 bg-gray-400 border-4 border-gradient-to-br from-blue-600 to-green-500
+       rounded-xl shadow-lg
+        group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+        <Icon icon="ic:baseline-plus"
+         class="w-10 h-8 text-gray-500"/>
+       
+      </div>
+    </button>
 
-
-<!---Home icon-->
-<Icon icon="material-symbols:home" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Home-->
-</div>
-
-  <button
-  @click="showNotify = true"
-
-  class="relative z-50 p-3 hover:bg-gray-200 rounded-xl">
-<!---Heart icon-->
-<Icon icon="solar:heart-outline" class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>
-<span v-if="notifications.length > 0"
-   class="absolute top-0 
-   right-0 -mt-1 -mr-1 bg-red-500 text-white text-xs font-bold 
-   rounded-full w-5 h-5 flex items-center justify-center">
-{{ notifications.length }}
-</span>
-</button>
-
-
- <div class="flex items-center gap-3 p-2 cursor-pointer border-gray-300 hover:text-blue-500">
-</div>    
-
-
-
-<!--Create Button Plus -->
-<div @click="openPostModal" class="relative z-40 p-2 hover:bg-gray-200 rounded-xl cursor-pointer">
-  <Icon icon="ic:baseline-plus" class="w-10 h-10 text-gray-500 bg-green-300 border-2 border-blue-200 rounded-xl" /> 
-  <p class="mt-1 text-xs font-medium text-gray-700">Add post</p>
-</div>
+  
 
 
 <!-- Reusable Notification Popup  -->
   <Notify
     v-model="showNotify"
     :notifications="notifications"/> 
+<!------>
 
 
 
@@ -124,25 +78,35 @@ class="relative z-50 p-3   hover:bg-gray-200 rounded-xl"> <!---Hover Style backg
 <!-- Floating Composer Modal -->
  <div
       v-if="showPostModal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]"
+      class="fixed inset-0 bg-black bg-opacity-50
+       flex items-center justify-center z-[9999]"
       @click.self="closePostModal">
       <div class="bg-white w-full max-w-xl rounded-xl p-6 relative" @click.stop>
 
         <!-- Close Button -->
-        <button @click="closePostModal" class="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl">
+        <button @click="closePostModal" 
+        class="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl">
           <Icon icon="basil:cross-solid" />
         </button>
 
         <!-- Story / Post Selector -->
-        <div v-if="!composerType" class="bg-white w-full max-w-md rounded-xl p-6 space-y-4">
-          <h2 class="text-center font-semibold text-lg">Create</h2>
-          <button @click="composerType = 'story'" class="w-full flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-100">
-            <Icon icon="fluent-color:history-32" class="w-8 h-8 text-green-600" />
+        <div v-if="!composerType" class="bg-white w-h-full rounded-xl p-6 space-y-2 ">
+          <h2 class="text-center font-semibold text-lg">
+            Create</h2>
+
+          <button @click="composerType = 'story'"
+           class="w-full flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-100">
+            <Icon icon="fluent-color:history-32"
+             class="w-8 h-8 text-green-600" />
             <p class="font-medium">Create Story</p>
           </button>
-          <button @click="composerType = 'post'" class="w-full flex items-center gap-3 p-4 border rounded-xl hover:bg-gray-100">
-            <Icon icon="system-uicons:postcard" class="w-8 h-8 text-blue-500" />
-            <span class="font-medium">Create Post</span>
+          <button @click="composerType = 'post'" 
+          class="w-full flex items-center gap-3 
+          p-4 border rounded-xl hover:bg-gray-100">
+            <Icon icon="system-uicons:postcard" 
+            class="w-8 h-8 text-blue-500" />
+            <span class="font-medium">
+              Create Post</span>
           </button>
         </div>
 
@@ -1205,14 +1169,16 @@ import story3 from '@/assets/sinayun_xyn.jpg';
 import story4 from '@/assets/jena8.jpg';
 import story5 from '@/assets/story2.jpg';
 import sinayun from '@/assets/mini1.jpg';
-
+import FriendSearch from '@/components/FriendSearch.vue'
 import aesp from '@/assets/aesp.jpg';
+
 
 
 
 export default {
   name: '',
   components: {
+    FriendSearch,
     Notify,
     Icon,
     EmojiPicker,
@@ -1234,6 +1200,9 @@ export default {
       //Story
       composerType: null, // null | 'post' | 'story'
       uploadedFiles: [],
+
+
+      
   
   
 
@@ -1311,6 +1280,7 @@ export default {
       showPostModal: false,
       showChatPopup: false,
       selectedUser: {},
+
       suggestedFriends: [
         { id: 1, name: 'nita_lovekhmer', time: '01:12 PM', avatar: story1 },
         { id: 2, name: 'នារី_lovekhmer', time: '06:16 AM', avatar: story2 },
@@ -1320,7 +1290,16 @@ export default {
       ],
       showSettings: false,
       showRepostPopup: null, 
-      friends: ['friend1.jpg', 'friend2.jpg', 'friend3.jpg'],                                                   //Show repost 
+
+//FriendSearch
+
+      friends: [
+       { id: 1, username: 'Sina yun ', avatar: story1},
+        { id: 2, username: 'Tida yun', avatar: story2 },
+      ], 
+        
+      
+      //Show repost 
       showSharePopup: null,                                                                        
   
       replyText: '',
@@ -2220,10 +2199,13 @@ toggleComment(index) {
   this.postLink = null;
   this.composerType = null;
   this.showPostModal = false;
-
-
   
     },
+//FriensSearch
+ handleAddFriend(user) {
+      console.log('Add friend:', user)
+ },
+
     handleFriendSelected(friend) {
       this.selectedUser = friend;
     },
