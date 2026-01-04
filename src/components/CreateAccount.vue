@@ -1,11 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center border-8 ">
+  <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center ">
 
   
       <div class="w-full max-w-md bg-white p-8 rounded-md    
     bg-gray p-8 rounded-xl shadow-md
      w-full max-w-sm border-2 mb-50
-     shadow-md text-center border "><!---Box Create Acc-->
+     shadow-md text-center border ">
+     <!---Box Create Acc-->
 
       <!-- Back to Main Feed Button (optional) -->
    
@@ -24,9 +25,9 @@ class="w-14 h-14 text-white transition-colors bg-green-500
       <!-- First + Last Name -->
       <div class="flex gap-3 mb-3">
         <input v-model.trim="form.firstName" type="text" placeholder="First name"
-          class="w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
+          class="w-1/2 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
         <input v-model.trim="form.lastName" type="text" placeholder="Last name"
-          class="w-1/2 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
+          class="w-1/2 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition text-sm" />
       </div>
       <p v-if="errors.name" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.name }}</p>
 
@@ -34,17 +35,18 @@ class="w-14 h-14 text-white transition-colors bg-green-500
       <div class="text-left text-sm font-medium text-gray-600 mb-2">Date of Birth</div>
       <div class="flex gap-3 mb-3">
         <select v-model="form.dobDay"
-          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          class="w-1/3 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
           <option value="" disabled>Day</option>
           <option v-for="d in 31" :key="d" :value="String(d).padStart(2, '0')">{{ d }}</option>
         </select>
         <select v-model="form.dobMonth"
-          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          class="w-1/3 px-4 py-2 border-2 border-gray-300 
+          rounded-lg focus:outline-none focus:border-blue-500 text-sm">
           <option value="" disabled>Month</option>
           <option v-for="m in 12" :key="m" :value="String(m).padStart(2, '0')">{{ m }}</option>
         </select>
         <select v-model="form.dobYear"
-          class="w-1/3 px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
+          class="w-1/3 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 text-sm">
           <option value="" disabled>Year</option>
           <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
         </select>
@@ -56,7 +58,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500
       <div class="flex gap-3 mb-3">
         <button v-for="g in ['Female', 'Male', 'Other']" :key="g" @click="form.gender = g"
           :class="[
-            'flex-1 py-3 px-4 rounded-lg border-2 text-sm font-medium transition',
+            'flex-1 py-2 px-4 rounded-lg border-2 text-sm font-medium transition',
             form.gender === g
               ? 'border-green-500 bg-green-50 text-green-700'
               : 'border-gray-300 hover:border-gray-400'
@@ -68,17 +70,19 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 
       <!-- Email -->
       <input v-model.trim="form.contact" type="text" placeholder="Email address"
-        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-3 text-sm" />
+        class="w-full px-2 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-3 text-sm" />
       <p v-if="errors.contact" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.contact }}</p>
 
       <!-- Password -->
       <input v-model="form.password" type="password" placeholder="Create password "
-        class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-4 text-sm" />
+        class="w-full px-2 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-4 text-sm" />
       <p v-if="errors.password" class="text-red-500 text-xs mb-4 -mt-3">{{ errors.password }}</p>
 
       <!-- Submit Button with Loading -->
       <button @click="handleSubmit" :disabled="isLoading"
-        class="w-full py-4 bg-blue-600 text-white font-bold text-lg rounded-xl hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed transition flex items-center justify-center">
+        class="w-full py-2 bg-blue-600 text-white font-semibold 
+        text-sm rounded-xl hover:bg-blue-400 disabled:bg-blue-400 
+        disabled:cursor-not-allowed transition flex items-center justify-center">
         <span v-if="isLoading">Creating Account...</span>
         <span v-else>Create Your Account</span>
       </button>
