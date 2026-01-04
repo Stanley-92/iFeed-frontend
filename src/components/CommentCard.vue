@@ -9,12 +9,12 @@
         v-if="depth > 0"
         class="absolute pointer-events-none"
         :style="{
-          left: '-18px',
+          left: '-16px',
           top: '-148px',
           width: '20px',
-          height: '178px',
-          borderLeft: '2px solid #93c5fd',
-          borderBottom: '2px solid #93c5fd',
+          height: '168px',
+          borderLeft: '2px solid #E2E2E2 ',
+          borderBottom: '2px solid #E2E2E2',
           borderBottomLeftRadius: '16px'
         }"/>
 
