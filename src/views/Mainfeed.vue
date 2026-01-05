@@ -1,12 +1,12 @@
 
 <template>
-<div class=" w-95 flex flex-col md:flex-row min-h-[100dvh] bg-white ">
+<div class=" w-95  flex flex-col md:flex-row min-h-[100dvh] bg-white ">
 
 
 <!-- Left Sidebar -->
 <aside class="w-20 bg-white border-r border-gray-200 sticky top-0 h-[100dvh] flex flex-col items-center py-8 space-y-8 hidden md:flex">
 
-  <!-- 1. Logo / Chat Icon (Top) -->
+  <!--Logo Icon  -->
   <button 
     @click="goToMainfeed"
     class="p-2 rounded-xl hover:bg-green-50 transition-all duration-200 group">
@@ -16,15 +16,13 @@ class="w-10 h-10 text-white transition-colors bg-green-500
     />
   </button>
 
-  <!-- Search Icon -->
+  <!-- Search Reused-->
   <div class="relative">
-
 
     <FriendSearch
     :users="friends"
     action-text="Follow"
-    @select="handleFollow"
-  />
+    @select="handleFollow"/>
   </div>
 
 
@@ -435,7 +433,8 @@ class="relative">
 
 
 <!-- MainiFeed -->
-<main class="flex-5 max-w-2xl mx-auto px-4 py-5 ">
+<main class="flex-5 max-w-2xl mx-auto px-10 py-5 ">
+
 
 
 
@@ -1295,7 +1294,9 @@ export default {
 
       friends: [
        { id: 1, username: 'Sina yun ', avatar: story1},
-        { id: 2, username: 'Tida yun', avatar: story2 },
+        { id: 2, username: 'Putyhy ', avatar: story2 },
+        { id: 3, username: 'oun mean', avatar: story3 },
+        { id: 4, username: 'Yun sina', avatar: story4 },
       ], 
         
       
@@ -2191,7 +2192,7 @@ toggleComment(index) {
 
     
     closePostModal() {
-      // Revoke only on cancel
+  // Revoke only on cancel
   this.mediaPreviews.forEach(preview => URL.revokeObjectURL(preview.url));
   this.mediaPreviews = [];
   this.newPost = '';
