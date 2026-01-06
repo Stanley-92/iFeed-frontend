@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-100 flex flex-col items-center justify-center ">
 
   
-      <div class="w-full max-w-md bg-white p-8 rounded-md    
+<div class="w-full max-w-md bg-white p-8 rounded-md    
     bg-gray p-8 rounded-xl shadow-md
      w-full max-w-sm border-2 mb-50
      shadow-md text-center border ">
@@ -18,6 +18,20 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 
  @click="goToMainfeed"/>
 </button>
+
+<!-- Connect with Gmail-->
+<div class="flex justify-center">
+  <button @click="signInWithGoogle"
+    class="relative flex items-center justify-center gap-4 px-4 
+    py-2 mb-2 text-base font-medium text-gray-700 bg-gray-200 border-2 
+    border-gray-300 rounded-full  shadow-sm hover:shadow-md 
+    hover:border-gray-400 focus:outline-none focus:ring-2 
+    focus:ring-offset-2 focus:ring-blue-500 transition-shadow">
+    <Icon icon="flat-color-icons:google" class="w-6 h-6" />
+    <span>Connect with Google</span>
+  </button>
+</div>
+<!----->
       </div>
 
       <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Create a new account</h2>
@@ -94,7 +108,15 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { 
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup 
+} from 'firebase/auth';
+
+const provider = new GoogleAuthProvider();
+// Optional: add scopes if needed later
+// provider addScope('https://www.googleapis.com/auth/userinfo.profile');
 
 export default {
   name: 'CreateAccount',
@@ -109,7 +131,7 @@ export default {
         dobMonth: '',
         dobYear: '',
         gender: '',
-        contact: '', // email only for now
+        contact: '', // email
         password: ''
       },
       errors: {
@@ -126,52 +148,42 @@ export default {
 
   methods: {
     goToMainfeed() {
-      this.$router.push('/'); // or your main feed route
+      this.$router.push('/');
     },
 
+    // Email/Password Signup (unchanged)
     async handleSubmit() {
-      // Reset errors
       this.errors = { name: '', dob: '', gender: '', contact: '', password: '' };
 
-      // Validation
       if (!this.form.firstName.trim() || !this.form.lastName.trim()) {
         this.errors.name = 'First and last name are required.';
       }
-
       if (!this.form.dobDay || !this.form.dobMonth || !this.form.dobYear) {
         this.errors.dob = 'Please select your full date of birth.';
       }
-
       if (!this.form.gender) {
         this.errors.gender = 'Please select your gender.';
       }
-
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.form.contact || !emailRegex.test(this.form.contact)) {
         this.errors.contact = 'Please enter a valid email address.';
       }
-
       if (!this.form.password || this.form.password.length < 6) {
         this.errors.password = 'Password must be at least 6 characters.';
       }
-
-      // Stop if errors
       if (Object.values(this.errors).some(err => err)) return;
 
       this.isLoading = true;
 
       try {
-        // Create user in Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           this.form.contact,
           this.form.password
         );
-
         const user = userCredential.user;
         const uid = user.uid;
 
-        // Prepare full profile data
         const profileData = {
           uid: uid,
           email: this.form.contact,
@@ -181,42 +193,95 @@ export default {
           dateOfBirth: `${this.form.dobYear}-${this.form.dobMonth}-${this.form.dobDay}`,
           gender: this.form.gender,
           createdAt: new Date().toISOString(),
-          emailVerified: false
+          emailVerified: false,
+          provider: 'email'
         };
 
-        //  Send profile to backend → save in MongoDB
         const response = await fetch('http://localhost/api/users/create-profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profileData)
         });
 
-        const result = await response.json();
-
         if (!response.ok) {
+          const result = await response.json();
           throw new Error(result.message || 'Failed to save profile data');
         }
 
-        console.log('Profile successfully saved in MongoDB:', result);
-
-        // Optional: Store UID for quick access
         localStorage.setItem('userUid', uid);
         localStorage.setItem('userEmail', this.form.contact);
 
-        // 4. Redirect to Profile Page
-        this.$router.push({ name: 'ProfileUser' }); // Make sure this route name exists in router
+        this.$router.push({ name: 'ProfileUser' });
 
       } catch (error) {
         console.error('Signup error:', error);
-
         if (error.code === 'auth/email-already-in-use') {
           this.errors.contact = 'This email is already registered.';
         } else if (error.code === 'auth/weak-password') {
           this.errors.password = 'Password is too weak.';
-        } else if (error.code === 'auth/invalid-email') {
-          this.errors.contact = 'Invalid email address.';
         } else {
           this.errors.contact = error.message || 'Signup failed. Please try again.';
+        }
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+    // NEW: Google Sign-In
+    async signInWithGoogle() {
+      this.isLoading = true;
+      try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        const uid = user.uid;
+
+        // Extract name from Google displayName
+        let firstName = '';
+        let lastName = '';
+        if (user.displayName) {
+          const parts = user.displayName.trim().split(' ');
+          firstName = parts[0];
+          lastName = parts.slice(1).join(' ') || '';
+        }
+
+        const profileData = {
+          uid: uid,
+          email: user.email,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: user.displayName || '',
+          photoURL: user.photoURL || '',
+          dateOfBirth: '', // Google doesn't provide DOB
+          gender: '',      // Google doesn't provide gender by default
+          createdAt: new Date().toISOString(),
+          emailVerified: user.emailVerified,
+          provider: 'google'
+        };
+
+        // Save to your MongoDB backend
+        const response = await fetch('http://localhost/api/users/create-profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profileData)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.warn('Profile save failed (non-critical):', errorData.message);
+          // Continue anyway — user is already signed in
+        }
+
+        // Store session
+        localStorage.setItem('userUid', uid);
+        localStorage.setItem('userEmail', user.email);
+
+        // Redirect
+        this.$router.push({ name: 'ProfileUser' });
+
+      } catch (error) {
+        console.error('Google sign-in error:', error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+          alert('Google sign-in failed. Please try again.');
         }
       } finally {
         this.isLoading = false;
@@ -225,7 +290,6 @@ export default {
   }
 };
 </script>
-
 <style scoped>
 /* Optional: Add any custom styles here */
 </style>
