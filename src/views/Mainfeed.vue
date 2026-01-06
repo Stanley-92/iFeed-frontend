@@ -874,7 +874,7 @@ iFeed
         v-model="post.newComment"
         placeholder="Write a comment..."
         class="w-full px-12 py-3 pr-16 text-sm bg-gray-100 rounded-2xl resize-none
-               focus:outline-none focus:ring-2 focus:ring-blue-400"
+        focus:outline-none focus:ring-2 focus:ring-blue-400"
         rows="1"
         @input="autoResize($event)"
         @keyup.enter.exact.prevent="addCommentToPost(index)">
@@ -882,15 +882,17 @@ iFeed
 
       <!-- Emoji Button -->
       <button
-        class="absolute left-3 bottom-3 text-gray-500 hover:text-blue-500"
+        class="absolute left-3 bottom-3 text-gray-500 hover:text-blue-500 py-2"
         @click.stop="toggleEmojiPicker(index)">
         <Icon icon="proicons:emoji" class="w-5 h-5" />
       </button>
 
       <!-- Photo Upload -->
-      <label class="absolute right-12 bottom-3 cursor-pointer text-gray-500 hover:text-blue-500">
+      <label 
+      class="absolute right-12 bottom-3 cursor-pointer text-gray-500 hover:text-blue-500">
         <Icon icon="tabler:photo" class="w-5 h-5" />
-        <input type="file" accept="image/*,video/*" class="hidden" @change="addCommentImage($event, index)" />
+        <input type="file" accept="image/*,video/*" 
+        class="hidden" @change="addCommentImage($event, index)"/>
       </label>
 
       <!-- Send Button -->
@@ -1752,6 +1754,7 @@ toggleEmojiPicker(index) {
  this.showEmojiPickerIndex = this.showEmojiPickerIndex === index ? null : index;
   this.showEmojiPickerIndex === index ? null : index;
 },
+
 //add Emoji commet
 addEmojiToComment(emoji, index) {
   this.showEmojiPickerIndex === index ? null : index
