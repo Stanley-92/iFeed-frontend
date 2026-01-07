@@ -108,6 +108,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
+
 import { 
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -145,7 +146,7 @@ export default {
   computed: {
     // Dynamic API base URL - uses Vercel env var in production, localhost locally
     apiBase() {
-      return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      return import.meta.env.VITE_API_URL ||'http://localhost:3000';
     }
   },
 
@@ -295,6 +296,7 @@ export default {
   }
 };
 </script>
+
 <style scoped>
 /* Optional: Add any custom styles here */
 </style>
