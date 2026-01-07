@@ -202,22 +202,38 @@ export default {
           provider: 'email'
         };
 
-        // FIXED: Use dynamic API URL
-        const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(profileData)
-        });
+        // 
 
-        if (!response.ok) {
-          const result = await response.json();
-          throw new Error(result.message || 'Failed to save profile data');
+        try {
+          const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profileData)
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.warn('Profile save failed:', errorData.message || response.status);
+          } else {
+            console.log('Profile saved successfully');
+          }
+        } catch (fetchError) {
+          console.warn('Backend unreachable (non-critical):', fetchError.message);
+          // Continue anyway — user is already signed in with Firebase
         }
 
+        // ALWAYS redirect — even if backend is down or route doesn't exist yet
         localStorage.setItem('userUid', uid);
-        localStorage.setItem('userEmail', this.form.contact);
+        localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userDisplayName', user.displayName || '');
+        localStorage.setItem('userPhotoURL', user.photoURL || '');
 
+        console.log('Redirecting to ProfileUser...');
         this.$router.push({ name: 'ProfileUser' });
+
+
+
+
 
       } catch (error) {
         console.error('Signup error:', error);
@@ -233,9 +249,12 @@ export default {
       }
     },
 
-    async signInWithGoogle() {
+
+
+    
+async signInWithGoogle() {
       this.isLoading = true;
-      const provider = new GoogleAuthProvider(); // Moved inside method
+      const provider = new GoogleAuthProvider();
 
       try {
         const result = await signInWithPopup(auth, provider);
@@ -264,22 +283,32 @@ export default {
           provider: 'google'
         };
 
-        // FIXED: Use dynamic API URL
-        const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(profileData)
-        });
+        // === PASTE THE NEW CODE BLOCK HERE (replaces old fetch + redirect) ===
+        try {
+          const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profileData)
+          });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          console.warn('Profile save failed (non-critical):', errorData.message);
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            console.warn('Profile save failed:', errorData.message || response.status);
+          } else {
+            console.log('Profile saved successfully');
+          }
+        } catch (fetchError) {
+          console.warn('Backend unreachable (non-critical):', fetchError.message);
         }
 
         localStorage.setItem('userUid', uid);
         localStorage.setItem('userEmail', user.email);
+        localStorage.setItem('userDisplayName', user.displayName || '');
+        localStorage.setItem('userPhotoURL', user.photoURL || '');
 
+        console.log('Redirecting to ProfileUser...');
         this.$router.push({ name: 'ProfileUser' });
+        //
 
       } catch (error) {
         console.error('Google sign-in error:', error.code, error.message);
