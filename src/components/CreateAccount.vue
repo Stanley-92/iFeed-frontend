@@ -108,6 +108,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
+
 import { 
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
