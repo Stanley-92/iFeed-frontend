@@ -108,16 +108,11 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
-
 import { 
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup 
 } from 'firebase/auth';
-
-const provider = new GoogleAuthProvider();
-// Optional: add scopes if needed later
-// provider addScope('https://www.googleapis.com/auth/userinfo.profile');
 
 export default {
   name: 'CreateAccount',
@@ -147,15 +142,23 @@ export default {
     };
   },
 
+  computed: {
+    // Dynamic API base URL - uses Vercel env var in production, localhost locally
+    apiBase() {
+      return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    }
+  },
+
   methods: {
     goToMainfeed() {
       this.$router.push('/');
     },
 
-    // Email/Password Signup (unchanged)
     async handleSubmit() {
+      // Reset errors
       this.errors = { name: '', dob: '', gender: '', contact: '', password: '' };
 
+      // Validation (unchanged - good!)
       if (!this.form.firstName.trim() || !this.form.lastName.trim()) {
         this.errors.name = 'First and last name are required.';
       }
@@ -186,7 +189,7 @@ export default {
         const uid = user.uid;
 
         const profileData = {
-          uid: uid,
+          uid,
           email: this.form.contact,
           firstName: this.form.firstName.trim(),
           lastName: this.form.lastName.trim(),
@@ -198,7 +201,8 @@ export default {
           provider: 'email'
         };
 
-        const response = await fetch('http://localhost/api/users/create-profile', {
+        // FIXED: Use dynamic API URL
+        const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profileData)
@@ -228,15 +232,15 @@ export default {
       }
     },
 
-    // NEW: Google Sign-In
     async signInWithGoogle() {
       this.isLoading = true;
+      const provider = new GoogleAuthProvider(); // Moved inside method
+
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         const uid = user.uid;
 
-        // Extract name from Google displayName
         let firstName = '';
         let lastName = '';
         if (user.displayName) {
@@ -246,21 +250,21 @@ export default {
         }
 
         const profileData = {
-          uid: uid,
+          uid,
           email: user.email,
-          firstName: firstName,
-          lastName: lastName,
+          firstName,
+          lastName,
           fullName: user.displayName || '',
           photoURL: user.photoURL || '',
-          dateOfBirth: '', // Google doesn't provide DOB
-          gender: '',      // Google doesn't provide gender by default
+          dateOfBirth: '',
+          gender: '',
           createdAt: new Date().toISOString(),
           emailVerified: user.emailVerified,
           provider: 'google'
         };
 
-        // Save to your MongoDB backend
-        const response = await fetch('http://localhost/api/users/create-profile', {
+        // FIXED: Use dynamic API URL
+        const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profileData)
@@ -269,20 +273,20 @@ export default {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           console.warn('Profile save failed (non-critical):', errorData.message);
-          // Continue anyway — user is already signed in
         }
 
-        // Store session
         localStorage.setItem('userUid', uid);
         localStorage.setItem('userEmail', user.email);
 
-        // Redirect
         this.$router.push({ name: 'ProfileUser' });
 
       } catch (error) {
-        console.error('Google sign-in error:', error);
+        console.error('Google sign-in error:', error.code, error.message);
         if (error.code !== 'auth/popup-closed-by-user') {
-          alert('Google sign-in failed. Please try again.');
+          let msg = 'Google sign-in failed. Please try again.';
+          if (error.code === 'auth/popup-blocked') msg = 'Popup blocked — please allow popups.';
+          if (error.code === 'auth/network-request-failed') msg = 'Network error — check your connection.';
+          this.errors.contact = msg;
         }
       } finally {
         this.isLoading = false;
