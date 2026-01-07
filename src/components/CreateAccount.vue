@@ -105,14 +105,18 @@ class="w-14 h-14 text-white transition-colors bg-green-500
   </div>
 </template>
 
+
+
+
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
-
-import { 
+import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  signInWithPopup 
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
 } from 'firebase/auth';
 
 export default {
@@ -128,7 +132,7 @@ export default {
         dobMonth: '',
         dobYear: '',
         gender: '',
-        contact: '', // email
+        contact: '',
         password: ''
       },
       errors: {
@@ -144,9 +148,20 @@ export default {
   },
 
   computed: {
-    // Dynamic API base URL - uses Vercel env var in production, localhost locally
     apiBase() {
-      return import.meta.env.VITE_API_URL ||'http://localhost:3000';
+      return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    }
+  },
+
+  // Handle Google redirect result
+  async mounted() {
+    try {
+      const result = await getRedirectResult(auth);
+      if (result?.user) {
+        await this.handleGoogleSuccess(result.user);
+      }
+    } catch (error) {
+      console.error('Google redirect error:', error);
     }
   },
 
@@ -155,11 +170,56 @@ export default {
       this.$router.push('/');
     },
 
+    // ===============================
+    // GOOGLE SIGN-IN SUCCESS HANDLER
+    // ===============================
+    async handleGoogleSuccess(user) {
+      const displayName = user.displayName || '';
+      const nameParts = displayName.split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const profileData = {
+        uid: user.uid,
+        email: user.email,
+        firstName,
+        lastName,
+        fullName: displayName,
+        photoURL: user.photoURL || '',
+        dateOfBirth: '',
+        gender: '',
+        provider: 'google',
+        emailVerified: user.emailVerified,
+        createdAt: new Date().toISOString()
+      };
+
+      // Save profile to backend (awaited)
+      try {
+        await fetch(`${this.apiBase}/api/users/create-profile`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profileData)
+        });
+      } catch (e) {
+        console.warn('Backend unreachable:', e.message);
+      }
+
+      // Store locally
+      localStorage.setItem('userUid', user.uid);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userDisplayName', displayName);
+      localStorage.setItem('userPhotoURL', user.photoURL || '');
+
+      // Redirect AFTER save
+      await this.$router.push({ name: 'ProfileUser' });
+    },
+
+    // ===============================
+    // EMAIL + PASSWORD SIGN-UP
+    // ===============================
     async handleSubmit() {
-      // Reset errors
       this.errors = { name: '', dob: '', gender: '', contact: '', password: '' };
 
-      // Validation (unchanged - good!)
       if (!this.form.firstName.trim() || !this.form.lastName.trim()) {
         this.errors.name = 'First and last name are required.';
       }
@@ -169,6 +229,7 @@ export default {
       if (!this.form.gender) {
         this.errors.gender = 'Please select your gender.';
       }
+
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!this.form.contact || !emailRegex.test(this.form.contact)) {
         this.errors.contact = 'Please enter a valid email address.';
@@ -176,147 +237,74 @@ export default {
       if (!this.form.password || this.form.password.length < 6) {
         this.errors.password = 'Password must be at least 6 characters.';
       }
-      if (Object.values(this.errors).some(err => err)) return;
+
+      if (Object.values(this.errors).some(e => e)) return;
 
       this.isLoading = true;
 
       try {
-        const userCredential = await createUserWithEmailAndPassword(
+        const { user } = await createUserWithEmailAndPassword(
           auth,
           this.form.contact,
           this.form.password
         );
-        const user = userCredential.user;
-        const uid = user.uid;
 
         const profileData = {
-          uid,
+          uid: user.uid,
           email: this.form.contact,
           firstName: this.form.firstName.trim(),
           lastName: this.form.lastName.trim(),
           fullName: `${this.form.firstName.trim()} ${this.form.lastName.trim()}`,
           dateOfBirth: `${this.form.dobYear}-${this.form.dobMonth}-${this.form.dobDay}`,
           gender: this.form.gender,
-          createdAt: new Date().toISOString(),
+          provider: 'email',
           emailVerified: false,
-          provider: 'email'
+          createdAt: new Date().toISOString()
         };
 
-        // 
+        await fetch(`${this.apiBase}/api/users/create-profile`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profileData)
+        });
 
-        try {
-          const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(profileData)
-          });
+        localStorage.setItem('userUid', user.uid);
+        localStorage.setItem('userEmail', this.form.contact);
 
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.warn('Profile save failed:', errorData.message || response.status);
-          } else {
-            console.log('Profile saved successfully');
-          }
-        } catch (fetchError) {
-          console.warn('Backend unreachable (non-critical):', fetchError.message);
-          // Continue anyway — user is already signed in with Firebase
-        }
-
-        // ALWAYS redirect — even if backend is down or route doesn't exist yet
-        localStorage.setItem('userUid', uid);
-        localStorage.setItem('userEmail', user.email);
-        localStorage.setItem('userDisplayName', user.displayName || '');
-        localStorage.setItem('userPhotoURL', user.photoURL || '');
-
-        console.log('Redirecting to ProfileUser...');
-        this.$router.push({ name: 'ProfileUser' });
-
-
-
-
+        await this.$router.push({ name: 'ProfileUser' });
 
       } catch (error) {
-        console.error('Signup error:', error);
         if (error.code === 'auth/email-already-in-use') {
           this.errors.contact = 'This email is already registered.';
         } else if (error.code === 'auth/weak-password') {
           this.errors.password = 'Password is too weak.';
         } else {
-          this.errors.contact = error.message || 'Signup failed. Please try again.';
+          this.errors.contact = error.message;
         }
       } finally {
         this.isLoading = false;
       }
     },
 
-
-
-    
-async signInWithGoogle() {
+    // ===============================
+    // GOOGLE SIGN-IN BUTTON
+    // ===============================
+    async signInWithGoogle() {
       this.isLoading = true;
       const provider = new GoogleAuthProvider();
 
       try {
         const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const uid = user.uid;
-
-        let firstName = '';
-        let lastName = '';
-        if (user.displayName) {
-          const parts = user.displayName.trim().split(' ');
-          firstName = parts[0];
-          lastName = parts.slice(1).join(' ') || '';
-        }
-
-        const profileData = {
-          uid,
-          email: user.email,
-          firstName,
-          lastName,
-          fullName: user.displayName || '',
-          photoURL: user.photoURL || '',
-          dateOfBirth: '',
-          gender: '',
-          createdAt: new Date().toISOString(),
-          emailVerified: user.emailVerified,
-          provider: 'google'
-        };
-
-        // === PASTE THE NEW CODE BLOCK HERE (replaces old fetch + redirect) ===
-        try {
-          const response = await fetch(`${this.apiBase}/api/users/create-profile`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(profileData)
-          });
-
-          if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.warn('Profile save failed:', errorData.message || response.status);
-          } else {
-            console.log('Profile saved successfully');
-          }
-        } catch (fetchError) {
-          console.warn('Backend unreachable (non-critical):', fetchError.message);
-        }
-
-        localStorage.setItem('userUid', uid);
-        localStorage.setItem('userEmail', user.email);
-        localStorage.setItem('userDisplayName', user.displayName || '');
-        localStorage.setItem('userPhotoURL', user.photoURL || '');
-
-        console.log('Redirecting to ProfileUser...');
-        this.$router.push({ name: 'ProfileUser' });
-        //
-
+        await this.handleGoogleSuccess(result.user);
       } catch (error) {
-        console.error('Google sign-in error:', error.code, error.message);
-        if (error.code !== 'auth/popup-closed-by-user') {
-          let msg = 'Google sign-in failed. Please try again.';
-          if (error.code === 'auth/popup-blocked') msg = 'Popup blocked — please allow popups.';
-          if (error.code === 'auth/network-request-failed') msg = 'Network error — check your connection.';
-          this.errors.contact = msg;
+        if (
+          error.code === 'auth/popup-blocked' ||
+          error.code === 'auth/popup-closed-by-user'
+        ) {
+          await signInWithRedirect(auth, provider);
+        } else {
+          console.error('Google sign-in error:', error);
+          this.errors.contact = 'Google sign-in failed.';
         }
       } finally {
         this.isLoading = false;
@@ -325,6 +313,8 @@ async signInWithGoogle() {
   }
 };
 </script>
+
+
 
 <style scoped>
 /* Optional: Add any custom styles here */
