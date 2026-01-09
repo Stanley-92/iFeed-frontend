@@ -156,7 +156,7 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
           <button class="text-xs font-medium text-white bg-black px-3 py-1 rounded">View profile</button>
         </div>
 
-        <!-- Card 3 -->
+<!-- Card 3 -->
 <div class="bg-gray-200 rounded-xl p-4 flex flex-col items-center text-center">
 <Icon icon="mdi:pencil" class="w-8 h-8 mb-2" />
 <p class="text-xs mb-2">Introduce yourself<br />and tell peoplewhat you're into.</p>
@@ -176,7 +176,8 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
   <div v-if="showEditModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
   <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm relative">
     <button @click="showEditModal = false" class="absolute top-2 right-2 text-gray-500 hover:text-black">✕</button>
-    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+    <h2 class="text-xl font-bold mb-4">
+    Edit Profile</h2>
 
     <!-- Avatar Upload -->
     <div class="flex items-center gap-4 mb-4">
@@ -185,7 +186,8 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
         <input type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
       </label>
       <div>
-        <p class="text-sm text-gray-500">Change Avatar</p>
+        <p class="text-sm text-gray-500">
+        Change Avatar</p>
       </div>
     </div>
 
@@ -194,14 +196,12 @@ class="flex items-center gap-3 p-2 border rounded justify-between">
       v-model="currentUser.name"
       type="text"
       placeholder="Your Name"
-      class="w-full border rounded px-3 py-2 mb-4"
-    />
+      class="w-full border rounded px-3 py-2 mb-4"/>
 
     <!-- Save Button -->
     <button
       @click="saveProfile"
-      class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full"
-    >
+      class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full">
       Save Changes
     </button>
   </div>

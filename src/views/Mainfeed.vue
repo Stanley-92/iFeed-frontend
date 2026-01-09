@@ -419,6 +419,7 @@ class="relative">
             <Icon
               icon="material-symbols:logout"
               class="w-8 h-8 cursor-pointer"
+          
               @click="goLogin"/>
           </div>
         </div>
@@ -1652,8 +1653,11 @@ selectSearchUser(user) {
     this.$router.push('/profile'); //Go to Profile
 
    },
+
+
    goLogin(){
-    localStorage.clear();
+   localStorage.clear();
+   sessionStorage.clear();
     this.$router.push('/'); //Go to Profile
 
    },

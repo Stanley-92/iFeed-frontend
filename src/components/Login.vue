@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray flex items-center justify-center">
-    <div class="flex w-full max-w-6xl items-center justify-between px-8 gap-10">
+  <div class="flex w-full max-w-6xl items-center justify-between px-8 gap-10">
 
       <!-- LEFT TEXT -->
 
@@ -10,7 +10,9 @@
 <div class=" w-65 hidden md:block max-w-full">
 <button class="flex-1 items-center pl-3 cursor-pointer ">
 <Icon icon="tdesign:chat-bubble" 
-class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
+class="w-14 h-14 text-white transition-colors
+ bg-green-500 border-4 border-green-500 rounded-xl
+  duration-200 hover:text-gray-600 mb-10" 
  @click="goToMainfeed"/>
 </button>
 
@@ -64,42 +66,59 @@ class="w-14 h-14 text-white transition-colors bg-green-500 border-4 border-green
  
 
 
-      <!-- LOGIN FORM -->
-      <div class=" border-2   p-8 rounded-xl shadow-md w-full max-w-sm  mb-50">
-        <input
-          type="text"
-          placeholder="Email or Phone number"
-          class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
-          v-model="email"/>
+<!-- LOGIN FORM -->
+<div class=" border-2   p-8 rounded-xl shadow-md w-full max-w-sm  mb-50">
+       <!-- Email -->
+<input
+  type="text"
+  placeholder="Email or Phone number"
+  class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+  v-model="email"
+  autocomplete="off"
+  name="login_email"
+/>
 
-        <input
-          type="password"
-          placeholder="Password"
-          class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
-          v-model="password" />
+<!-- Password -->
+<input
+  type="password"
+  placeholder="Password"
+  class="w-full mb-4 px-4 py-2 border-2 rounded outline-none focus:ring-2 focus:ring-blue-500"
+  v-model="password"
+  autocomplete="new-password"
+  name="login_password"
+  readonly
+  @focus="$event.target.removeAttribute('readonly')"/>
 
         <button
-          class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 mb-2"
-          @click="login" >
+          class="w-full bg-blue-600 text-white 
+          font-semibold py-2 rounded hover:bg-blue-700 mb-2"
+          @click="login">
           Login
         </button>
 
         <router-link
           to="/forgot-password"
-          class="text-sm text-center text-gray-500 mb-4 block">
-          Forgot your password?
+          class="text-sm text-center  text-gray-600 mb-4 block">
+          Forgot your password ?
         </router-link>
 
         <hr class="mb-4" />
 
         <router-link to="/create" class="block">
           <button
-            class="bg-green-600 text-white w-full py-2 rounded text-sm font-semibold hover:bg-green-700">
+            class="bg-blue-500 text-white  rounded-xl w-full
+             py-2 rounded text-sm font-semibold hover:bg-gray-400">
             Create your account
           </button>
         </router-link>
-      </div>
+        <!-- New Google Sign-In Button -->
+<div class="flex justify-center mb-4 mt-4">
+<GoogleSignInButton redirectAfter="ProfileUser" />
+</div>
 
+
+      </div>
+    
 
       
 
@@ -117,14 +136,22 @@ import { Icon } from '@iconify/vue';
 import story1 from '@/assets/Khmer.jpg'
 import story2 from '@/assets/jena8.jpg'
 import story3 from '@/assets/sinayun_xyn.jpg'
+import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
 
-import { signInWithEmailAndPassword, sendEmailVerification } from 'firebase/auth'
+import { signInWithEmailAndPassword, } from 'firebase/auth'
+
 import { auth } from '../firebase'
+
+
 
 
 export default {
   name: 'Login',
-   components: { Icon },
+   components:{
+     Icon ,
+   GoogleSignInButton,
+
+   },
 
   data() {
     return {
@@ -132,6 +159,8 @@ export default {
       password: '',
       loading: false,
       showPassword: false,
+
+
       stories: [
         { img: story2, rotate: '-14deg', right: '70px', z: 2 },
         { img: story1, rotate: '12deg', left: '300px', z: 1},
@@ -141,41 +170,53 @@ export default {
     }
   },
 
+ 
+  // THIS clears password on refresh / revisit login page
+  mounted() {
+    this.password = '';
+  },
+
+
+ 
   methods: {
-    async login() {
-      if (this.loading) return
+  async login() {
+  if (this.loading) return
 
-      if (!this.email || !this.password) {
-        alert('Please enter both email and password.')
-        return
-      }
+  if (!this.email || !this.password) {
+    alert('Please enter both email and password.')
+    return
+  }
 
-      this.loading = true
+  this.loading = true
 
-      try {
-        const { user } = await signInWithEmailAndPassword(
-          auth,
-          this.email,
-          this.password
-        )
+  try {
+    const { user } = await signInWithEmailAndPassword(
+      auth,
+      this.email,
+      this.password
+    )
 
-        //  Block access if email not verified
-        if (!user.emailVerified) {
-          await sendEmailVerification(user)
-          alert('Verification email sent. Please verify before login.')
-          return
-        }
+    // 🔐 Block unverified users
+    if (!user.emailVerified) {
+      alert('Please verify your email before logging in.')
+      await signOut(auth)   // ✅ force logout
+      return
+    }
 
-        //  Verified → go to feed
-        this.$router.push('/feed')
+    this.password = ''
+    this.$router.push('/feed')
 
-      } catch (error) {
-        console.error(error)
-        alert(this.getErrorMessage(error.code))
-      } finally {
-        this.loading = false
-      }
-    },
+  } catch (e) {
+    alert(this.getErrorMessage(e.code))
+  } finally {
+    this.loading = false
+  }
+},
+
+  async logout() {
+  await signOut(auth)
+  this.$router.push('/')
+},
 
     getErrorMessage(code) {
       const messages = {
@@ -189,6 +230,7 @@ export default {
     }
   }
 }
+
 </script>
 
 

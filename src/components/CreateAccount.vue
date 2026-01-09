@@ -20,17 +20,11 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 </button>
 
 <!-- Connect with Gmail-->
-<div class="flex justify-center">
-  <button @click="signInWithGoogle"
-    class="relative flex items-center justify-center gap-4 px-4 
-    py-2 mb-2 text-base font-medium text-gray-700 bg-gray-200 border-2 
-    border-gray-300 rounded-full  shadow-sm hover:shadow-md 
-    hover:border-gray-400 focus:outline-none focus:ring-2 
-    focus:ring-offset-2 focus:ring-blue-500 transition-shadow">
-    <Icon icon="flat-color-icons:google" class="w-6 h-6" />
-    <span>Connect with Google</span>
-  </button>
+<!-- New Google Sign-In Button -->
+<div class="flex justify-center mb-4">
+  <GoogleSignInButton redirectAfter="ProfileUser" />
 </div>
+
 <!----->
       </div>
 
@@ -80,25 +74,30 @@ class="w-14 h-14 text-white transition-colors bg-green-500
           {{ g }}
         </button>
       </div>
-      <p v-if="errors.gender" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.gender }}</p>
+      <p v-if="errors.gender" class="text-red-500 text-xs mb-3 -mt-2">
+        {{ errors.gender }}</p>
 
       <!-- Email -->
       <input v-model.trim="form.contact" type="text" placeholder="Email address"
         class="w-full px-2 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-3 text-sm" />
-      <p v-if="errors.contact" class="text-red-500 text-xs mb-3 -mt-2">{{ errors.contact }}</p>
+      <p v-if="errors.contact" class="text-red-500 text-xs mb-3 -mt-2">
+        {{ errors.contact }}</p>
 
       <!-- Password -->
       <input v-model="form.password" type="password" placeholder="Create password "
         class="w-full px-2 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 mb-4 text-sm" />
-      <p v-if="errors.password" class="text-red-500 text-xs mb-4 -mt-3">{{ errors.password }}</p>
+      <p v-if="errors.password" class="text-red-500 text-xs mb-4 -mt-3">
+        {{ errors.password }}</p>
 
       <!-- Submit Button with Loading -->
       <button @click="handleSubmit" :disabled="isLoading"
         class="w-full py-2 bg-blue-600 text-white font-semibold 
         text-sm rounded-xl hover:bg-blue-400 disabled:bg-blue-400 
         disabled:cursor-not-allowed transition flex items-center justify-center">
+
         <span v-if="isLoading">
         Creating Account...</span>
+
         <span v-else>Create Your Account</span>
       </button>
 
@@ -112,19 +111,19 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
+import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
 
 
-import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult
-} from 'firebase/auth';
+
+
 
 export default {
   name: 'CreateAccount',
-  components: { Icon },
+  components: { 
+    Icon,
+    GoogleSignInButton,
+  },
+
 
   data() {
     return {
@@ -156,111 +155,18 @@ export default {
     }
   },
 
-  async mounted() {
-    // Only handles the result if the user was redirected back from Google
-    try {
-      const result = await getRedirectResult(auth);
-      if (result?.user) {
-        await this.handleGoogleSuccess(result.user);
-      }
-    } catch (error) {
-      console.error('Google redirect error:', error);
-    }
-  },
 
   methods: {
 
 
     // GOOGLE SIGN-IN SUCCESS HANDLER
-    async handleGoogleSuccess(user) {
-      
-      // Define variables from the user object first
-      const displayName = user.displayName || '';
-      const nameParts = displayName.split(' ');
-      const firstName = nameParts[0] || '';
-      const lastName = nameParts.slice(1).join(' ') || '';
-      const googleAvatar = user.photoURL || '';
-      const photoURL = user.photoURL || ''; // <--- Get the Gmail photo
-    
+   
 
       // Prepare local storage data for ProfileUser.vue
-      const userData = {
-        firstName,
-        lastName,
-        email: user.email
     
-      };
-
-      const profileData = {
-        uid: user.uid,
-        email: user.email,
-        firstName,
-        lastName,
-        fullName: displayName,
-        photoURL: user.photoURL || '',
-        provider: 'google',
-        createdAt: new Date().toISOString()
-      };
-
-      try {
-        // Sync with your backend API
-        await fetch(`${this.apiBase}/api/users/create-profile`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(profileData)
-        });
-      } catch (e) {
-        console.warn('Backend sync failed, proceeding to profile anyway:', e.message);
-      }
-
-      // Store data locally so ProfileUser.vue can display the name immediately
-      localStorage.setItem('newUserData', JSON.stringify(userData));
-      localStorage.setItem('userUid', user.uid);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userDisplayName', displayName);
-      localStorage.setItem('userAvatar', googleAvatar); // Save avatar URL here
-      localStorage.setItem('userAvatar', photoURL);
-
-      // Final Redirect to the Profile page
-      await this.$router.push({ name: 'ProfileUser' });
-    },
+  
 
 
-
-
-    // GOOGLE SIGN-IN TRIGGER
-    async signInWithGoogle() {
-      if (this.isLoading) return; // Prevent double-execution if user clicks twice
-      
-      this.isLoading = true;
-      const provider = new GoogleAuthProvider();
-
-      provider.setCustomParameters({ prompt: 'select_account' });
-
-   try {
-  const result = await signInWithPopup(auth, provider);
-  if (result?.user) {
-    await this.handleGoogleSuccess(result.user);
-  }
-} catch (error) {
-  // Handle 2-Step Verification requirements or blocked popups
-  if (error.code === 'auth/multi-factor-auth-required') {
-
-    // This happens if you've enabled mandatory MFA in the Firebase Console
-    this.errors.contact = "2-Step Verification is required for this account.";
-
-    // You would typically redirect to a specific MFA verification component here
-  } else if (error.code === 'auth/popup-blocked') {
-
-    await signInWithRedirect(auth, provider);
-  } else if (error.code !== 'auth/popup-closed-by-user') {
-    console.error('Google sign-in error:', error);
-    this.errors.contact = "Failed to connect Google account.";
-  }
-      } finally {
-        this.isLoading = false;
-      }
-    },
 
 
 
