@@ -15,7 +15,7 @@ const routes = [
   { path: '/chat', name: 'Chat', component: ChatPanel },
   { path: '/comment', name: 'comment', component: CommentCard },
   { path: '/feed', name: 'Mainfeed', component: Mainfeed },
-  { path: '/profile', name: 'profile', component: ProfileUser },
+  { path: '/profile', name: 'ProfileUser', component: ProfileUser },
   { path: '/create', name: 'CreateAccount', component: CreateAccount },
   { path: '/verify', name: 'Verify', component: Verify },
   { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword },

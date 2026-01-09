@@ -97,7 +97,8 @@ class="w-14 h-14 text-white transition-colors bg-green-500
         class="w-full py-2 bg-blue-600 text-white font-semibold 
         text-sm rounded-xl hover:bg-blue-400 disabled:bg-blue-400 
         disabled:cursor-not-allowed transition flex items-center justify-center">
-        <span v-if="isLoading">Creating Account...</span>
+        <span v-if="isLoading">
+        Creating Account...</span>
         <span v-else>Create Your Account</span>
       </button>
 
@@ -111,6 +112,8 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 <script>
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
+
+
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -153,8 +156,8 @@ export default {
     }
   },
 
-  // Handle Google redirect result
   async mounted() {
+    // Only handles the result if the user was redirected back from Google
     try {
       const result = await getRedirectResult(auth);
       if (result?.user) {
@@ -166,18 +169,27 @@ export default {
   },
 
   methods: {
-    goToMainfeed() {
-      this.$router.push('/');
-    },
 
-    // ===============================
+
     // GOOGLE SIGN-IN SUCCESS HANDLER
-    // ===============================
     async handleGoogleSuccess(user) {
+      
+      // Define variables from the user object first
       const displayName = user.displayName || '';
       const nameParts = displayName.split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
+      const googleAvatar = user.photoURL || '';
+      const photoURL = user.photoURL || ''; // <--- Get the Gmail photo
+    
+
+      // Prepare local storage data for ProfileUser.vue
+      const userData = {
+        firstName,
+        lastName,
+        email: user.email
+    
+      };
 
       const profileData = {
         uid: user.uid,
@@ -186,37 +198,73 @@ export default {
         lastName,
         fullName: displayName,
         photoURL: user.photoURL || '',
-        dateOfBirth: '',
-        gender: '',
         provider: 'google',
-        emailVerified: user.emailVerified,
         createdAt: new Date().toISOString()
       };
 
-      // Save profile to backend (awaited)
       try {
+        // Sync with your backend API
         await fetch(`${this.apiBase}/api/users/create-profile`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(profileData)
         });
       } catch (e) {
-        console.warn('Backend unreachable:', e.message);
+        console.warn('Backend sync failed, proceeding to profile anyway:', e.message);
       }
 
-      // Store locally
+      // Store data locally so ProfileUser.vue can display the name immediately
+      localStorage.setItem('newUserData', JSON.stringify(userData));
       localStorage.setItem('userUid', user.uid);
       localStorage.setItem('userEmail', user.email);
       localStorage.setItem('userDisplayName', displayName);
-      localStorage.setItem('userPhotoURL', user.photoURL || '');
+      localStorage.setItem('userAvatar', googleAvatar); // Save avatar URL here
+      localStorage.setItem('userAvatar', photoURL);
 
-      // Redirect AFTER save
+      // Final Redirect to the Profile page
       await this.$router.push({ name: 'ProfileUser' });
     },
 
-    // ===============================
-    // EMAIL + PASSWORD SIGN-UP
-    // ===============================
+
+
+
+    // GOOGLE SIGN-IN TRIGGER
+    async signInWithGoogle() {
+      if (this.isLoading) return; // Prevent double-execution if user clicks twice
+      
+      this.isLoading = true;
+      const provider = new GoogleAuthProvider();
+
+      provider.setCustomParameters({ prompt: 'select_account' });
+
+   try {
+  const result = await signInWithPopup(auth, provider);
+  if (result?.user) {
+    await this.handleGoogleSuccess(result.user);
+  }
+} catch (error) {
+  // Handle 2-Step Verification requirements or blocked popups
+  if (error.code === 'auth/multi-factor-auth-required') {
+
+    // This happens if you've enabled mandatory MFA in the Firebase Console
+    this.errors.contact = "2-Step Verification is required for this account.";
+
+    // You would typically redirect to a specific MFA verification component here
+  } else if (error.code === 'auth/popup-blocked') {
+
+    await signInWithRedirect(auth, provider);
+  } else if (error.code !== 'auth/popup-closed-by-user') {
+    console.error('Google sign-in error:', error);
+    this.errors.contact = "Failed to connect Google account.";
+  }
+      } finally {
+        this.isLoading = false;
+      }
+    },
+
+
+
+    // EMAIL + PASSWORD SIGN-UP (Existing Logic)
     async handleSubmit() {
       this.errors = { name: '', dob: '', gender: '', contact: '', password: '' };
 
@@ -249,16 +297,21 @@ export default {
           this.form.password
         );
 
+        const userData = {
+          firstName: this.form.firstName.trim(),
+          lastName: this.form.lastName.trim(),
+          email: this.form.contact
+        };
+
         const profileData = {
           uid: user.uid,
           email: this.form.contact,
-          firstName: this.form.firstName.trim(),
-          lastName: this.form.lastName.trim(),
-          fullName: `${this.form.firstName.trim()} ${this.form.lastName.trim()}`,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          fullName: `${userData.firstName} ${userData.lastName}`,
           dateOfBirth: `${this.form.dobYear}-${this.form.dobMonth}-${this.form.dobDay}`,
           gender: this.form.gender,
           provider: 'email',
-          emailVerified: false,
           createdAt: new Date().toISOString()
         };
 
@@ -268,6 +321,7 @@ export default {
           body: JSON.stringify(profileData)
         });
 
+        localStorage.setItem('newUserData', JSON.stringify(userData));
         localStorage.setItem('userUid', user.uid);
         localStorage.setItem('userEmail', this.form.contact);
 
@@ -276,8 +330,6 @@ export default {
       } catch (error) {
         if (error.code === 'auth/email-already-in-use') {
           this.errors.contact = 'This email is already registered.';
-        } else if (error.code === 'auth/weak-password') {
-          this.errors.password = 'Password is too weak.';
         } else {
           this.errors.contact = error.message;
         }
@@ -286,33 +338,14 @@ export default {
       }
     },
 
-    // ===============================
-    // GOOGLE SIGN-IN BUTTON
-    // ===============================
-    async signInWithGoogle() {
-      this.isLoading = true;
-      const provider = new GoogleAuthProvider();
-
-      try {
-        const result = await signInWithPopup(auth, provider);
-        await this.handleGoogleSuccess(result.user);
-      } catch (error) {
-        if (
-          error.code === 'auth/popup-blocked' ||
-          error.code === 'auth/popup-closed-by-user'
-        ) {
-          await signInWithRedirect(auth, provider);
-        } else {
-          console.error('Google sign-in error:', error);
-          this.errors.contact = 'Google sign-in failed.';
-        }
-      } finally {
-        this.isLoading = false;
-      }
+    goToMainfeed() {
+      this.$router.push({ name: 'Mainfeed' });
     }
   }
 };
 </script>
+
+
 
 
 

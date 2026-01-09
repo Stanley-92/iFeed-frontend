@@ -227,7 +227,13 @@ export default {
 
   data() {
     return {
-       // ADD THESE (Follower Popup)
+
+      userProfile: {
+      firstName: '',
+      lastName: '',
+      email: ''
+    },   // ADD THESE (Follower Popup)
+
     showFollowerPopup: false,
     activeTab: 'followers',
     followers: [
@@ -251,14 +257,31 @@ export default {
   
 
   mounted() {
-    const userDataString = localStorage.getItem('newUserData')
-    if (userDataString) {
-      const userData = JSON.parse(userDataString)
-      this.currentUser.name = `${userData.firstName} ${userData.lastName}`
+    const userDataString = localStorage.getItem('newUserData');
+    const googleName = localStorage.getItem('userDisplayName');
+    const googleAvatar = localStorage.getItem('userAvatar');
+
       localStorage.removeItem('newUserData')
       localStorage.removeItem('verifyEmail')
+
+    // Logic to set the name
+  if (userDataString) {
+    try {
+      const userData = JSON.parse(userDataString);
+      this.currentUser.name = `${userData.firstName} ${userData.lastName}`;
+    } catch (e) {
+      console.error("Error parsing userData:", e);
     }
-  },
+  } else if (googleName) {
+    // If we have the Google display name, use it
+    this.currentUser.name = googleName;
+    this.currentUser.avatar = googleAvatar;
+  }
+},
+
+
+
+
 
   methods: {
     
@@ -290,7 +313,7 @@ export default {
           formData.append('avatar', this.avatarFile)
 
           const uploadRes = await axios.post(
-            'http://localhost:5000/api/upload-avatar',
+            'http://localhost:3000/api/upload-avatar',
             formData,
             { headers: { 'Content-Type': 'multipart/form-data' } }
           )
@@ -298,8 +321,10 @@ export default {
           uploadedAvatarUrl = uploadRes.data.url
         }
 
+        
+
         // Save profile info
-        await axios.post('http://localhost:5000/api/update-profile', {
+        await axios.post('http://localhost:3000/api/update-profile', {
           name: this.currentUser.name,
           avatar: uploadedAvatarUrl
         })

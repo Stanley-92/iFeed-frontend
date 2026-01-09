@@ -57,7 +57,12 @@ class="w-10 h-10 text-white transition-colors bg-green-500
        
       </div>
     </button>
-
+    
+<div>
+<button class="">
+<Icon icon="fluent:video-short-32-regular" class="w-6 h-6"/>
+</button>
+</div>
   
 
 
@@ -1204,7 +1209,14 @@ export default {
 
 
       
-  
+   currentUser: {
+      name: 'Guest User',
+      avatar: story4,
+      username: 'myUsername',
+      uid: null,
+ 
+      },
+
   
 
 
@@ -1332,12 +1344,9 @@ export default {
         { id: 4, avatar: story4, username: 'ycn_lovekhm' },
         { id: 5, avatar: story5, username: 'Kon_Khmer' },     
       ],
-      currentUser: {
-      name: 'sinayun_xyn',
-      avatar: story4,
-      username: 'myUsername',
- 
-      },
+
+      
+      
 
 //Post
       posts: [
@@ -1410,6 +1419,9 @@ computed: {
   
   //Method 
   methods: {
+ 
+
+
     // Improved async link detection
   async handlePostInput() {
     // Keep any existing mention logic
@@ -1623,6 +1635,8 @@ selectSearchUser(user) {
       }, 5000);
     },
 
+
+
 //Notify popup
    openLikesPopup() {
       console.log("Heart clicked"); 
@@ -1634,10 +1648,12 @@ selectSearchUser(user) {
       },
 
    goToProfileUser(){
+    
     this.$router.push('/profile'); //Go to Profile
 
    },
    goLogin(){
+    localStorage.clear();
     this.$router.push('/'); //Go to Profile
 
    },
@@ -2267,6 +2283,32 @@ toggleComment(index) {
 
 
   mounted() {
+
+
+    //Get the Google/Email data from storage
+    const storedName = localStorage.getItem('userDisplayName');
+    const storedAvatar = localStorage.getItem('userAvatar');
+    const storedUserData = localStorage.getItem('newUserData');
+
+
+    if (storedName) {
+      this.currentUser.name = storedName;
+    } else if (storedUserData) {
+      try {
+        const parsed = JSON.parse(storedUserData);
+        this.currentUser.name = `${parsed.firstName} ${parsed.lastName}`;
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    }
+
+    // 3. Set Avatar if it exists in storage (Gmail URL)
+    if (storedAvatar && storedAvatar !== 'null' && storedAvatar !== 'undefined') {
+      this.currentUser.avatar = storedAvatar;
+    }
+
+
+
 
     // this.listenRealtime();
     document.addEventListener('click', this.handleClickOutside);
