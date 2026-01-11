@@ -8,7 +8,7 @@
     <Icon icon="flat-color-icons:google" class="w-6 h-6" />
     <span>Connect with Google</span>
   </button>
-  
+
 </template>
 
 <script>
@@ -47,6 +47,8 @@ export default {
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       const googleAvatar = user.photoURL || '';
+
+      localStorage.setItem('isLoggedIn', 'true');
 
       const userData = { firstName, lastName, email: user.email };
 

@@ -3,7 +3,7 @@
   <div class="relative w-16">
     <button
       @click="toggleOpen"
-      class="rounded-xl hover:bg-gray-100 transition-all duration-200 group p-2">
+      class="rounded-xl hover:bg-gray-300 transition-all duration-200 group p-3">
       <Icon
         icon="solar:magnifer-outline"
         class="w-7 h-7 text-gray-600 group-hover:text-gray-800"/>
@@ -19,9 +19,9 @@
       leave-to-class="opacity-0 scale-95">
       <div
         v-if="isOpen"
-        class="absolute top-full left-0 mt-2
+        class="absolute top-full left-0 mt-4 mr-4
                w-80 max-w-[90vw]
-               bg-white border border-gray-200
+               bg-white border border-blue-200
                rounded-xl shadow-2xl
                z-[9999] overflow-hidden">
         <!-- Input -->
@@ -30,7 +30,7 @@
           v-model="searchQuery"
           :placeholder="placeholder"
           class="w-full rounded-xl  px-4 py-2 text-sm
-                 border-2 border-gray-400
+                 border-2 border-blue-400
             focus:ring-blue-200"
           @keydown.esc="closeDropdown"/>
 
@@ -43,7 +43,7 @@
             :key="user.id"
             @mousedown.prevent="selectUser(user)"
             class="flex items-center gap-3 px-2 py-3
-                   hover:bg-gray-100 cursor-pointer
+                   hover:bg-blue-100 cursor-pointer
                    transition-colors">
             <img
               :src="user.avatar"
@@ -54,7 +54,7 @@
             </p>
 
             <button
-              class="ml-auto text-sm text-blue-600
+              class="ml-auto text-sm text-blue-600 mr-8
                      hover:text-blue-700 transition-colors">
               {{ actionText }}
             </button>

@@ -7,6 +7,10 @@ import Verify from '@/components/Verify.vue'
 import ForgotPassword from '@/components/ForgotPassword.vue'
 import ChatPanel from '@/components/ChatPanel.vue'
 import CommentCard from '@/components/CommentCard.vue'
+import Reel from '@/views/Reel.vue'
+
+
+
 
 
 
@@ -18,7 +22,13 @@ const routes = [
   { path: '/profile', name: 'ProfileUser', component: ProfileUser },
   { path: '/create', name: 'CreateAccount', component: CreateAccount },
   { path: '/verify', name: 'Verify', component: Verify },
-  { path: '/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
+  { path: '/forgot', name: 'ForgotPassword', component: ForgotPassword },
+  { path: '/reel', name: 'Reel', component: Reel },
+
+
+
+
+
 
 
 ]

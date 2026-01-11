@@ -97,7 +97,7 @@ class="w-14 h-14 text-white transition-colors
         </button>
 
         <router-link
-          to="/forgot-password"
+          to="/forgot"
           class="text-sm text-center  text-gray-600 mb-4 block">
           Forgot your password ?
         </router-link>
@@ -116,14 +116,9 @@ class="w-14 h-14 text-white transition-colors
 <GoogleSignInButton redirectAfter="ProfileUser" />
 </div>
 
-
       </div>
-    
-
-      
 
     </div>
-
    
   </div>
 
@@ -137,8 +132,7 @@ import story1 from '@/assets/Khmer.jpg'
 import story2 from '@/assets/jena8.jpg'
 import story3 from '@/assets/sinayun_xyn.jpg'
 import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
-
-import { signInWithEmailAndPassword, } from 'firebase/auth'
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 
 import { auth } from '../firebase'
 
@@ -179,55 +173,60 @@ export default {
 
  
   methods: {
-  async login() {
-  if (this.loading) return
-
+ async login() {
+  if (this.loading) return;
   if (!this.email || !this.password) {
-    alert('Please enter both email and password.')
-    return
+    alert('Please enter both email and password.');
+    return;
   }
 
-  this.loading = true
+  this.loading = true;
 
   try {
-    const { user } = await signInWithEmailAndPassword(
-      auth,
-      this.email,
-      this.password
-    )
+    const { user } = await signInWithEmailAndPassword(auth, this.email, this.password);
 
-    // 🔐 Block unverified users
-    if (!user.emailVerified) {
-      alert('Please verify your email before logging in.')
-      await signOut(auth)   // ✅ force logout
-      return
-    }
+   if (!user.emailVerified) {
+  alert('Please verify your email before logging in.');
+  await signOut(auth); // This is why it kicks you out
+  return;
+}
 
-    this.password = ''
-    this.$router.push('/feed')
+    this.password = '';
+    this.$router.push('/feed');
 
   } catch (e) {
-    alert(this.getErrorMessage(e.code))
+    // Check if account exists but has no password (Google users)
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
+      alert("Invalid password. If you originally joined with Google, please use the 'Connect with Google' button or use 'Forgot Password' to create a manual login password.");
+    } else {
+      alert(this.getErrorMessage(e.code));
+    }
   } finally {
-    this.loading = false
+    this.loading = false;
   }
 },
 
-  async logout() {
-  await signOut(auth)
-  this.$router.push('/')
+
+
+// Inside your Sidebar/Settings component logout logic
+async goLogin() {
+  await signOut(auth);
+  localStorage.clear(); // Important: Wipes Gmail avatar/name from memory
+  this.$router.push('/').then(() => {
+    window.location.reload(); // Ensures all Vue data is reset to empty strings
+  });
 },
 
-    getErrorMessage(code) {
-      const messages = {
-        'auth/user-not-found': 'Account not found.',
-        'auth/wrong-password': 'Incorrect password.',
-        'auth/invalid-email': 'Invalid email address.',
-        'auth/user-disabled': 'This account has been disabled.',
-        'auth/too-many-requests': 'Too many attempts. Try again later.'
-      }
-      return messages[code] || 'Login failed. Please try again.'
-    }
+   getErrorMessage(code) {
+  const messages = {
+    'auth/user-not-found': 'Account not found.',
+    'auth/wrong-password': 'Incorrect password.',
+    'auth/invalid-credential': 'Login failed. If you signed up with Google, please use the Google button.', // Added this
+    'auth/invalid-email': 'Invalid email address.',
+    // ...
+  }
+  return messages[code] || `Error: ${code}`; // Show the code so you can debug
+}
   }
 }
 

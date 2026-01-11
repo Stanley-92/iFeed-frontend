@@ -112,8 +112,14 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
 import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
+// At the top of your <script> section
 
+// Ensure your import looks exactly like this:
 
+import { 
+  createUserWithEmailAndPassword, // Add this line!
+  sendEmailVerification 
+} from 'firebase/auth';
 
 
 
@@ -122,6 +128,7 @@ export default {
   components: { 
     Icon,
     GoogleSignInButton,
+   
   },
 
 
@@ -149,24 +156,47 @@ export default {
     };
   },
 
-  computed: {
-    apiBase() {
-      return import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    }
-  },
+
+
+
 
 
   methods: {
 
 
-    // GOOGLE SIGN-IN SUCCESS HANDLER
-   
+   async handleRegister() {
+  try {
+    // 1. Create the user in Firebase
+   const userCredential = await createUserWithEmailAndPassword(
+      auth, 
+      this.form.contact, 
+      this.form.password
+    );
+    
+    await sendEmailVerification(userCredential.user);
+    alert("Success! Check your email for a verification link.");
+    this.$router.push('/');
 
-      // Prepare local storage data for ProfileUser.vue
+    
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      alert("This email is already registered via Google. Please log in with Google instead.");
+    } else {
+      console.error(error);
+      alert("Registration failed: " + error.message);
+    }
+  }
+},
+ 
     
   
 
-
+computed: {
+  apiBase() {
+    // This is the correct way to access it in Vite
+    return import.meta.env.VITE_API_URL || 'http://localhost:3000';
+  }
+},
 
 
 

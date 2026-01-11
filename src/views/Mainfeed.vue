@@ -9,7 +9,7 @@
   <!--Logo Icon  -->
   <button 
     @click="goToMainfeed"
-    class="p-2 rounded-xl hover:bg-green-50 transition-all duration-200 group">
+    class="p-3 rounded-xl  transition-all duration-200 group">
     <Icon icon="tdesign:chat-bubble" 
 class="w-10 h-10 text-white transition-colors bg-green-500
  border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
@@ -17,7 +17,7 @@ class="w-10 h-10 text-white transition-colors bg-green-500
   </button>
 
   <!-- Search Reused-->
-  <div class="relative">
+  <div class="relative  pl-3">
 
     <FriendSearch
     :users="friends"
@@ -32,7 +32,7 @@ class="w-10 h-10 text-white transition-colors bg-green-500
     
     <!-- Notifications  heart icon  -->
     <button @click="showNotify = true"
-            class="relative p-3 rounded-xl hover:bg-gray-100 transition-all duration-200 group">
+            class="relative p-3 rounded-xl hover:bg-gray-300 transition-all duration-200 group">
       <Icon icon="solar:heart-outline" class="w-7 h-7 text-gray-600 group-hover:text-gray-900"/>
       <span v-if="notifications.length > 0"
             class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md">
@@ -41,7 +41,7 @@ class="w-10 h-10 text-white transition-colors bg-green-500
     </button>
 
     <!-- Home -->
-    <button class="p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 group">
+    <button class="p-3 rounded-xl hover:bg-gray-300 transition-all duration-200 group">
       <Icon icon="proicons:home" 
       class="w-7 h-7 text-gray-600 group-hover:text-gray-900"/>
     </button>
@@ -131,7 +131,7 @@ class="w-10 h-10 text-white transition-colors bg-green-500
 
           <!-- Upload Media -->
           <label class="cursor-pointer flex items-center gap-2 mb-4" title="Upload Media">
-            <Icon icon="system-uicons:postcard" class="w-8 h-8 text-blue-500" />
+            <Icon icon="proicons:photo" class="w-8 h-8 text-blue-500" />
           
             <span class="font-medium">
               
@@ -144,10 +144,6 @@ class="w-10 h-10 text-white transition-colors bg-green-500
               @change="handleFileUpload"/>
               
           </label>
-
-
-
-          
 <!----->
 
 
@@ -355,15 +351,13 @@ class="relative">
 </div>
 </div>
 </teleport>
-
-
 </nav>
 
 <div class="mt-40 mb-5 relative">
   <!-- Settings Icon -->
   <div 
     @click="toggleSettings"  
-    class="relative z- hover:bg-gray-200 rounded-xl">
+    class="p-3 rounded-xl hover:bg-gray-300 transition-all duration-200 group">
   <Icon icon="famicons:reorder-three-outline"  
   class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Setting-->
   </div>
@@ -1191,6 +1185,7 @@ export default {
     EmojiPicker,
     CommentCard,
     ChatPanel,
+
     name: 'PostComposer',
 
   },
