@@ -6,7 +6,7 @@
     bg-gray p-8 rounded-xl shadow-md
      w-full max-w-sm border-2 mb-50
      shadow-md text-center border ">
-     <!---Box Create Acc-->
+
 
       <!-- Back to Main Feed Button (optional) -->
    
@@ -17,9 +17,17 @@ class="w-14 h-14 text-white transition-colors bg-green-500
  border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
 
  @click="goToMainfeed"/>
+
 </button>
 
-<!-- Connect with Gmail-->
+
+  
+
+
+
+
+
+
 <!-- New Google Sign-In Button -->
 <div class="flex justify-center mb-4">
   <GoogleSignInButton redirectAfter="ProfileUser" />
@@ -97,7 +105,6 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 
         <span v-if="isLoading">
         Creating Account...</span>
-
         <span v-else>Create Your Account</span>
       </button>
 
@@ -112,7 +119,7 @@ class="w-14 h-14 text-white transition-colors bg-green-500
 import { Icon } from '@iconify/vue';
 import { auth } from '@/firebase';
 import GoogleSignInButton from '@/components/GoogleSignInButton.vue';
-// At the top of your <script> section
+
 
 // Ensure your import looks exactly like this:
 
@@ -166,7 +173,7 @@ export default {
 
    async handleRegister() {
   try {
-    // 1. Create the user in Firebase
+    // Create the user in Firebase
    const userCredential = await createUserWithEmailAndPassword(
       auth, 
       this.form.contact, 

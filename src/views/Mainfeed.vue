@@ -368,6 +368,9 @@ class="relative">
 
 
  <div>
+
+
+
 <!-- Settings Popup -->
 <teleport to="body">
   <!-- Overlay (click outside) -->
@@ -375,10 +378,11 @@ class="relative">
     v-if="showSettings"
     class="fixed inset-0 z-40"
     @click.self="showSettings = false">
+
+
     <!-- Popup -->
     <div
-      class="absolute top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 z-50">
-
+      class="flex top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 button-10">
       <!-- Menu Sections -->
       <div class="divide-y bg-white">
 
@@ -522,6 +526,7 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 
 
 
+  
  
   <!-- Three-dot Menu -->
 <div class="relative z-20 pointer-events-auto">
@@ -775,16 +780,31 @@ iFeed
 <input type="text" placeholder="Write something..." class="flex-1 border rounded px-2 py-1" />
 </div>
 
+
 <!-- Sent to Friend -->
 <div class="mb-4">
 <p class="font-semibold mb-1">
-  Sent to Friend
+  Peolpe 
 </p>
-<div class="flex space-x-2">
-<img
- v-for="(friend, index) in friends" :key="index" :src="friend"
-  class="w-10 h-10 rounded-full" />
+
+
+<!---List of Friends-->
+<div class="flex -space-x-2 items-center">
+  <img
+    v-for="(friend, index) in friends.slice(0, 5)"
+    :key="index"
+    :src="friend"
+    class="w-10 h-10 rounded-full border-2 border-white object-cover"
+  />
+
+  <div
+    v-if="friends.length > 5"
+    class="w-10 h-10 rounded-full bg-gray-200 flex items-center
+           justify-center text-sm font-semibold border-2 border-white">
+    +{{ friends.length - 5 }}
+  </div>
 </div>
+  
 </div>
 
 <!-- Share To -->
@@ -835,13 +855,14 @@ iFeed
 
  <!-- Comment Reply Box -->
   <div v-if="post.showComments" 
-  class="max-w-sl rounded-full mx-auto px-4 py-4">
+  class="max-w-sl rounded-full mx-auto px-4 py-4 ">
 
     <!-- View All Toggle -->
   <div
     class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
    @click="post.viewAll = !post.viewAll">
-   All {{countTotalComments (post.commentsList) }} comments 
+   All {{countTotalComments (post.commentsList) }}
+  comments 
   </div>
 
   <!-- Comment List -->
@@ -906,6 +927,9 @@ iFeed
     </div>
   </div>
 
+
+
+
   <!-- Attached Media Preview -->
   <div v-if="post.commentMedia?.length" class="mt-3 flex flex-wrap gap-2">
     <div v-for="(media, i) in post.commentMedia" :key="i" class="relative">
@@ -938,14 +962,12 @@ iFeed
 </div>   
 <!--When  Post a Composer Bottom -->
  </main>
-
    
+
+
+
 <!-- Right Sidebar Suggestions -->
 <aside class="w-72 bg-white border-l p-10 hidden xl:block sticky top-0 h-screen overflow-y-auto">
-
-
-
-
 
 <!-- Profile Box with Heart Icon -->
 <div class="flex items-center justify-between mb-32">
@@ -983,14 +1005,14 @@ v-if="showChatPopup"
 
 
       
-<div class="flex justify-between items-center mb-12 ">
+<div class="flex justify-between items-center mb-12">
 <h2 class="font-semibold text-gray-800 hover:text-blue-600 ">
 Suggested for you</h2>
 
 <button @click="ShowAll" class="text-sm text-gray-500 hover:text-blue-600" >
 Show All</button>
 </div>
-<ul class="space-y-4">
+<ul class="space-y-2">
  <li
 v-for="user in suggestedUsers"
  :key="user.id"
@@ -1002,13 +1024,13 @@ v-for="user in suggestedUsers"
   <div class="flex flex-col">
   <span class="text-sm font-medium text-gray-700">{{ user.username }}</span>
   <button 
-  class="w-20 text-sm font-medium text-blue-600 py-1 rounded hover:text-gray-700 transition duration-200">
+  class="w-20 text-sm font-medium text-blue-600 py-1 
+  rounded hover:text-gray-700 transition duration-200">
    Follow
   </button>
   </div>
   </li>
   </ul>
-  
 <!--  Add Copyright Box -->
 <div class=" mt-8 text-center text-xs text-gray-400">
 © 2025 iFeed. All rights reserved.
@@ -1193,6 +1215,10 @@ export default {
  
   data() {
     return {
+      
+
+
+      
       following:[], // stores userIds you follow
 
       showSearch: false,
@@ -1207,18 +1233,20 @@ export default {
 
       
    currentUser: {
-      name: 'Guest User',
+      name: 'Sina Yun',
       avatar: story4,
-      username: 'myUsername',
+      username: 'CurrentUser',
       uid: null,
  
-      },
-
-  
-
-
-  
- 
+    // Friend List for Share Post
+    friends: [
+      { id: 1, name: 'Sokha', avatar: story1 },
+      { id: 2, name: 'Dara', avatar: story2 },
+      { id: 3, name: 'Sreyneang', avatar: story3 },
+      { id: 4, name: 'Vannak', avatar: story4 },
+      { id: 5, name: 'Rithy', avatar: story5 },
+    ]
+    },
       
 
       showLikes: false,
@@ -1352,7 +1380,7 @@ export default {
           userId:'u_2',
           user: 'nayun_ndo',
           avatar: aesp,
-          caption: 'A design room for myself',
+          Caption: 'Exploring the beautiful landscapes of Cambodia! #Travel #Adventure',
           media: [{ url: story5, type: 'image' }],
           time: '1h ago',
           likes: 0,
@@ -1367,24 +1395,7 @@ export default {
           commentsDisabled: false,
         
         },
-        {
-          id: 2,
-          userId:'u_3',
-          user: 'nita_lovekhmer',
-          avatar: story2,
-          caption: 'My girlfriend so cute ',
-          media: [{ url: story3, type: 'image' }],
-          time: '1m ago',
-          likes: 999,
-          isFollowing: false, //Follow in post
-          shares: 0,
-          liked: false,
-          showComments: false,
-          showShare: false,
-          newComment: '',
-          commentsList: [],
-          commentsDisabled: false,
-        },
+       
       ],
     };
   },
@@ -1416,6 +1427,12 @@ computed: {
   
   //Method 
   methods: {
+
+// Open Friend Profile from Chat Panel
+  openProfile(index) {
+    console.log('Open friend profile:', index)
+  },
+
  
 
 
@@ -1569,6 +1586,8 @@ computed: {
     user.followers = user.followers.filter(id => id !== this.currentUser.id);
   }
 },
+
+
 //Comment
 toggleMenu(index) {
   this.activeMenuIndex =
@@ -1795,7 +1814,8 @@ addEmojiToComment(emoji, index) {
   }
 
   if (this.composerType === 'story') {
-    // === STORY ONLY ===
+
+    // STORY ONLY 
     this.stories.unshift({
       id: Date.now(),
       username: this.currentUser.username,

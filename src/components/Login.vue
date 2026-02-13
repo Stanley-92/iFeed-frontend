@@ -39,7 +39,7 @@ class="w-14 h-14 text-white transition-colors
 
       <!-- ACTION + STORY STACK -->
       <div class="relative items-center mt-10 p-2  ">
-    <!-- CENTER STORY STACK -->
+    <!-- CENTER STORY STACK 
       <div class="relative   items-center w-[360px] h-[320px] mt-10 px-4 mr-80  p-2">
         <img
           v-for="(story, i) in stories"
@@ -52,7 +52,7 @@ class="w-14 h-14 text-white transition-colors
             zIndex: story.z
           }"/>
         </div>
-      
+      -->
   
 </div>
 
@@ -68,7 +68,7 @@ class="w-14 h-14 text-white transition-colors
 
 <!-- LOGIN FORM -->
 <div class=" border-2   p-8 rounded-xl shadow-md w-full max-w-sm  mb-50">
-       <!-- Email -->
+<!-- Email -->
 <input
   type="text"
   placeholder="Email or Phone number"
@@ -94,7 +94,7 @@ class="w-14 h-14 text-white transition-colors
           font-semibold py-2 rounded hover:bg-blue-700 mb-2"
           @click="login">
           Login
-        </button>
+  </button>
 
         <router-link
           to="/forgot"
