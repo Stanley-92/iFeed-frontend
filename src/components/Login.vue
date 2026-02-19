@@ -5,10 +5,10 @@
       <!-- LEFT TEXT -->
 
 
-<div class="flex min-h-[100dvh] mt-8  ">
+<div class="flex-1 mt-8  ">
 <aside >
 <div class=" w-65 hidden md:block max-w-full">
-<button class="flex-1 items-center pl-3 cursor-pointer ">
+<button class="flex items-center pl-3 cursor-pointer ">
 <Icon icon="tdesign:chat-bubble" 
 class="w-14 h-14 text-white transition-colors
  bg-green-500 border-4 border-green-500 rounded-xl
@@ -17,12 +17,14 @@ class="w-14 h-14 text-white transition-colors
 </button>
 
 
-<div class="flex items-center gap-4 ">
+<div class="flex-1 items-center gap-4 ">
 <p class="text-gray-600 leading-relaxed">
-          Connect with the people in your life and the world. 
+          Connect with the people in your
+           life and the world. 
           Secure and safe sharing your activity.
         </p>
 </div>
+
 
    <!-- ACTION MENU -->
     <!-----  <div class="flex flex-col gap-6 text-black">
