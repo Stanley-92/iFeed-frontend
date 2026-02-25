@@ -9,12 +9,21 @@
          
           <button @click="$emit('update:modelValue', false)">✕</button>
           
-        </div>
- <button class="flex justify-between items-center mb-5" >All</button>
+</div>
 
-<button class="flex-1 justify-between items-center mb-2" >
-Unread
-</button> 
+
+<div>
+<button>
+<span class="text-sm font-semibold  hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">All</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Unread</span>
+</button>
+</div>
+   
+
+
         <!-- Notifications -->
         <div class="space-y-4 overflow-y-auto h-[90%]">
           <div

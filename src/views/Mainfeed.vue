@@ -233,7 +233,6 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
 </div>
 </teleport>
 
-
 <!-- Location Popup Modal -->
 
 
@@ -254,12 +253,12 @@ class="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-100"
   </button>
 
   <div
-    v-if="showEmojiPickerIndex === 'composer'"
-    class="absolute z-50 top-8 right-0"
-    @click.stop>
-    <EmojiPicker @select="EmojiToPost" />
+  v-if="showEmojiPickerIndex === 'composer'"
+  class="absolute z-50 top-8 right-0"
+  @click.stop>
+  <EmojiPicker @select="EmojiToPost" />
   </div>
-</div>
+  </div>
 
 
 <!-- Post Button-->
@@ -355,10 +354,11 @@ class="relative">
 </nav>
 
 <div class="mt-40 mb-5 relative">
+  
   <!-- Settings Icon -->
   <div 
-    @click="toggleSettings"  
-    class="p-3 rounded-xl hover:bg-gray-300 transition-all duration-200 group">
+  @click="toggleSettings"  
+  class="p-3 rounded-xl hover:bg-gray-300 transition-all duration-200 group">
   <Icon icon="famicons:reorder-three-outline"  
   class="w-8 h-8 text-gray-500 transition-colors duration-200 hover:text-gray-600"/>  <!---Setting-->
   </div>
@@ -368,29 +368,26 @@ class="relative">
 
 
  <div>
-
-
-
 <!-- Settings Popup -->
 <teleport to="body">
   <!-- Overlay (click outside) -->
   <div
-    v-if="showSettings"
-    class="fixed inset-0 z-40"
-    @click.self="showSettings = false">
+  v-if="showSettings"
+  class="fixed inset-0 z-40"
+  @click.self="showSettings = false">
 
 
     <!-- Popup -->
     <div
-      class="flex top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 button-10">
-      <!-- Menu Sections -->
-      <div class="divide-y bg-white">
+    class="flex top-20 left-40 w-72 bg-white shadow-lg border-2 border-gray-300 rounded-xl p-4 button-10">
+    <!-- Menu Sections -->
+    <div class="divide-y bg-white">
 
         <!-- Section 1 -->
         <div>
-          <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 px-2 rounded">
-            <span class="font-medium">Switch Mode</span>
-            <Icon icon="ooui:next-ltr"/>
+        <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-50 px-2 rounded">
+          <span class="font-medium">Switch Mode</span>
+          <Icon icon="ooui:next-ltr"/>
           </div>
           <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 
           rounded">Daily Review</div>
@@ -399,35 +396,35 @@ class="relative">
         </div>
 
         <!-- Section 2 -->
-        <div>
-          <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-200 px-2 rounded">
-            <button>
-              iFeed
-            </button>
-            <Icon icon="ooui:next-ltr"/>
-          </div>
-          <div class="py-3 px-2 cursor-pointer hover:bg-gray-200 rounded">Feedback</div>
-          <div class="py-3 px-2 cursor-pointer hover:text-gray-600 rounded flex items-center gap-2">
-            <Icon icon="akar-icons:heart" class="w-8 h-8"/>
-          </div>
-        </div>
+    <div>
+    <div class="py-3 flex justify-between items-center cursor-pointer hover:bg-gray-200 px-2 rounded">
+    <button>
+     iFeed
+    </button>
+    <Icon icon="ooui:next-ltr"/>
+    </div>
+    <div class="py-3 px-2 cursor-pointer hover:bg-gray-200 rounded">Feedback</div>
+    <div class="py-3 px-2 cursor-pointer hover:text-gray-600 rounded flex items-center gap-2">
+    <Icon icon="akar-icons:heart" class="w-8 h-8"/>
+    </div>
+    </div>
 
 <!-- Logout -->
-        <div>
-          <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 rounded text-red-500 flex items-center gap-2">
-            <Icon
-              icon="material-symbols:logout"
-              class="w-8 h-8 cursor-pointer"
+    <div>
+    <div class="py-3 px-2 cursor-pointer hover:bg-gray-50 rounded text-red-500 flex items-center gap-2">
+    <Icon
+    icon="material-symbols:logout"
+    class="w-8 h-8 cursor-pointer"
           
-              @click="goLogin"/>
-          </div>
-        </div>
-
-      </div>
+    @click="goLogin"/>
     </div>
-  </div>
-</teleport>
-</div>
+    </div>
+
+    </div>
+    </div>
+    </div>
+    </teleport>
+    </div>
 
 
 
@@ -440,12 +437,6 @@ class="relative">
 <!-- MainiFeed -->
 <main class="flex-5 max-w-2xl mx-auto px-10 py-5 ">
 
-
-
-
-
-
-
 <!-- STORIES WRAPPER -->
 <div class="relative w-full mb-4">
 
@@ -453,21 +444,31 @@ class="relative">
   <div
     ref="storyScrollRef"
     class="flex gap-4 overflow-x-auto scroll-smooth px-2 no-scrollbar">
+
+
+    <!-- Normal Stories -->
     <div
       v-for="(story, i) in stories"
       :key="story.id"
       @click="openStory(i)"
-      class="flex flex-col items-center flex-shrink-0 w-[90px] cursor-pointer">
-      <!-- Gradient Border -->
-      <div class="w-20 h-20 rounded-xl p-[2px] bg-gradient-to-tr from-purple-500 to-pink-500">
+      class="flex flex-col items-center flex-shrink-0 w-[90px] cursor-pointer hover:brightness-90 transition">
+
+      <!-- Circle Story Ring -->
+      <div
+        :class="story.viewed 
+          ? 'border-2 border-gray-300' 
+          : 'p-[3px] bg-gradient-to-tr from-blue-500 to-purple-500 rounded-full'">
+
         <img
           :src="story.media"
-          class="w-full h-full rounded-lg object-cover bg-white"/>
+          class="w-20 h-20 rounded-full object-cover bg-white"/>
       </div>
+
       <p class="text-xs mt-2 text-gray-700 truncate w-full text-center">
         {{ story.username }}
       </p>
     </div>
+
   </div>
 
   <!-- LEFT ARROW -->
@@ -478,25 +479,64 @@ class="relative">
   </button>
 
   <!-- RIGHT ARROW -->
-  <button
-    @click="scrollStories('right')"
-    class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-20">
-    <Icon icon="ic:round-chevron-right" class="w-5 h-5" />
-  </button>
+<button
+@click="scrollStories('right')"
+class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-1 z-20">
+<Icon icon="ic:round-chevron-right" class="w-5 h-5" />
+ </button>
 </div>
 
 
 
 
 
-<!-- Post a Composer 1  box Media post -->
+<!--Button -->
+<div class="flex gap-4 mb-6 bg-gray-50 p-2 rounded-xl w-max">
+<button>
+<span>All</span>
+</button>
 
+<button>
+<span class="text-sm font-semibold  hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Entertainment</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Music</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Travel</span>
+</button>
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Food</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Technology</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Political</span>
+</button>
+
+<button>
+<span class="text-sm font-semibold hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Find Jobs</span>
+</button>
+
+</div>
+
+
+
+
+
+
+
+<!--Post a Composer 1  box Media post -->
 <div v-for="(post, index) in posts" :key="post.id"
  class="bg-white border rounded-xl shadow-sm p-4  relative  ">
 <!-- Post Header -->
 
 <div class="flex items-center justify-between mb-2 rounded-xl">
-
 
 <!-- Avatar  User Info -->
 <div class="flex items-center gap-2 ">
@@ -607,17 +647,17 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <!-- Caption or Editable -->
   <div class="mb-4">
   <div v-if="editingIndex === index">
-        <input v-model="editedCaption"
-         class="w-full border px-3 py-1 rounded focus:outline-none" />
-        <div class="text-right mt-1">
-        <button class="text-green-600 text-sm font-semibold hover:underline mr-2"
-         @click="saveEditedPost(index)">Save</button>
-        <button class="text-gray-500 text-sm hover:underline"
-         @click="cancelEdit">Cancel</button>
-        </div>
-        </div>
-        <p v-else> {{ post.caption }}</p>
-        </div>
+  <input v-model="editedCaption"
+  class="w-full border px-3 py-1 rounded focus:outline-none" />
+  <div class="text-right mt-1">
+  <button class="text-green-600 text-sm font-semibold hover:underline mr-2"
+  @click="saveEditedPost(index)">Save</button>
+  <button class="text-gray-500 text-sm hover:underline"
+  @click="cancelEdit">Cancel</button>
+  </div>
+  </div>
+  <p v-else> {{ post.caption }}</p>
+  </div>
 
 
 
@@ -629,33 +669,32 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
   class="mt-4 border rounded-xl overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
   @click="window.open(post.link.url, '_blank')">
   <div v-if="post.link.image" class="w-full h-48 bg-gray-200">
-    <img :src="post.link.image" class="w-full h-full object-cover" />
+  <img :src="post.link.image" class="w-full h-full object-cover" />
   </div>
   <div class="p-3 bg-white">
-    <p class="text-sm font-medium text-gray-900 line-clamp-2">
-      {{ post.link.title || 'Untitled' }}</p>
-    <p v-if="post.link.description" 
-    class="text-xs text-gray-600 mt-1 line-clamp-2">
-      {{ post.link.description }}</p>
-    <p class="text-xs text-gray-500 mt-2 truncate">
-      {{ post.link.domain }}</p>
+  <p class="text-sm font-medium text-gray-900 line-clamp-2">
+  {{ post.link.title || 'Untitled' }}</p>
+  <p v-if="post.link.description" 
+  class="text-xs text-gray-600 mt-1 line-clamp-2">
+  {{ post.link.description }}</p>
+  <p class="text-xs text-gray-500 mt-2 truncate">
+  {{ post.link.domain }}</p>
   </div>
 </div>
 
   <!-- YouTube Link -->
-  <iframe
-    v-if="post && post.link && post.link.type === 'youtube' && post.link.url"
-    :src="`https://www.youtube.com/embed/${getYouTubeId(post.link.url)}`"
-    class="w-full aspect-video rounded-xl mt-2"
-    allowfullscreen>
+<iframe
+v-if="post && post.link && post.link.type === 'youtube' && post.link.url"
+:src="`https://www.youtube.com/embed/${getYouTubeId(post.link.url)}`"
+class="w-full aspect-video rounded-xl mt-2"
+allowfullscreen>
 </iframe>
 
 <!-- Open Photo Post Media  sinayun_xyn 1h ago ) -->
 
 <div
   ref="scrollContainer"
-  class="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer"
->
+  class="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory cursor-pointer">
   <component
     v-for="(media, i) in post.media"
     :key="i"
@@ -684,7 +723,6 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 </button>
 
 <!-- Icon Prev -->
- 
 <button
 v-if="selectedIndex > 0"
         @click.stop="prevMedia"
@@ -762,8 +800,9 @@ class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-5
 <div 
 class="bg-white rounded-xl p-4 w-[420px] relative"
 @click.stop>
-<!-- Header -->
 
+
+<!-- Header -->
 <div class="flex justify-between items-center mb-3">
 <h2 class="text-lg font-bold">
 iFeed
@@ -794,8 +833,7 @@ iFeed
     v-for="(friend, index) in friends.slice(0, 5)"
     :key="index"
     :src="friend"
-    class="w-10 h-10 rounded-full border-2 border-white object-cover"
-  />
+    class="w-10 h-10 rounded-full border-2 border-white object-cover"/>
 
   <div
     v-if="friends.length > 5"
@@ -918,19 +956,19 @@ iFeed
       </label>
 
       <!-- Send Button -->
-      <button
-        v-if="post.newComment?.trim() || post.commentMedia?.length"
-        class="absolute right-3 bottom-3 text-blue-500 hover:text-blue-600"
-        @click="addCommentToPost(index)">
-        <Icon icon="famicons:paper-plane-outline" class="w-6 h-6" />
-      </button>
+    <button
+    v-if="post.newComment?.trim() || post.commentMedia?.length"
+    class="absolute right-3 bottom-3 text-blue-500 hover:text-blue-600"
+    @click="addCommentToPost(index)">
+    <Icon icon="famicons:paper-plane-outline" class="w-6 h-6" />
+   </button>
     </div>
   </div>
 
 
 
 
-  <!-- Attached Media Preview -->
+  <!-- Attached Media Preview-->
   <div v-if="post.commentMedia?.length" class="mt-3 flex flex-wrap gap-2">
     <div v-for="(media, i) in post.commentMedia" :key="i" class="relative">
       <component
@@ -951,9 +989,9 @@ iFeed
 
   <!-- Emoji Picker -->
   <div v-if="showEmojiPickerIndex === index" class="relative">
-    <div class="absolute bottom-full right-0 mb-2 z-50" @click.stop>
-      <EmojiPicker @select="emoji => addEmojiToComment(emoji, index)" />
-    </div>
+  <div class="absolute bottom-full right-0 mb-2 z-50" @click.stop>
+  <EmojiPicker @select="emoji => addEmojiToComment(emoji, index)" />
+  </div>
   </div>
 
 
@@ -1031,7 +1069,8 @@ v-for="user in suggestedUsers"
   </div>
   </li>
   </ul>
-<!--  Add Copyright Box -->
+n
+<!--  Copyright Box -->
 <div class=" mt-8 text-center text-xs text-gray-400">
 © 2025 iFeed. All rights reserved.
 TeamDevOP.Sihanouk Ville City.Cambodia 
@@ -1048,12 +1087,12 @@ TeamDevOP.Sihanouk Ville City.Cambodia
   class="fixed inset-0 bg-black/80 flex items-center justify-center z-[9999]"
   @click.self="closeStory">
 
-  <!-- PHONE FRAME -->
+<!-- PHONE FRAME -->
   <div
     class="relative w-[90vw] max-w-[430px] aspect-[9/16]
     bg-black rounded-2xl overflow-hidden shadow-2xl">
 
-    <!-- MEDIA NON INTERACTIVE) -->
+<!-- MEDIA NON INTERACTIVE) -->
   
 <div class="absolute inset-0 z-0">
   <component
@@ -1062,8 +1101,7 @@ TeamDevOP.Sihanouk Ville City.Cambodia
     class="w-full h-full object-cover pointer-events-none"
     v-bind="activeStory.type === 'video'
       ? { autoplay: true, muted: true, loop: true, playsinline: true }
-      : {}"
-  />
+      : {}"/>
 </div>
 
 
@@ -1071,7 +1109,8 @@ TeamDevOP.Sihanouk Ville City.Cambodia
     <div class="absolute inset-x-0 top-0 p-3 z-20">
       <!-- Progress Bar -->
       <div class="h-1 w-full bg-white/20 rounded mb-3">
-        <div class="h-full bg-white rounded" :style="{ width: progress + '%' }"></div>
+        <div class="h-full bg-white rounded" :style="{ width: progress + '%' }">
+        </div>
       </div>
 
       <!-- Avatar, Username, Time -->
@@ -1114,7 +1153,7 @@ TeamDevOP.Sihanouk Ville City.Cambodia
       @click="prevStory"
       class="absolute left-3 top-1/2 -translate-y-1/2 z-40
       p-2 rounded-full bg-black/30 hover:bg-black/50">
-      <Icon icon="ooui:next-rtl" class="w-6 h-6 text-white" />
+      <Icon icon="ooui:next-rtl" class="w-6 h-6 text-white"/>
     </button>
 
     <!-- RIGHT ARROW (CLICKABLE) -->
@@ -1122,7 +1161,7 @@ TeamDevOP.Sihanouk Ville City.Cambodia
       @click="nextStory"
       class="absolute right-3 top-1/2 -translate-y-1/2 z-40
       p-2 rounded-full bg-black/30 hover:bg-black/50">
-      <Icon icon="ooui:next-ltr" class="w-6 h-6 text-white" />
+    <Icon icon="ooui:next-ltr" class="w-6 h-6 text-white" />
     </button>
 
     <!-- BOTTOM COMPOSER -->

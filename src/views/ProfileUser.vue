@@ -3,7 +3,9 @@
     <!-- Sidebar -->
 <aside class="w-35 bg-white p-6 border-r hidden lg:flex flex-col">
 <button class="flex-1 flex-col items-center text-sm item-center">
-<Icon icon="tdesign:chat-bubble" class="w-10 h-10 text-white transition-colors bg-green-500 border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600" 
+<Icon icon="tdesign:chat-bubble"
+ class="w-10 h-10 text-white transition-colors bg-green-500
+  border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600" 
  @click="goToMainfeed"/>
 </button>
 </aside>
