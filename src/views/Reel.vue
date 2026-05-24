@@ -97,21 +97,26 @@
             {{ showMore ? fullText : shortText }}
           </p>
           
+          <!-- Mute -->
+        <button
+          @click="toggleMute"
+          class="pointer-events-auto w-12 h-12
+          flex items-center justify-center
+          rounded-full bg-black/60 backdrop-blur-lg
+          text-white hover:bg-black/80
+          transition shadow-xl">
+          <Icon
+            :icon="isMuted
+              ? 'material-symbols:volume-off'
+              : 'material-symbols:volume-up'"
+            class="w-5 h-5   "
+          />
+        </button>
 
-          <button
-            @click="showMore = !showMore"
-            class="text-blue-400 mt-2 text-sm hover:underline">
-            {{ showMore ? 'Show less' : 'Show more' }}
-            
-          </button>
 
-        </div>
-        
-      </div>
-
-      <!-- TOP BAR -->
+ <!-- TOP BAR -->
       <div
-        class="absolute top-90 left-4 right-4 px-4 py-2
+        class="absolute  left-4 right-4 px-4 py-2
         flex items-center z-30">
         <div class="flex-1 h-1 bg-white/40 rounded-full overflow-hidden">
         <div
@@ -121,6 +126,22 @@
         </div>
       </div>
 
+
+
+
+          <button
+            @click="showMore = !showMore"
+            class="text-blue-400 mt-2 text-sm hover:underline">
+            {{ showMore ? 'Show less' : 'Show more' }}
+            
+          </button>
+          
+
+        </div>
+        
+      </div>
+
+     
 
       <!-- CENTER CONTROLS -->
       <div
@@ -134,8 +155,7 @@
           flex items-center justify-center
           rounded-full bg-black/60 backdrop-blur-lg
           text-white hover:bg-black/80
-          transition shadow-xl"
-        >
+          transition shadow-xl">
           <Icon
             :icon="isPlaying
               ? 'material-symbols:pause'
@@ -144,21 +164,7 @@
           />
           
         </button>
- <!-- Mute -->
-        <button
-          @click="toggleMute"
-          class="pointer-events-auto w-12 h-12
-          flex items-center justify-center
-          rounded-full bg-black/60 backdrop-blur-lg
-          text-white hover:bg-black/80
-          transition shadow-xl">
-          <Icon
-            :icon="isMuted
-              ? 'material-symbols:volume-off'
-              : 'material-symbols:volume-up'"
-            class="w-7 h-7"
-          />
-        </button>
+ 
        
 
       </div>
@@ -174,7 +180,7 @@
       <button class="group">
       <div
           class="w-13 h-13 flex items-center justify-center
-          rounded-full bg-black/45 backdrop-blur-lg
+          rounded-xl p-2 bg-black/45 
           shadow-xl group-hover:scale-110
           transition-transform duration-200">
           <Icon
@@ -187,7 +193,7 @@
       <button class="group">
         <div
           class="w-13 h-13 flex items-center justify-center
-          rounded-full bg-black/45 backdrop-blur-lg
+          rounded-xl  p-2 bg-black/45 
           shadow-xl group-hover:scale-110
           transition-transform duration-200">
           <Icon
@@ -198,26 +204,23 @@
 
       <button class="group">
         <div
-          class="w-13 h-13 flex items-center justify-center
-          rounded-full bg-black/45 backdrop-blur-lg
+         class="w-13 h-13 flex items-center justify-center
+          rounded-xl p-2 bg-black/45
           shadow-xl group-hover:scale-110
-          transition-transform duration-200"
-        >
+          transition-transform duration-200">
           <Icon
-            icon="solar:share-bold"
-            class="w-7 h-7 text-white group-hover:text-green-400"
-          />
-
-
+            icon="bitcoin-icons:share-filled"
+            class="w-7 h-7 text-white group-hover:text-blue-400"/>
         </div>
         
       </button>
+      
       
 <!---3 Dot -->
       <button class="group">
         <div
           class="w-13 h-13 flex items-center justify-center
-          rounded-full bg-black/45 backdrop-blur-lg
+          rounded-xl  p-2 bg-black/45 
           shadow-xl group-hover:scale-110
           transition-transform duration-200">
           <Icon
@@ -226,10 +229,43 @@
           />
         </div>
       </button>
-
+<!---Arrow Downd-->
     </div>
 
+      <div class="flex flex-col gap-4 absolute right-6 top-1/2 -translate-y-1/2 z-20">
+         <button class="group">
+        <div
+          class="w-13 h-13 flex items-center justify-center
+          rounded-full  p-2 bg-black/45 
+          shadow-xl group-hover:scale-110
+          transition-transform duration-200">
+          <Icon
+            icon="oui:arrow-up"
+            class="w-7 h-7 text-white group-hover:text-white-400"
+          />
+        </div>
+      </button>  
+
+
+      <button class="group">
+        <div
+          class="w-13 h-13 flex items-center justify-center
+          rounded-full  p-2 bg-black/45 
+          shadow-xl group-hover:scale-110
+          transition-transform duration-200">
+          <Icon
+            icon="oui:arrow-down"
+            class="w-7 h-7 text-white group-hover:text-white-400"
+          />
+        </div>
+      </button>  
+    
+      </div>
+
+
   </div>
+  
+  
 </template>
 
 <script>
