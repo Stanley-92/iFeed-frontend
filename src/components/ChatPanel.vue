@@ -309,6 +309,7 @@ class="w-[2px] bg-white rounded-sm transition-all duration-75 "/>
 
 </template>
 
+
 <script setup>
 import {  computed } from 'vue'
 import { ref, nextTick } from 'vue'
@@ -357,7 +358,7 @@ const messages = ref([])
 
 
 const currentUser = ref({
-  name: 'sinayun_xyn',
+  name: 'SinaYun',
   role: 'Software Engineering',
   avatar: sinayun
 })

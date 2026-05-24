@@ -6,16 +6,6 @@
 <!-- Left Sidebar -->
 <aside class="w-20 bg-white border-r border-gray-200 sticky top-0 h-[100dvh] flex flex-col items-center py-8 space-y-8 hidden md:flex">
 
-  <!--Logo Icon  -->
-  <button 
-    @click="goToMainfeed"
-    class="p-3 rounded-xl  transition-all duration-200 group">
-    <Icon icon="tdesign:chat-bubble" 
-class="w-10 h-10 text-white transition-colors bg-green-500
- border-4 border-green-500 rounded-xl duration-200 hover:text-gray-600 mb-10" 
-    />
-  </button>
-
   <!-- Search Reused-->
   <div class="relative  pl-3">
 
@@ -368,6 +358,7 @@ class="relative">
 
 
  <div>
+
 <!-- Settings Popup -->
 <teleport to="body">
   <!-- Overlay (click outside) -->
@@ -497,7 +488,7 @@ class="absolute right-1 top-1/2 -translate-y-1/2 bg-white shadow rounded-full p-
 </button>
 
 <button>
-<span class="text-sm font-semibold  hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Entertainment</span>
+<span class="text-sm font-semibold  hover:bg-gray-400 duration-200  rounded-xl px-2 py-2">Highlight Reel</span>
 </button>
 
 <button>
@@ -547,6 +538,7 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
 <div>
 <h2 class="text-sm font-semibold text-gray-800">{{ post.user }}</h2>
 <p class="text-xs text-gray-400">{{ post.time }}</p>
+
 <!---Location text-->
 <p v-if="post.location" class="text-xs text-gray-400">{{ post.location }}</p>
 
@@ -606,12 +598,12 @@ class="w-10 h-10 rounded-full border border-gray-200 object-cover shadow-sm"/>
     class="w-4 h-4"/>
 </li>
 
-      <li
-        @click="copylink(index)"
-        class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
-        Copy Link
-        <Icon icon="ri:link" class="w-4 h-4" />
-      </li>
+<li
+@click="copylink(index)"
+class="flex items-center justify-between px-4 py-2 hover:bg-gray-100 cursor-pointer">
+Copy Link
+<Icon icon="ri:link" class="w-4 h-4" />
+</li>
 
       <li
         @click="shareTo(index)"
@@ -897,7 +889,7 @@ iFeed
 
     <!-- View All Toggle -->
   <div
-    class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
+  class="text-gray-400 text-sm mb-1 cursor-pointer hover:text-gray-500"
    @click="post.viewAll = !post.viewAll">
    All {{countTotalComments (post.commentsList) }}
   comments 
@@ -927,62 +919,62 @@ iFeed
 <div v-if="!post.commentsDisabled" class="mt-4">
 
   <div class="flex gap-3 items-start">
-    <img :src="currentUser.avatar" class="w-10 h-10 rounded-full border-2 flex-shrink-0" />
+  <img :src="currentUser.avatar" class="w-10 h-10 rounded-full border-2 flex-shrink-0" />
 
-    <div class="flex-1 relative">
-      <textarea
-        v-model="post.newComment"
-        placeholder="Write a comment..."
-        class="w-full px-12 py-3 pr-16 text-sm bg-gray-100 rounded-2xl resize-none
-        focus:outline-none focus:ring-2 focus:ring-blue-400"
-        rows="1"
-        @input="autoResize($event)"
-        @keyup.enter.exact.prevent="addCommentToPost(index)">
-      </textarea>
+  <div class="flex-1 relative">
+  <textarea
+  v-model="post.newComment"
+  placeholder="Write a comment..."
+  class="w-full px-12 py-3 pr-16 text-sm bg-gray-100 rounded-2xl resize-none
+  focus:outline-none focus:ring-2 focus:ring-blue-400"
+  rows="1"
+  @input="autoResize($event)"
+  @keyup.enter.exact.prevent="addCommentToPost(index)">
+  </textarea>
 
-      <!-- Emoji Button -->
-      <button
-        class="absolute left-3 bottom-3 text-gray-500 hover:text-blue-500 py-2"
-        @click.stop="toggleEmojiPicker(index)">
-        <Icon icon="proicons:emoji" class="w-5 h-5" />
-      </button>
+  <!-- Emoji Button -->
+  <button
+  class="absolute left-3 bottom-3 text-gray-500 hover:text-blue-500 py-2"
+  @click.stop="toggleEmojiPicker(index)">
+  <Icon icon="proicons:emoji" class="w-5 h-5" />
+  </button>
 
-      <!-- Photo Upload -->
-      <label 
-      class="absolute right-12 bottom-3 cursor-pointer text-gray-500 hover:text-blue-500">
-        <Icon icon="tabler:photo" class="w-5 h-5" />
-        <input type="file" accept="image/*,video/*" 
-        class="hidden" @change="addCommentImage($event, index)"/>
-      </label>
+<!-- Photo Upload -->
+<label 
+class="absolute right-12 bottom-3 cursor-pointer text-gray-500 hover:text-blue-500">
+<Icon icon="tabler:photo" class="w-5 h-5" />
+<input type="file" accept="image/*,video/*" 
+class="hidden" @change="addCommentImage($event, index)"/>
+</label>
 
       <!-- Send Button -->
-    <button
-    v-if="post.newComment?.trim() || post.commentMedia?.length"
-    class="absolute right-3 bottom-3 text-blue-500 hover:text-blue-600"
-    @click="addCommentToPost(index)">
-    <Icon icon="famicons:paper-plane-outline" class="w-6 h-6" />
-   </button>
-    </div>
-  </div>
+<button
+v-if="post.newComment?.trim() || post.commentMedia?.length"
+class="absolute right-3 bottom-3 text-blue-500 hover:text-blue-600"
+@click="addCommentToPost(index)">
+<Icon icon="famicons:paper-plane-outline" class="w-6 h-6" />
+</button>
+</div>
+</div>
 
 
 
 
-  <!-- Attached Media Preview-->
-  <div v-if="post.commentMedia?.length" class="mt-3 flex flex-wrap gap-2">
-    <div v-for="(media, i) in post.commentMedia" :key="i" class="relative">
-      <component
-        :is="media.type.startsWith('video') ? 'video' : 'img'"
-        :src="media.url"
-        class="w-24 h-24 object-cover rounded-lg border"
-        controls />
-      <button
-        @click.stop="removeCommentMedia(index, i)"
-        class="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1">
-        <Icon icon="mdi:close" class="w-4 h-4" />
-      </button>
-    </div>
-  </div>
+<!-- Attached Media Preview-->
+<div v-if="post.commentMedia?.length" class="mt-3 flex flex-wrap gap-2">
+<div v-for="(media, i) in post.commentMedia" :key="i" class="relative">
+<component
+:is="media.type.startsWith('video') ? 'video' : 'img'"
+:src="media.url"
+class="w-24 h-24 object-cover rounded-lg border"
+controls />
+<button
+@click.stop="removeCommentMedia(index, i)"
+class="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1">
+<Icon icon="mdi:close" class="w-4 h-4" />
+</button>
+</div>
+</div>
 
 
   
@@ -1014,18 +1006,20 @@ iFeed
   alt="Profile"
   class="w-16 h-16 rounded-full object-cover border-4" />
   <div>
-  <button @click="goToProfileUser" class="font-medium text-blue-600 hover:text-gray-800">
-  View profile
+  <button @click="goToProfileUser" 
+  class="font-medium text-blue-600 hover:text-gray-800">
+  {{ currentUser.name }}
   </button>
     
-  <p class="text-sm text-gray-500">{{ currentUser.name }}</p>
+ 
+  
   </div>
   </div>
 
 <!-- Heart Button that redirects to Chat.vue -->
 <button @click="togglechat" class="text-xl hover:text-blue-600">
 <Icon
-icon="basil:comment-outline"  class="w-6 h-6 transition"/>
+icon="basil:comment-outline"  class="w-10 h-10 transition text-blue-500 hover:text-blue-500"/>
 </button>
 </div>
 
@@ -1069,7 +1063,7 @@ v-for="user in suggestedUsers"
   </div>
   </li>
   </ul>
-n
+
 <!--  Copyright Box -->
 <div class=" mt-8 text-center text-xs text-gray-400">
 © 2025 iFeed. All rights reserved.
@@ -1105,22 +1099,23 @@ TeamDevOP.Sihanouk Ville City.Cambodia
 </div>
 
 
-    <!-- TOP OVERLAY: Avatar + Username + Time + Close -->
-    <div class="absolute inset-x-0 top-0 p-3 z-20">
-      <!-- Progress Bar -->
-      <div class="h-1 w-full bg-white/20 rounded mb-3">
-        <div class="h-full bg-white rounded" :style="{ width: progress + '%' }">
-        </div>
-      </div>
+<!-- TOP OVERLAY: Avatar + Username + Time + Close -->
+<div class="absolute inset-x-0 top-0 p-3 z-20">
+<!-- Progress Bar -->
+<div class="h-1 w-full bg-white/20 rounded mb-3">
+<div class="h-full bg-white rounded" :style="{ width: progress + '%' }">
+</div>
+</div>
 
-      <!-- Avatar, Username, Time -->
-      <div class="flex items-center justify-between">
+<!-- Avatar, Username, Time -->
+ <div class="flex items-center justify-between">
         <div class="flex items-center gap-2 text-white">
           <!-- Avatar -->
           <img
             :src="activeStory.avatar"
             alt="Poster Avatar"
             class="w-8 h-8 rounded-full ring-2 ring-purple-500" />
+
           <!-- Username + Time -->
           <div class="leading-tight">
             <p class="text-sm font-semibold">{{ activeStory.username }}</p>
@@ -1175,6 +1170,7 @@ TeamDevOP.Sihanouk Ville City.Cambodia
                  rounded-full px-4 py-2 outline-none"
           @keydown.enter.prevent="sendReply"/>
 
+
 <!-- Heart Button -->
 <button
   @click="toggleLike"
@@ -1183,36 +1179,25 @@ TeamDevOP.Sihanouk Ville City.Cambodia
     icon="solar:heart-linear"
     :class="[
       'w-5 h-5 transition-transform transition-colors',
-      activeStory.liked ? 'text-red-500 scale-125' : 'text-white scale-100'
-    ]"
-  />
+      activeStory.liked ? 'text-red-500 scale-125' : 'text-white scale-100']"/>
 </button>
 
 
-        <button
-          class="p-2 rounded-full bg-white/10 hover:bg-white/20"
-          @click="sendReply">
-          <Icon icon="meteor-icons:paper-plane" class="w-5 h-5 text-white" />
-        </button>
-      </div>
-    </div>
-
+  <button
+  class="p-2 rounded-full bg-white/10 hover:bg-white/20"
+  @click="sendReply">
+  <Icon icon="meteor-icons:paper-plane" class="w-5 h-5 text-white" />
+  </button>
   </div>
+  </div>
+
+</div>
 </div>
 </div>
   
  <!-- Story Modal -->
 
 </template>
-
-
-
-
-
-
-
-
-
 
 
 

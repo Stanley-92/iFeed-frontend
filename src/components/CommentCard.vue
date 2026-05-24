@@ -44,8 +44,7 @@
           <div
             v-for="(media, i) in localComment.media"
             :key="i"
-            class="rounded-lg overflow-hidden border shadow-sm"
-          >
+            class="rounded-lg overflow-hidden border shadow-sm">
             <component
               :is="media.type.startsWith('video') ? 'video' : 'img'"
               :src="media.url"
@@ -57,55 +56,52 @@
           </div>
         </div>
 
-        <!-- Actions -->
-        <div class="flex items-center gap-4 text-xs text-gray-600 mt-2 ml-3">
-          <!-- Like -->
-          <button
-            @click="toggleLike"
-            class="flex items-center gap-1 hover:text-red-500 transition"
-            :class="{ 'text-red-500': localComment.liked }"
-          >
-            <Icon
-              :icon="localComment.liked ? 'solar:heart-bold' : 'solar:heart-linear'"
-              class="w-5 h-5"
-            />
-            <span v-if="localComment.likes > 0" class="font-medium">
-              {{ localComment.likes }}
-            </span>
-          </button>
+<!-- Actions -->
+<div class="flex items-center gap-4 text-xs text-gray-600 mt-2 ml-3">
+<!-- Like -->
+<button
+@click="toggleLike"
+class="flex items-center gap-1 hover:text-red-500 transition"
+:class="{ 'text-red-500': localComment.liked }">
+<Icon
+:icon="localComment.liked ? 'solar:heart-bold' : 'solar:heart-linear'"
+class="w-5 h-5"/>
+<span v-if="localComment.likes > 0" class="font-medium">
+{{ localComment.likes }}
+</span>
+</button>
 
-          <!-- Reply -->
-          <button
-            @click="replyOpen = !replyOpen"
-            class="hover:text-blue-600 transition"
-          >
-            <Icon icon="uil:comment" class="w-5 h-5" />
-          </button>
+<!-- Reply -->
+<button
+@click="replyOpen = !replyOpen"
+class="hover:text-blue-600 transition">
+<Icon icon="uil:comment" class="w-5 h-5" />
+</button>
 
   
-          <!-- Three-dot menu -->
-          <div class="relative">
-            <button @click.stop="toggleDots($event)">
-              <Icon icon="bi:three-dots" class="w-5 h-5" />
-            </button>
+<!-- Three-dot menu -->
+<div class="relative">
+<button @click.stop="toggleDots($event)">
+<Icon icon="bi:three-dots" class="w-5 h-5" />
+</button>
 <div>
 <teleport to="body">
-              <div
-                v-if="open"
-                ref="popup"
-                class="flex bg-white border rounded-xl shadow-lg z-50"
-                :style="popupStyle"
-                @click.stop>
-                <ul class="py-2 text-gray-700 font-semibold">
-                  <li @click="edit" class="px-4 py-2 rounded-xl hover:bg-gray-50 cursor-pointer">Edit</li>
-                  <li @click="hideComment" class="px-4 py-2 rounded-xl hover:bg-gray-100 cursor-pointer">Hide</li>
-                  <li @click="report" class="px-4 py-2 rounded-xl hover:bg-gray-200 cursor-pointer">Report</li>
-                  <li @click="remove" class="px-4 py-2 rounded-xl hover:bg-gray-200 text-red-600 cursor-pointer">Delete</li>
-                </ul>
-              </div>
-            </teleport>
-          </div>
-        </div>
+<div
+v-if="open"
+ref="popup"
+class="flex bg-white border rounded-xl shadow-lg z-50"
+:style="popupStyle"
+@click.stop>
+<ul class="py-2 text-gray-700 font-semibold">
+<li @click="edit" class="px-4 py-2 rounded-xl hover:bg-gray-50 cursor-pointer">Edit</li>
+<li @click="hideComment" class="px-4 py-2 rounded-xl hover:bg-gray-100 cursor-pointer">Hide</li>
+<li @click="report" class="px-4 py-2 rounded-xl hover:bg-gray-200 cursor-pointer">Report</li>
+<li @click="remove" class="px-4 py-2 rounded-xl hover:bg-gray-200 text-red-600 cursor-pointer">Delete</li>
+</ul>
+</div>
+</teleport>
+</div>
+</div>
 </div>
             
         
@@ -114,32 +110,30 @@
         <!-- Show/Hide Replies -->
    
 
-        <!-- Reply Input -->
-        <transition name="fade">
-          <div v-if="replyOpen" class="mt-4">
-            <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-md">
-              <button>
-                <Icon icon="solar:camera-broken" class="w-5 h-5"/>
-              </button>
+<!-- Reply Input -->
+<transition name="fade">
+<div v-if="replyOpen" class="mt-4">
+<div class="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-md">
+<button>
+<Icon icon="solar:camera-broken" class="w-5 h-5"/>
+</button>
          
-              <input
-                v-model="replyText"
-                @keyup.enter="submitReply"
-                ref="replyInput"
-                class="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
-                :placeholder="`@${localComment.user}`"
-              />
-              <button
-                @click="submitReply"
-                :disabled="!replyText.trim()"
-                class="text-blue-500 disabled:text-gray-300 transition"
-              >
-                <Icon icon="solar:paper-plane-bold" class="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-        </transition>
-      </div>
+<input
+v-model="replyText"
+@keyup.enter="submitReply"
+ref="replyInput"
+class="flex-1 bg-transparent outline-none text-sm placeholder-gray-400"
+:placeholder="`@${localComment.user}`"/>
+<button
+@click="submitReply"
+:disabled="!replyText.trim()"
+class="text-blue-500 disabled:text-gray-300 transition">
+<Icon icon="solar:paper-plane-bold" class="w-5 h-5" />
+</button>
+</div>
+</div>
+</transition>
+</div>
     </div>
 
     <!-- Recursive Replies -->
@@ -199,7 +193,7 @@ export default {
       if (isOpen) this.$nextTick(() => this.$refs.replyInput?.focus())
     })
 
-    // Click outside for 3-dot menu
+  // Click outside for 3-dot menu
     document.addEventListener('click', this.handleClickOutside)
   },
   beforeUnmount() {

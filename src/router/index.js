@@ -10,10 +10,6 @@ import CommentCard from '@/components/CommentCard.vue'
 import Reel from '@/views/Reel.vue'
 
 
-
-
-
-
 const routes = [
   { path: '/', name: 'Login', component: Login },
   { path: '/chat', name: 'Chat', component: ChatPanel },

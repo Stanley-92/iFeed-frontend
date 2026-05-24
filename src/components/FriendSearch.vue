@@ -62,13 +62,13 @@
         </div>
 
         <!-- Empty -->
-        <div
-          v-else
-          class="px-4 py-6 text-center text-gray-400">
-          {{ emptyText }}
-        </div>
-      </div>
-    </Transition>
+  <div
+  v-else
+  class="px-4 py-6 text-center text-gray-400">
+  {{ emptyText }}
+  </div>
+  </div>
+  </Transition>
   </div>
 
   <!-- Click outside -->

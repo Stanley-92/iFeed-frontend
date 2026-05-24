@@ -144,7 +144,7 @@ import { auth } from '../firebase'
 export default {
   name: 'Login',
    components:{
-     Icon ,
+    Icon ,
    GoogleSignInButton,
 
    },
@@ -219,7 +219,7 @@ async goLogin() {
   });
 },
 
-   getErrorMessage(code) {
+getErrorMessage(code) {
   const messages = {
     'auth/user-not-found': 'Account not found.',
     'auth/wrong-password': 'Incorrect password.',

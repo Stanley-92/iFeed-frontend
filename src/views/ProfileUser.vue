@@ -11,19 +11,19 @@
 </aside>
 
 <!-- Profile Section -->
-    <div class="flex-1 max-w-xl mx-auto bg-white p-6">
-      <!-- Header -->
-      <div class="flex justify-between items-start mb-4">
-        <div>
-          <h2 class="font-bold">{{ currentUser.name }}</h2>
-          <p class="text-xs text-gray-500">{{ currentUser.role }}</p>
-        </div>
+  <div class="flex-1 max-w-xl mx-auto bg-white p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-start mb-4">
+  <div>
+  <h2 class="font-bold">{{ currentUser.name }}</h2>
+  <p class="text-xs text-gray-500">{{ currentUser.role }}</p>
+  </div>
 
         
-        <div class="flex items-center gap-4">
-          <button @click="showEditModal =true">
-          <Icon icon="mynaui:edit-one" class="w-5 h-5" />
-        </button>
+    <div class="flex items-center gap-4">
+    <button @click="showEditModal =true">
+    <Icon icon="mynaui:edit-one" class="w-5 h-5" />
+    </button>
 
 
           <button>
